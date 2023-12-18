@@ -378,6 +378,12 @@ might_alloc(gfp_t gfp_mask __unused)
 
 #define	is_cow_mapping(flags)	(false)
 
+static inline bool
+want_init_on_free(void)
+{
+	return (false);
+}
+
 static inline void
 vm_flags_clear(struct vm_area_struct *vma, unsigned long flags)
 {
