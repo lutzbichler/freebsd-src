@@ -180,6 +180,25 @@ memchr_inv(const void *start, int c, size_t length)
 	return (NULL);
 }
 
+static inline char *
+strnchr(const char *str, size_t length, int chr)
+{
+	const char *ptr;
+	const char *end;
+
+	ptr = str;
+	end = str + length;
+
+	while (ptr != end) {
+		if (*ptr == '\0')
+			break;
+		if (*ptr == chr)
+			return (__DECONST(char *, ptr));
+		ptr++;
+	}
+	return (NULL);
+}
+
 static inline size_t
 str_has_prefix(const char *str, const char *prefix)
 {
