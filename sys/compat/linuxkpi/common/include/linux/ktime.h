@@ -63,10 +63,22 @@ ktime_to_us(ktime_t kt)
 	return (ktime_divns(kt, NSEC_PER_USEC));
 }
 
+static inline ktime_t
+us_to_ktime(uint64_t usec)
+{
+	return (usec * NSEC_PER_USEC);
+}
+
 static inline int64_t
 ktime_to_ms(ktime_t kt)
 {
 	return (ktime_divns(kt, NSEC_PER_MSEC));
+}
+
+static inline ktime_t
+ms_to_ktime(uint64_t msec)
+{
+	return (msec * NSEC_PER_MSEC);
 }
 
 static inline struct timeval
