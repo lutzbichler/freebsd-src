@@ -63,6 +63,13 @@ struct linux_cdev;
 #define	i_private v_data
 
 #define	S_IRUGO	(S_IRUSR | S_IRGRP | S_IROTH)
+
+#ifdef __LP64__
+#define MAX_LFS_FILESIZE        ((loff_t)LLONG_MAX)
+#else
+#define MAX_LFS_FILESIZE	((loff_t)ULONG_MAX << PAGE_SHIFT)
+#endif
+
 #define	S_IWUGO	(S_IWUSR | S_IWGRP | S_IWOTH)
 
 typedef struct files_struct *fl_owner_t;
