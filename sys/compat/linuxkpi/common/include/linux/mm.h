@@ -370,4 +370,16 @@ might_alloc(gfp_t gfp_mask __unused)
 
 #define	is_cow_mapping(flags)	(false)
 
+static inline void
+vm_flags_clear(struct vm_area_struct *vma, unsigned long flags)
+{
+	vma->vm_flags &= ~flags;
+}
+
+static inline void
+vm_flags_set(struct vm_area_struct *vma, unsigned long flags)
+{
+	vma->vm_flags |= flags;
+}
+
 #endif					/* _LINUXKPI_LINUX_MM_H_ */
