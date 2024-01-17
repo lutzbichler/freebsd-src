@@ -421,7 +421,7 @@ want_init_on_free(void)
 }
 
 #define folio_pfn(f)			page_to_pfn(f)
-#define folio_mark_accessed(f)	mark_page_accessed(f)
+#define folio_mark_accessed(f)		mark_page_accessed(f)
 #define folio_mark_dirty(f)		set_page_dirty(f)
 #define folio_nr_pages(f)		1
 #define folio_size(f)			PAGE_SIZE
