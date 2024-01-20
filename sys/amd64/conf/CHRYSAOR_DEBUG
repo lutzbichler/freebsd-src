@@ -1,5 +1,5 @@
 #
-# MEDUSA_DEBUG -- Kernel configuration file for FreeBSD/amd64
+# CHRYSAOR_DEBUG -- Kernel configuration file for FreeBSD/amd64
 #
 # For more information on this file, please read the config(5) manual page,
 # and/or the handbook section on Kernel Configuration Files:
@@ -19,7 +19,7 @@
 # $FreeBSD$
 
 cpu		HAMMER
-ident		MEDUSADBG
+ident		CHRYSAORDBG
 
 makeoptions	DEBUG=-g		# Build kernel with gdb(1) debug symbols
 makeoptions	WITH_CTF=1		# Run ctfconvert(1) for DTrace support
@@ -184,6 +184,7 @@ device		firmware	# firmware assist module
 device		bpf		# Berkeley packet filter
 
 # USB support
+device		ehci
 device		xhci
 device		usb
 device 		ums
