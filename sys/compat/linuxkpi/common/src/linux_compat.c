@@ -342,7 +342,7 @@ error:
 }
 
 struct class *
-class_create(struct module *owner, const char *name)
+linux_class_create(struct module *owner, const char *name)
 {
 	struct class *class;
 	int error;

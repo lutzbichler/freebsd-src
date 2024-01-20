@@ -343,7 +343,12 @@ put_device(struct device *dev)
 		kobject_put(&dev->kobj);
 }
 
-struct class *class_create(struct module *owner, const char *name);
+struct class *linux_class_create(struct module *owner, const char *name);
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION >= 60400
+#define class_create(name)	linux_class_create(THIS_MODULE, name)
+#else
+#define class_create(module, name)	linux_class_create(module, name)
+#endif
 
 static inline int
 class_register(struct class *class)
