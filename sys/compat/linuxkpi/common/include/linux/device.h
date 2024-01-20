@@ -64,7 +64,11 @@ struct class {
 	const struct attribute_group **dev_groups;
 	void		(*class_release)(struct class *class);
 	void		(*dev_release)(struct device *dev);
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION >= 60200
+	char *		(*devnode)(const struct device *dev, umode_t *mode);
+#else
 	char *		(*devnode)(struct device *dev, umode_t *mode);
+#endif
 };
 
 struct dev_pm_ops {
