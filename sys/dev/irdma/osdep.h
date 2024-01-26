@@ -77,7 +77,6 @@
 	hlist_add_head(n, &h[jhash(&k, sizeof(k), 0) >> (32 - ilog2(ARRAY_SIZE(h)))])
 #define HASH_DEL(tbl, node) hlist_del(node)
 
-#define WQ_UNBOUND_MAX_ACTIVE max_t(int, 512, num_possible_cpus() * 4)
 #define if_addr_rlock(x)
 #define if_addr_runlock(x)
 
