@@ -45,6 +45,7 @@
 #define	WQ_UNBOUND (1 << 0)
 #define	WQ_HIGHPRI (1 << 1)
 #define	WQ_MEM_RECLAIM (1 << 2)
+#define	WQ_UNBOUND_MAX_ACTIVE max_t(int, 512, num_possible_cpus() * 4)
 
 struct work_struct;
 typedef void (*work_func_t)(struct work_struct *);
