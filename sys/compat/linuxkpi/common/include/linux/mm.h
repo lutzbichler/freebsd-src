@@ -186,6 +186,7 @@ get_order(unsigned long size)
  */
 void *linux_page_address(struct page *);
 #define	page_address(page) linux_page_address(page)
+#define page_to_virt(page) linux_page_address(page)
 
 static inline void *
 lowmem_page_address(struct page *page)
