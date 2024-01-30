@@ -93,7 +93,8 @@ struct page_frag_cache {
  */
 extern void *linux_page_address(struct page *);
 
-#define	page_address(page) linux_page_address(page)
+#define	page_address(pp)	linux_page_address(pp)
+#define	page_to_virt(pp)	linux_page_address(pp)
 
 /*
  * Page management for unmapped pages:
