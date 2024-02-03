@@ -129,6 +129,13 @@ sg_set_page(struct scatterlist *sg, struct page *page, unsigned int len,
 	sg->length = len;
 }
 
+static inline void
+sg_set_folio(struct scatterlist *sg, struct folio *folio, unsigned int len,
+	unsigned int offset)
+{
+	sg_set_page(sg, folio, len, offset);
+}
+
 static inline struct page *
 sg_page(struct scatterlist *sg)
 {
