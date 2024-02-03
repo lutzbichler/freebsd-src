@@ -29,6 +29,8 @@
 #ifndef _LINUXKPI_LINUX_PAGEFLAGS_H_
 #define _LINUXKPI_LINUX_PAGEFLAGS_H_
 
+#define page_folio(p)       p
+
 #define	PageHighMem(p)		(0)
 
 #endif	/* _LINUXKPI_LINUX_PAGEFLAGS_H_ */
