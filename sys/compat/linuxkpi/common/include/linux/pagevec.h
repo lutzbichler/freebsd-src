@@ -66,4 +66,65 @@ check_move_unevictable_pages(struct pagevec *pvec)
 {
 }
 
+struct folio_batch {
+	unsigned int nr;
+	struct folio *folios[PAGEVEC_SIZE];
+};
+
+static inline void
+folio_batch_init(struct folio_batch *fbatch)
+{
+
+	fbatch->nr = 0;
+}
+
+static inline void
+folio_batch_reinit(struct folio_batch *fbatch)
+{
+
+	fbatch->nr = 0;
+}
+
+static inline void
+__folio_batch_release(struct folio_batch *fbatch)
+{
+
+	release_folios(fbatch->folios, fbatch->nr);
+	folio_batch_reinit(fbatch);
+}
+
+static inline void
+folio_batch_release(struct folio_batch *fbatch)
+{
+
+	if (fbatch->nr)
+		__folio_batch_release(fbatch);
+}
+
+static inline unsigned int
+folio_batch_add(struct folio_batch *fbatch, struct folio *folio)
+{
+
+	fbatch->folios[fbatch->nr++] = folio;
+	return (PAGEVEC_SIZE - fbatch->nr);
+}
+
+static inline unsigned int
+folio_batch_count(struct folio_batch *fbatch)
+{
+	return (fbatch->nr);
+}
+
+static inline unsigned int
+folio_batch_space(struct folio_batch *fbatch)
+{
+	return PAGEVEC_SIZE - fbatch->nr;
+}
+
+static inline void
+check_move_unevictable_folios(struct folio_batch *fbatch)
+{
+
+}
+
 #endif	/* _LINUXKPI_LINUX_PAGEVEC_H_ */

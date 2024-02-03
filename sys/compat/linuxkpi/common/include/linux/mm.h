@@ -412,4 +412,14 @@ want_init_on_free(void)
 	return (false);
 }
 
+/* Map folio to page */
+#define folio_pfn(f)			page_to_pfn(f)
+#define folio_mark_accessed(f)	mark_page_accessed(f)
+#define folio_mark_dirty(f)		set_page_dirty(f)
+#define folio_nr_pages(f)		1
+#define folio_size(f)			PAGE_SIZE
+#define folio_put(f)			__free_page(f)
+#define folio_address(f)		page_address(f)
+#define virt_to_folio(v)		virt_to_page(v)
+
 #endif					/* _LINUXKPI_LINUX_MM_H_ */
