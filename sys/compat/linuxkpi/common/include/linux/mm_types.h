@@ -79,4 +79,6 @@ mmgrab(struct mm_struct *mm)
 extern struct mm_struct *linux_get_task_mm(struct task_struct *);
 #define	get_task_mm(task) linux_get_task_mm(task)
 
+#define folio	vm_page
+
 #endif					/* _LINUXKPI_LINUX_MM_TYPES_H_ */

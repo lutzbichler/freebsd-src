@@ -48,6 +48,9 @@ void linux_shmem_truncate_range(vm_object_t obj, loff_t lstart,
 #define	shmem_read_mapping_page_gfp(...) \
   linux_shmem_read_mapping_page_gfp(__VA_ARGS__)
 
+#define shmem_read_folio_gfp(...) \
+  linux_shmem_read_mapping_page_gfp(__VA_ARGS__)
+
 #define	shmem_file_setup(...) \
   linux_shmem_file_setup(__VA_ARGS__)
 
