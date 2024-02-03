@@ -49,6 +49,15 @@ release_pages(struct page **pages, int nr)
 }
 
 static inline void
+release_folios(struct folio **folios, int nr)
+{
+	int i;
+
+	for (i = 0; i < nr; i++)
+		put_page(folios[i]);
+}
+
+static inline void
 mapping_clear_unevictable(vm_object_t mapping)
 {
 }
