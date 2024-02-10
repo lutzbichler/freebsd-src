@@ -154,30 +154,6 @@ rb_insert_color_cached(struct rb_node *node, struct rb_root_cached *root,
 }
 
 static inline struct rb_node *
-rb_add_cached(struct rb_node * node, struct rb_root_cached *root,
-	bool (*less)(struct rb_node *, const struct rb_node *))
-{
-	bool leftmost = true;
-	struct rb_node *current, *parent;
-
-	current = root->rb_root.rb_node;
-	while (current != NULL) {
-		parent = current;
-		if (less(node, parent))
-			current = RB_LEFT(parent, __entry);
-		else {
-			current = RB_RIGHT(parent, __entry);
-			leftmost = false;
-		}
-	}
-
-	rb_link_node(node, parent, &current);
-	rb_insert_color_cached(node, root, leftmost);
-
-	return (leftmost ? node : NULL);
-}
-
-static inline struct rb_node *
 rb_erase_cached(struct rb_node *node, struct rb_root_cached *root)
 {
 	struct rb_node *retval;
