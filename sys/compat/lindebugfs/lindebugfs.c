@@ -226,7 +226,7 @@ debugfs_create_file_size(const char *name, umode_t mode,
     loff_t file_size __unused)
 {
 
-	return debugfs_create_file(name, mode, parent, data, fops);
+	return (debugfs_create_file(name, mode, parent, data, fops));
 }
 
 /*
@@ -608,6 +608,17 @@ debugfs_create_atomic_t(const char *name, umode_t mode, struct dentry *parent, a
 	    &fops_atomic_t_ro, &fops_atomic_t_wo);
 }
 
+struct dentry *
+debugfs_lookup(const char *name, struct dentry *parent)
+{
+	struct pfs_node *pfs;
+	
+	pfs = pfs_find_node(parent->d_pfs_node, name);
+	if (pfs == NULL)
+		return (NULL);
+
+	return ((struct dentry *)pfs->pn_data);
+}
 
 static ssize_t
 fops_blob_read(struct file *filp, char __user *ubuf, size_t read_size, loff_t *ppos)
