@@ -173,6 +173,13 @@ kstrtou16(const char *cp, unsigned int base, u16 *res)
 }
 
 static inline int
+kstrtos32(const char *cp, unsigned int base, s32 *res)
+{
+
+	return (kstrtoint(cp, base, res));
+}
+
+static inline int
 kstrtou32(const char *cp, unsigned int base, u32 *res)
 {
 
