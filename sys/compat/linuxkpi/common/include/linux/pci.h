@@ -1364,6 +1364,9 @@ pci_bus_write_config_word(struct pci_bus *bus, unsigned int devfn, int pos,
 struct pci_dev *lkpi_pci_get_class(unsigned int class, struct pci_dev *from);
 #define	pci_get_class(class, from)	lkpi_pci_get_class(class, from)
 
+struct pci_dev *lkpi_pci_get_base_class(unsigned int class, struct pci_dev *from);
+#define	pci_get_base_class(class, from)	lkpi_pci_get_base_class(class, from)
+
 /* -------------------------------------------------------------------------- */
 
 #define	pcim_enable_device(pdev)	linuxkpi_pcim_enable_device(pdev)
