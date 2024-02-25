@@ -28,6 +28,7 @@
 
 #include <sys/queue.h>
 #include <linux/gfp.h>
+#include <linux/slab.h>
 
 struct shrink_control {
 	gfp_t		gfp_mask;
@@ -38,9 +39,10 @@ struct shrink_control {
 struct shrinker {
 	unsigned long		(*count_objects)(struct shrinker *, struct shrink_control *);
 	unsigned long		(*scan_objects)(struct shrinker *, struct shrink_control *);
-	int			seeks;
-	long			batch;
+	int					seeks;
+	long				batch;
 	TAILQ_ENTRY(shrinker)	next;
+	void 				*private_data;
 };
 
 #define	SHRINK_STOP	(~0UL)
@@ -58,5 +60,33 @@ void	linuxkpi_synchronize_shrinkers(void);
 #endif
 #define	unregister_shrinker(s)	linuxkpi_unregister_shrinker(s)
 #define	synchronize_shrinkers()	linuxkpi_synchronize_shrinkers()
+
+static inline struct shrinker *
+shrinker_alloc(unsigned int f, const char *n)
+{
+	struct shrinker *s;
+
+	s = (struct shrinker *)kzalloc(sizeof(*s), GFP_KERNEL);
+	if (!s)
+		return (NULL);
+
+	s->seeks = DEFAULT_SEEKS;
+	s->batch = 0;
+
+	return (s);
+}
+
+static inline void
+shrinker_register(struct shrinker *s)
+{
+	register_shrinker(s);
+}
+
+static inline void
+shrinker_free(struct shrinker *s)
+{
+	unregister_shrinker(s);
+	kfree(s);
+}
 
 #endif	/* _LINUXKPI_LINUX_SHRINKER_H_ */
