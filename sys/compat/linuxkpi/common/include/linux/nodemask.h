@@ -37,4 +37,10 @@ num_possible_nodes(void)
 	return (1);
 }
 
+static inline int
+num_online_nodes(void)
+{
+	return (1);
+}
+
 #endif /* _LINUXKPI_LINUX_NODEMASK_H_ */
