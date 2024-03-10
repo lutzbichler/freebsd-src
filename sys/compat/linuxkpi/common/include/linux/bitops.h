@@ -348,6 +348,15 @@ __test_and_set_bit(long bit, volatile unsigned long *var)
 	return !!(val & bit);
 }
 
+static inline void
+__assign_bit(long bit, volatile unsigned long *addr, bool value)
+{
+	if (value)
+		set_bit(bit, addr);
+	else
+		clear_bit(bit, addr);
+}
+
 enum {
         REG_OP_ISFREE,
         REG_OP_ALLOC,
