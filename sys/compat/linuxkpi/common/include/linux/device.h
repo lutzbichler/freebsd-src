@@ -655,6 +655,13 @@ class_remove_file(struct class *class, const struct class_attribute *attr)
 		sysfs_remove_file(&class->kobj, &attr->attr);
 }
 
+static inline bool
+dev_is_removable(struct device *dev __unused)
+{
+
+	return (false);
+}
+
 #define	dev_to_node(dev) linux_dev_to_node(dev)
 #define	of_node_to_nid(node) -1
 int linux_dev_to_node(struct device *);
