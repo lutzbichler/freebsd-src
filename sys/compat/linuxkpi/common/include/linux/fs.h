@@ -271,12 +271,62 @@ get_file(struct linux_file *f)
 	return (f);
 }
 
+static inline struct linux_file *
+get_file_active(struct linux_file **f)
+{
+	struct linux_file *tmp;
+
+	if (!f)
+		return (NULL);
+
+	tmp = *f;
+
+	for (;;) {
+		if (!tmp)
+			return (NULL);
+
+		if (refcount_acquire_if_not_zero(
+			tmp->_file == NULL ? &tmp->f_count : &tmp->_file->f_count)) {
+
+            return (tmp);
+		}
+
+		tmp++;
+	}
+}
+
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION >= 60700
+static inline struct linux_file *
+get_file_rcu(struct linux_file **f)
+{
+	struct linux_file *tmp;
+
+	if (!f)
+		return (NULL);
+
+	tmp = *f;
+
+	for (;;) {
+		if (!tmp)
+			return (NULL);
+
+		if (refcount_acquire_if_not_zero(
+			tmp->_file == NULL ? &tmp->f_count : &tmp->_file->f_count)) {
+
+            return (tmp);
+		}
+
+		tmp++;
+	}
+}
+#else
 static inline bool
 get_file_rcu(struct linux_file *f)
 {
 	return (refcount_acquire_if_not_zero(
 	    f->_file == NULL ? &f->f_count : &f->_file->f_count));
 }
+#endif
 
 static inline struct inode *
 igrab(struct inode *inode)
