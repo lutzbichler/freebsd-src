@@ -30,9 +30,7 @@
 #include <linux/radix-tree.h>
 #include <linux/err.h>
 #include <linux/kconfig.h>
-
-#include <sys/lock.h>
-#include <sys/mutex.h>
+#include <linux/spinlock.h>
 
 #define	XA_LIMIT(min, max) \
     ({ CTASSERT((min) == 0); (uint32_t)(max); })
@@ -49,13 +47,13 @@
 
 #define	xa_limit_32b XA_LIMIT(0, 0xFFFFFFFF)
 
-#define	XA_ASSERT_LOCKED(xa) mtx_assert(&(xa)->mtx, MA_OWNED)
-#define	xa_lock(xa) mtx_lock(&(xa)->mtx)
-#define	xa_unlock(xa) mtx_unlock(&(xa)->mtx)
+#define	XA_ASSERT_LOCKED(xa) assert_spin_locked(&(xa)->xa_lock)
+#define	xa_lock(xa) spin_lock(&(xa)->xa_lock)
+#define	xa_unlock(xa) spin_unlock(&(xa)->xa_lock)
 
 struct xarray {
 	struct radix_tree_root root;
-	struct mtx mtx;		/* internal mutex */
+	spinlock_t xa_lock;		/* internal mutex */
 	uint32_t flags;		/* see XA_FLAGS_XXX */
 };
 
@@ -109,6 +107,9 @@ void *__xa_next(struct xarray *, unsigned long *, bool);
 		xa_unlock((xa)); \
 		flags == 0; \
 	} while (0)
+
+#define xa_alloc_cyclic_irq(xa, pindex, ptr, mask, pindex_next, flags) \
+	xa_alloc_cyclic(xa, pindex, ptr, mask, pindex_next, flags)
 
 static inline int
 xa_err(void *ptr)
