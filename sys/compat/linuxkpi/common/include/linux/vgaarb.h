@@ -31,6 +31,7 @@
 #ifndef _LINUXKPI_LINUX_VGA_H_
 #define	_LINUXKPI_LINUX_VGA_H_
 
+#include <linux/types.h>
 #include <video/vga.h>
 
 /* Legacy VGA regions */
