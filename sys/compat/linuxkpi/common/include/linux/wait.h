@@ -83,12 +83,15 @@ struct wait_queue_head {
 	};
 };
 
+#define	WQ_FLAG_WOKEN	0
+
 /*
  * This function is referenced by at least one DRM driver, so it may not be
  * renamed and furthermore must be the default wait queue callback.
  */
 extern wait_queue_func_t autoremove_wake_function;
 extern wait_queue_func_t default_wake_function;
+#define	woken_wake_function	default_wake_function
 
 #define	DEFINE_WAIT_FUNC(name, function)				\
 	wait_queue_t name = {						\
