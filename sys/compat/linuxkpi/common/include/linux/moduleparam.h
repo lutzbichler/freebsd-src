@@ -51,6 +51,7 @@
 #define	LINUXKPI_PARAM_PASS(...) __VA_ARGS__
 #define	LINUXKPI_PARAM_DESC(name) LINUXKPI_PARAM_CONCAT(linuxkpi_,LINUXKPI_PARAM_PREFIX,name,_desc)
 #define	LINUXKPI_PARAM_NAME(name) LINUXKPI_PARAM_CONCAT(LINUXKPI_PARAM_PREFIX,name,,)
+#define	LINUXKPI_PARAM_UNINIT(name) LINUXKPI_PARAM_CONCAT(linuxkpi_,LINUXKPI_PARAM_PREFIX,name,_uninit)
 
 #define	LINUXKPI_PARAM_bool(name, var, perm)				\
 	extern const char LINUXKPI_PARAM_DESC(name)[];			\
@@ -109,11 +110,27 @@
 	LINUXKPI_PARAM_NAME(name), LINUXKPI_PARAM_PERM(perm), &(var), 0, \
 	LINUXKPI_PARAM_DESC(name)))
 
-#define	LINUXKPI_PARAM_charp(name, var, perm)				\
+#define	LINUXKPI_PARAM_llong(name, var, perm)				\
 	extern const char LINUXKPI_PARAM_DESC(name)[];			\
-	LINUXKPI_PARAM_PASS(SYSCTL_STRING(LINUXKPI_PARAM_PARENT, OID_AUTO, \
+	LINUXKPI_PARAM_PASS(SYSCTL_QUAD(LINUXKPI_PARAM_PARENT, OID_AUTO, \
 	LINUXKPI_PARAM_NAME(name), LINUXKPI_PARAM_PERM(perm), &(var), 0, \
 	LINUXKPI_PARAM_DESC(name)))
+
+#define	LINUXKPI_PARAM_ullong(name, var, perm)				\
+	extern const char LINUXKPI_PARAM_DESC(name)[];			\
+	LINUXKPI_PARAM_PASS(SYSCTL_UQUAD(LINUXKPI_PARAM_PARENT, OID_AUTO, \
+	LINUXKPI_PARAM_NAME(name), LINUXKPI_PARAM_PERM(perm), &(var), 0, \
+	LINUXKPI_PARAM_DESC(name)))
+
+#define	LINUXKPI_PARAM_charp(name, var, perm)				\
+	extern const char LINUXKPI_PARAM_DESC(name)[];			\
+	static void LINUXKPI_PARAM_UNINIT(name)(void *data) { kfree(LINUXKPI_PARAM_DESC(name)); } \
+	SYSUNINIT(LINUXKPI_PARAM_UNINIT(name), SI_SUB_KLD, SI_ORDER_MIDDLE, \
+	LINUXKPI_PARAM_UNINIT(name), NULL);			\
+	LINUXKPI_PARAM_PASS(SYSCTL_PROC(LINUXKPI_PARAM_PARENT, OID_AUTO, \
+	LINUXKPI_PARAM_NAME(name), \
+	LINUXKPI_PARAM_PERM(perm) | CTLTYPE_STRING | CTLFLAG_MPSAFE, \
+	&(var), 0, lkpi_sysctl_handle_charp, "A", LINUXKPI_PARAM_DESC(name)))
 
 #define	module_param_string(name, str, len, perm)			\
 	extern const char LINUXKPI_PARAM_DESC(name)[];			\
@@ -142,5 +159,7 @@
 #define	kernel_param_unlock(...) do {} while (0)
 
 SYSCTL_DECL(_compat_linuxkpi);
+
+extern int lkpi_sysctl_handle_charp(SYSCTL_HANDLER_ARGS);
 
 #endif					/* _LINUXKPI_LINUX_MODULEPARAM_H_ */
