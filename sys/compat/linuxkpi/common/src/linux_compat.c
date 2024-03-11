@@ -2697,6 +2697,47 @@ lkpi_devm_device_add_group(struct device *dev,
 	return (ret);
 }
 
+static struct sx lkpi_charp_lock;
+SX_SYSINIT(lkpi_charp, &lkpi_charp_lock, "lkpi charp module param lock");
+
+int
+lkpi_sysctl_handle_charp(SYSCTL_HANDLER_ARGS)
+{
+	char **charp = arg1;
+	int error = 0;
+
+	sx_xlock(&lkpi_charp_lock);
+
+	if (req->oldptr != NULL) {
+		error = SYSCTL_OUT_STR(req, *charp == NULL ? "" : *charp);
+	} else {
+		error = SYSCTL_OUT(req, NULL, *charp == NULL ? 1 : strlen(*charp) + 1);
+	}
+	if (error || !req->newptr) {
+		goto end;
+	}
+
+	kfree(*charp);
+
+	if (req->newlen == 0) {
+		*charp = NULL;
+		goto end;
+	}
+
+	*charp = kzalloc(req->newlen + 1, GFP_KERNEL);
+	error = SYSCTL_IN(req, *charp, req->newlen);
+	if (error) {
+		kfree(*charp);
+		*charp = NULL;
+	} else {
+		(*charp)[req->newlen] = '\0';
+	}
+
+end:
+	sx_xunlock(&lkpi_charp_lock);
+	return (error);
+}
+
 #if defined(__i386__) || defined(__amd64__)
 bool linux_cpu_has_clflush;
 struct cpuinfo_x86 boot_cpu_data;
