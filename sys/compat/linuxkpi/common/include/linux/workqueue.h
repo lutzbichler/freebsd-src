@@ -139,6 +139,9 @@ do {									\
 #define	queue_work(wq, work) \
 	linux_queue_work_on(WORK_CPU_UNBOUND, wq, work)
 
+#define queue_work_node(node, wq, work) \
+	linux_queue_work_on(node, wq, work);
+
 #define	schedule_work(work) \
 	linux_queue_work_on(WORK_CPU_UNBOUND, system_wq, work)
 
