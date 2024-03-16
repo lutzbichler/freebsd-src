@@ -34,6 +34,7 @@
 #include <sys/exec.h>
 #include <sys/filedesc.h>
 #include <sys/kernel.h>
+#include <sys/libkern.h>
 #include <sys/linker.h>
 #include <sys/malloc.h>
 #include <sys/mount.h>
@@ -384,6 +385,40 @@ debugfs_create_bool(const char *name, umode_t mode, struct dentry *parent, bool 
 	    &fops_bool_ro, &fops_bool_wo);
 }
 
+static int
+debugfs_str_get(void *data, uint64_t *value)
+{
+	const char *str = data;
+	const char** strvalue = (const char **)value;
+	
+	*strvalue = strdup(str, M_DFSINT);
+
+	return (0);
+}
+
+static int
+debugfs_str_set(void *data, uint64_t value)
+{
+	char **strdata = (char **)data;
+	const char *strvalue = (const char *)value;
+
+	free(*strdata, M_DFSINT);
+	*strdata = strdup(strvalue, M_DFSINT);
+
+	return (0);
+}
+
+DEFINE_DEBUGFS_ATTRIBUTE(fops_str, debugfs_str_get, debugfs_str_set, "%s\n");
+DEFINE_DEBUGFS_ATTRIBUTE(fops_str_ro, debugfs_str_get, NULL, "%s\n");
+DEFINE_DEBUGFS_ATTRIBUTE(fops_str_wo, NULL, debugfs_str_set, "%s\n");
+
+void
+debugfs_create_str(const char *name, umode_t mode, struct dentry *parent, char **value)
+{
+
+	debugfs_create_mode_unsafe(name, mode, parent, value, &fops_str,
+	    &fops_str_ro, &fops_str_wo);
+}
 
 static int
 debugfs_u8_get(void *data, uint64_t *value)
