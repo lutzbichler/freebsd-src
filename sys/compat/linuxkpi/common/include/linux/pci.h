@@ -525,13 +525,13 @@ pci_upstream_bridge(struct pci_dev *pdev)
 
 		bridge = device_get_parent(pdev->dev.bsddev);
 		if (bridge == NULL)
-			goto done;
+			return (NULL);
 		bridge = device_get_parent(bridge);
 		if (bridge == NULL)
-			goto done;
+			return (NULL);
 		if (device_get_devclass(device_get_parent(bridge)) !=
 		    devclass_find("pci"))
-			goto done;
+			return (NULL);
 
 		/*
 		 * "bridge" is a PCI-to-PCI bridge.  Create a Linux pci_dev
@@ -539,7 +539,7 @@ pci_upstream_bridge(struct pci_dev *pdev)
 		 */
 		pdev->bus->self = lkpinew_pci_dev(bridge);
 	}
-done:
+
 	return (pdev->bus->self);
 }
 
