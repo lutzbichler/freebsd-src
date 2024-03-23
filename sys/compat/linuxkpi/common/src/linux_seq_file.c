@@ -105,6 +105,12 @@ seq_puts(struct seq_file *seq, const char *str)
 		seq->size = sbuf_len(seq->buf);
 }
 
+void
+seq_hex_dump(struct seq_file *seq, const char *prefix_str, int prefix_type,
+	int rowsize, int groupsize, const void *buf, size_t len, bool ascii)
+{
+}
+
 /*
  * This only needs to be a valid address for lkpi
  * drivers it should never actually be called
