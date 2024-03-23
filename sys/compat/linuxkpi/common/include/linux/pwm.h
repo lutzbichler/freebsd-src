@@ -91,4 +91,11 @@ pwm_apply_state(struct pwm_device *pwm, const struct pwm_state *state)
 	return (-ENOTSUPP);
 }
 
+static inline int
+pwm_apply_might_sleep(struct pwm_device *pwm, const struct pwm_state *state)
+{
+        might_sleep();
+        return (-ENOTSUPP);
+}
+
 #endif	/* _LINUXKPI_LINUX_PWM_H_ */
