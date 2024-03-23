@@ -40,6 +40,7 @@
 #include <linux/rwlock.h>
 #include <linux/bottom_half.h>
 #include <linux/lockdep.h>
+#include <linux/irqflags.h>
 
 typedef struct {
 	struct mtx m;
