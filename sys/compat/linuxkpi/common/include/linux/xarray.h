@@ -33,7 +33,7 @@
 #include <linux/spinlock.h>
 
 #define	XA_LIMIT(min, max) \
-    ({ CTASSERT((min) == 0); (uint32_t)(max); })
+    ({ CTASSERT((min) >= 0); (uint32_t)(max); })
 
 #define	XA_FLAGS_ALLOC (1U << 0)
 #define	XA_FLAGS_LOCK_IRQ (1U << 1)
