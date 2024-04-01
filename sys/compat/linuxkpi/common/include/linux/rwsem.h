@@ -53,7 +53,6 @@ struct rw_semaphore {
 #define	down_write_nest_lock(sem, _rw)	down_write(_rw)
 #define	down_read_interruptible(_rw)	down_read_killable(_rw)
 
-
 #ifdef WITNESS_ALL
 /* NOTE: the maximum WITNESS name is 64 chars */
 #define	__rwsem_name(name, file, line)		\

@@ -1078,6 +1078,15 @@ linux_poll_wakeup(struct linux_file *filp)
 	spin_unlock(&filp->f_kqlock);
 }
 
+long
+linux_wait_woken(wait_queue_t queue, unsigned mode, long timeout)
+{
+
+        return timeout;
+}
+ 
+
+
 static void
 linux_file_kqfilter_detach(struct knote *kn)
 {
