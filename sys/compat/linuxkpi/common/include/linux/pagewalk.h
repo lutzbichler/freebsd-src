@@ -6,7 +6,9 @@
 #include <linux/mm.h>
 
 enum page_walk_action {
-	dummy
+	ACTION_AGAIN,
+	ACTION_CONTINUE,
+	ACTION_SUBTREE,
 };
 
 #endif /* LINUXKPI_PAGE_WALK_H_ */
