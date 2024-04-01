@@ -16,11 +16,20 @@
 #define pm_runtime_put_noidle(x) (void)(x)
 #define pm_runtime_forbid(x) (void)(x)
 #define pm_runtime_get_noresume(x) (void)(x)
-#define pm_runtime_put(x) (void)(x)
+#define pm_runtime_put(x) (int)(0)
 #define pm_runtime_enable(x) (void)(x)
 #define pm_runtime_disable(x) (void)(x)
 #define pm_runtime_autosuspend(x) (void)(x)
 #define pm_runtime_resume(x) (void)(x)
+
+#define SET_RUNTIME_PM_OPS(RUNTIME_SUSPEND, RUNTIME_RESUME, RUNTIME_IDLE) \
+	.runtime_suspend = RUNTIME_SUSPEND, \
+	.runtime_resume = RUNTIME_RESUME, \
+	.runtime_idle = RUNTIME_IDLE,
+
+#define SET_SYSTEM_SLEEP_PM_OPS(SUSPEND, RESUME) \
+	.suspend = SUSPEND, \
+	.resume = RESUME,
 
 static inline int
 pm_runtime_get_sync(struct device *dev)

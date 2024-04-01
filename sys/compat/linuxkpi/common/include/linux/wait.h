@@ -144,6 +144,10 @@ void linux_wake_up(wait_queue_head_t *, unsigned int, int, bool);
 int linux_wait_event_common(wait_queue_head_t *, wait_queue_t *, int,
     unsigned int, spinlock_t *);
 
+long linux_wait_woken(wait_queue_t *, unsigned int, long);
+#define wait_woken(queue, mode, timeout) \
+	linux_wait_woken(queue, mode, timeout)
+
 /*
  * Returns -ERESTARTSYS for a signal, 0 if cond is false after timeout, 1 if
  * cond is true after timeout, remaining jiffies (> 0) if cond is true before

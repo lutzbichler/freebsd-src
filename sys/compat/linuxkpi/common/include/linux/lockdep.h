@@ -70,6 +70,11 @@ struct pin_cookie {
 
 #define	lockdep_assert_none_held_once() do { } while (0)
 
+#define lockdep_assert_held_read(m) 	\
+	lockdep_assert_held(m)
+#define lockdep_assert_held_write(m) 	\
+	lockdep_assert_held(m)
+
 static __inline bool
 lockdep_is_held(void *__m)
 {
@@ -87,9 +92,11 @@ lockdep_is_held(void *__m)
 
 #define	lockdep_assert_not_held(m) do { (void)(m); } while (0)
 #define	lockdep_assert_held(m) do { (void)(m); } while (0)
-#define	lockdep_assert_none_held_once() do { } while (0)
+#define	lockdep_assert_held_read(m) do { (void)(m); } while (0)
+#define	lockdep_assert_held_write(m) do { (void)(m); } while (0)
 
 #define	lockdep_assert_held_once(m) do { (void)(m); } while (0)
+#define	lockdep_assert_none_held_once() do { } while (0)
 
 #define	lockdep_is_held(m)	1
 #define	lockdep_is_held_type(_m, _t)	1
