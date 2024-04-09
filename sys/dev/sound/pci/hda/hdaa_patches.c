@@ -219,6 +219,15 @@ hdac_pin_patch(struct hdaa_widget *w)
 			config |= HDA_CONFIG_DEFAULTCONF_CONNECTIVITY_NONE;
 			break;
 		}
+	} else if (id == HDA_CODEC_ALC294 && subid == ASUS_UX331_SUBVENDOR) {
+		switch (nid) {
+		case 25:
+			config = 0x01a1103c;
+			break;
+		case 33:
+			patch_str = "as=1 seq=15";
+			break;
+		}
 	}
 
 	/* New patches */
