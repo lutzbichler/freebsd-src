@@ -11,7 +11,5 @@
 	struct { __VA_ARGS__ } NAME;					\
     }
 
-#define __counted_by(x)
-
 #endif	/* _LINUXKPI_LINUX_STDDEF_H_ */
 

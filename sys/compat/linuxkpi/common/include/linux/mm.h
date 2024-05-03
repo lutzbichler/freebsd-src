@@ -420,18 +420,6 @@ want_init_on_free(void)
 	return (false);
 }
 
-static inline void
-vm_flags_clear(struct vm_area_struct *vma, unsigned long flags)
-{
-	vma->vm_flags &= ~flags;
-}
-
-static inline void
-vm_flags_set(struct vm_area_struct *vma, unsigned long flags)
-{
-	vma->vm_flags |= flags;
-}
-
 #define folio_pfn(f)			page_to_pfn(f)
 #define folio_mark_accessed(f)	mark_page_accessed(f)
 #define folio_mark_dirty(f)		set_page_dirty(f)
