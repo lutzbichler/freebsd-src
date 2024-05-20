@@ -334,7 +334,7 @@ xa_init_flags(struct xarray *xa, uint32_t flags)
 {
 	memset(xa, 0, sizeof(*xa));
 
-	mtx_init(&xa->xa_lock.m, "lkpi-xarray", NULL, MTX_DEF | MTX_RECURSE);
+	mtx_init(&xa->xa_lock, "lkpi-xarray", NULL, MTX_DEF | MTX_RECURSE);
 	xa->root.gfp_mask = GFP_NOWAIT;
 	xa->flags = flags;
 }
@@ -351,7 +351,7 @@ xa_destroy(struct xarray *xa)
 
 	radix_tree_for_each_slot(ppslot, &xa->root, &iter, 0)
 		radix_tree_iter_delete(&xa->root, &iter, ppslot);
-	mtx_destroy(&xa->xa_lock.m);
+	mtx_destroy(&xa->xa_lock);
 }
 
 /*
