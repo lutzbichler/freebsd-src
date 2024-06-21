@@ -27,10 +27,6 @@
 	.runtime_resume = RUNTIME_RESUME, \
 	.runtime_idle = RUNTIME_IDLE,
 
-#define SET_SYSTEM_SLEEP_PM_OPS(SUSPEND, RESUME) \
-	.suspend = SUSPEND, \
-	.resume = RESUME,
-
 static inline int
 pm_runtime_get_sync(struct device *dev)
 {
