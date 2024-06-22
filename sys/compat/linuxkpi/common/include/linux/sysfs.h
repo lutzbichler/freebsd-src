@@ -350,4 +350,20 @@ sysfs_emit_at(char *buf, int at, const char *fmt, ...)
 
 #define sysfs_attr_init(attr) do {} while(0)
 
+static inline int
+sysfs_add_file_to_group(struct kobject *kobj, const struct attribute *attr,
+	const char *group)
+{
+
+	return (0);
+}
+
+static inline int
+sysfs_remove_file_from_group(struct kobject *kobj, const struct attribute *attr,
+	const char *group)
+{
+
+	return (0);
+}
+
 #endif	/* _LINUXKPI_LINUX_SYSFS_H_ */
