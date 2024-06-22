@@ -28,6 +28,7 @@
 #define	_LINUXKPI_LINUX_BITMAP_H_
 
 #include <linux/bitops.h>
+#include <linux/find.h>
 #include <linux/slab.h>
 
 static inline void
