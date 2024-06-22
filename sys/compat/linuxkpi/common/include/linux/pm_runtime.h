@@ -40,7 +40,11 @@ pm_runtime_get_if_in_use(struct device *dev)
 }
 
 static inline int
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION < 60900
 pm_runtime_get_if_active(struct device *dev, bool x)
+#else
+pm_runtime_get_if_active(struct device *dev)
+#endif
 {
 	return 1;
 }
