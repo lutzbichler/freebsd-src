@@ -152,6 +152,13 @@ static inline int ida_alloc(struct ida *ida, gfp_t gfp)
 	return (ida_alloc_max(ida, ~0u, gfp));
 }
 
+static inline int ida_alloc_range(struct ida *ida, unsigned int start,
+	unsigned int end, gfp_t gfp_mask)
+{
+
+	return (ida_simple_get(ida, start, end, gfp_mask));
+}
+
 static inline bool
 ida_is_empty(struct ida *ida)
 {
