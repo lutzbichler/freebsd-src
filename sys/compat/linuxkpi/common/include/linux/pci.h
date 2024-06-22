@@ -1586,4 +1586,40 @@ pci_wake_from_d3(struct pci_dev *pdev, bool enable)
 	return (0);
 }
 
+static inline int
+pci_d3cold_enable(struct pci_dev *pdev)
+{
+
+	return (0);
+}
+
+static inline int
+pci_d3cold_disable(struct pci_dev *pdev)
+{
+
+	return (0);
+}
+
+static inline int
+pci_pr3_present(struct pci_dev *pdev)
+{
+
+	return (0);
+}
+
+static inline int
+pci_sriov_get_totalvfs(struct pci_dev *pdev)
+{
+	
+	return (0);
+}
+
+static inline int
+pci_msix_vec_count(struct pci_dev *pdev)
+{
+
+	return (pci_msix_count(pdev->dev.bsddev));
+}
+
+
 #endif	/* _LINUXKPI_LINUX_PCI_H_ */
