@@ -30,6 +30,19 @@
 
 #include <sys/types.h>
 
+enum string_size_units {
+        STRING_UNITS_10,
+        STRING_UNITS_2,
+};
+
+static inline int
+string_get_size(uint64_t size, uint64_t blk_size, enum string_size_units units,
+		char* buf, int len)
+{
+	buf[0] = '\0';
+	return (-1);
+}
+
 static inline const char *
 str_yes_no(bool value)
 {
