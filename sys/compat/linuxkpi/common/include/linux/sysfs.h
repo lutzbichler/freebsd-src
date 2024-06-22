@@ -484,4 +484,20 @@ _sysfs_match_string(const char * const *a, size_t l, const char *s)
 
 #define sysfs_attr_init(attr) do {} while(0)
 
+static inline int
+sysfs_add_file_to_group(struct kobject *kobj, const struct attribute *attr,
+	const char *group)
+{
+
+	return (0);
+}
+
+static inline int
+sysfs_remove_file_from_group(struct kobject *kobj, const struct attribute *attr,
+	const char *group)
+{
+
+	return (0);
+}
+
 #endif	/* _LINUXKPI_LINUX_SYSFS_H_ */
