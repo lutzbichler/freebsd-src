@@ -1540,4 +1540,11 @@ pci_pr3_present(struct pci_dev *pdev)
 	return (0);
 }
 
+static inline int
+pci_sriov_get_totalvfs(struct pci_dev *pdev)
+{
+	
+	return (0);
+}
+
 #endif	/* _LINUXKPI_LINUX_PCI_H_ */
