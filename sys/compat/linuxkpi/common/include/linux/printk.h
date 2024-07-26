@@ -37,7 +37,7 @@
 					htons(((u16 *)gid_raw)[2]), htons(((u16 *)gid_raw)[3]),\
 					htons(((u16 *)gid_raw)[4]), htons(((u16 *)gid_raw)[5]),\
 					htons(((u16 *)gid_raw)[6]), htons(((u16 *)gid_raw)[7])
-#define HW_ERR			        "[Hardware Error]: "
+#define	HW_ERR			        "[Hardware Error]: "
 
 
 enum {

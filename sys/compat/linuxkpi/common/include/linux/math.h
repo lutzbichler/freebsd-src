@@ -44,9 +44,9 @@
 #define	round_up(x, y)		((((x)-1) | __round_mask(x, y))+1)
 #define	round_down(x, y)	((x) & ~__round_mask(x, y))
 
-#define	DIV_ROUND_UP(x, n)		howmany(x, n)
-#define	DIV_ROUND_DOWN(x, y)		((x) / (y))
-#define	DIV_ROUND_UP_ULL(x, n)		DIV_ROUND_UP((unsigned long long)(x), (n))
+#define	DIV_ROUND_UP(x, n)	howmany(x, n)
+#define	DIV_ROUND_DOWN(x, y)	((x) / (y))
+#define	DIV_ROUND_UP_ULL(x, n)	DIV_ROUND_UP((unsigned long long)(x), (n))
 #define	DIV_ROUND_DOWN_ULL(x, y)	DIV_ROUND_DOWN(x, y)
 
 #define	DIV_ROUND_CLOSEST(x, divisor)	(((x) + ((divisor) / 2)) / (divisor))

@@ -124,13 +124,9 @@
 
 #define	LINUXKPI_PARAM_charp(name, var, perm)				\
 	extern const char LINUXKPI_PARAM_DESC(name)[];			\
-	static void LINUXKPI_PARAM_UNINIT(name)(void *data) { kfree(LINUXKPI_PARAM_DESC(name)); } \
-	SYSUNINIT(LINUXKPI_PARAM_UNINIT(name), SI_SUB_KLD, SI_ORDER_MIDDLE, \
-	LINUXKPI_PARAM_UNINIT(name), NULL);			\
-	LINUXKPI_PARAM_PASS(SYSCTL_PROC(LINUXKPI_PARAM_PARENT, OID_AUTO, \
-	LINUXKPI_PARAM_NAME(name), \
-	LINUXKPI_PARAM_PERM(perm) | CTLTYPE_STRING | CTLFLAG_MPSAFE, \
-	&(var), 0, lkpi_sysctl_handle_charp, "A", LINUXKPI_PARAM_DESC(name)))
+	LINUXKPI_PARAM_PASS(SYSCTL_STRING(LINUXKPI_PARAM_PARENT, OID_AUTO, \
+	LINUXKPI_PARAM_NAME(name), LINUXKPI_PARAM_PERM(perm), &(var), 0, \
+	LINUXKPI_PARAM_DESC(name)))
 
 #define	module_param_string(name, str, len, perm)			\
 	extern const char LINUXKPI_PARAM_DESC(name)[];			\

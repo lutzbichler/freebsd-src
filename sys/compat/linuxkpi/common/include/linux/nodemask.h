@@ -40,6 +40,7 @@ num_possible_nodes(void)
 static inline int
 num_online_nodes(void)
 {
+	pr_debug("%s: TODO\n", __func__);
 	return (1);
 }
 
