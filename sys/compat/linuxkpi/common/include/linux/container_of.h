@@ -41,6 +41,9 @@
 	(type *)((uintptr_t)__p - offsetof(type, member));	\
 })
 
+#define container_of_const(ptr, type, member)		\
+	container_of(ptr, type, member)
+
 #define	typeof_member(type, member)	__typeof(((type *)0)->member)
 
 #endif
