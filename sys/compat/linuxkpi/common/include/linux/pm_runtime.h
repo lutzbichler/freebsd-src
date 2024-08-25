@@ -25,13 +25,15 @@
 static inline int
 pm_runtime_get_sync(struct device *dev)
 {
-	return 0;
+
+	return (0);
 }
 
 static inline int
 pm_runtime_get_if_in_use(struct device *dev)
 {
-	return 1;
+
+	return (1);
 }
 
 #if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION < 60900
@@ -42,13 +44,22 @@ static inline int
 pm_runtime_get_if_active(struct device *dev)
 #endif
 {
-	return 1;
+
+	return (1);
 }
 
 static inline int
 pm_runtime_suspended(struct device *dev)
 {
-	return 0;
+
+	return (0);
+}
+
+static inline int
+pm_runtime_resume_and_get(struct device *dev)
+{
+
+	return (0);
 }
 
 #endif	/* _LINUXKPI_LINUX_PM_RUNTIME_H_ */
