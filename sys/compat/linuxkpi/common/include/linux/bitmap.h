@@ -136,6 +136,18 @@ bitmap_clear(unsigned long *map, unsigned int start, int nr)
 	}
 }
 
+static inline void
+bitmap_set_value8(unsigned long *map, unsigned long value, unsigned long start)
+{
+	const unsigned int offset = (start % BITS_PER_LONG);
+	const unsigned long mask_to_clear = ~(0xFFUL << offset);
+	const unsigned long value_to_set = (value << offset);
+
+	map += BIT_WORD(start);
+	*map &= mask_to_clear;
+	*map |= value_to_set;
+}
+
 static inline unsigned int
 bitmap_find_next_zero_area_off(const unsigned long *map,
     const unsigned int size, unsigned int start,
