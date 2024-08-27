@@ -104,9 +104,21 @@ fls64(uint64_t mask)
 }
 
 static inline uint32_t
+rol32(uint32_t word, unsigned int shift)
+{
+	return ((word << shift) | (word >> (32 - shift)));
+}
+
+static inline uint32_t
 ror32(uint32_t word, unsigned int shift)
 {
 	return ((word >> shift) | (word << (32 - shift)));
+}
+
+static inline uint64_t
+rol64(uint64_t word, unsigned int shift)
+{
+	return ((word << shift) | (word >> (64 - shift)));
 }
 
 #define	ffz(mask)	__ffs(~(mask))
