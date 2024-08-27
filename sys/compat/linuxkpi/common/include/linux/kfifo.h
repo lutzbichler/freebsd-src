@@ -34,7 +34,15 @@
 #include <linux/gfp.h>
 
 #define	INIT_KFIFO(x)	0
-#define	DECLARE_KFIFO(x, y, z)
+
+#define	DECLARE_KFIFO(_name, _type, _count)				\
+	struct kfifo_##_name {						\
+		size_t		total;					\
+		size_t		count;					\
+		size_t		first;					\
+		size_t		last;					\
+		_type		head[_count];				\
+	} _name;
 
 #define	DECLARE_KFIFO_PTR(_name, _type)					\
 	struct kfifo_ ## _name {					\
