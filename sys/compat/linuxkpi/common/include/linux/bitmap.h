@@ -408,6 +408,33 @@ bitmap_xor(unsigned long *dst, const unsigned long *src1,
 }
 
 static inline void
+bitmap_shift_left(unsigned long *dst, const unsigned long *src,
+    unsigned int shift, unsigned int size)
+{
+	const unsigned int end = BITS_TO_LONGS(size);
+	const unsigned int off = BIT_WORD(shift);
+	const unsigned int rem = shift & (BITS_PER_LONG - 1);
+	unsigned long left, right;
+	int i, srcpos;
+
+	for (i = end - 1, srcpos = end - off - 1; srcpos >= 0; i--, srcpos--) {
+		left = src[srcpos];
+		right = 0;
+
+		if (rem != 0) {
+            left <<= rem;
+            if (srcpos > 0) {
+                right = src[srcpos-1];
+                right >>= (BITS_PER_LONG - rem);
+            }
+        }
+		dst[i] = left | right;
+	}
+	if (off != 0)
+		memset(dst, 0, off * sizeof(unsigned long));
+}
+
+static inline void
 bitmap_shift_right(unsigned long *dst, const unsigned long *src,
     unsigned int shift, unsigned int size)
 {
