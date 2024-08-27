@@ -380,3 +380,38 @@ radix_tree_store(struct radix_tree_root *root, unsigned long index, void **ppite
 		node->count++;
 	return (0);
 }
+
+void*
+radix_tree_deref_slot(void **slot)
+{
+
+	return (NULL);
+}
+
+void
+radix_tree_tag_set(struct radix_tree_root *root, unsigned long key, unsigned int tag)
+{
+
+}
+
+void*
+radix_tree_tag_clear(struct radix_tree_root *root, unsigned long key, unsigned int tag)
+{
+
+	return (NULL);
+}
+
+int
+radix_tree_tagged(const struct radix_tree_root *root, unsigned int tag)
+{
+
+	return (0);
+}
+
+unsigned int
+radix_tree_gang_lookup_tag(const struct radix_tree_root *root, void **res,
+		unsigned long index, unsigned int num, unsigned int tag)
+{
+
+	return (0);
+}
