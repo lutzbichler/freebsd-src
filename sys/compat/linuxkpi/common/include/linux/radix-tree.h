@@ -79,5 +79,11 @@ int	radix_tree_insert(struct radix_tree_root *, unsigned long, void *);
 int	radix_tree_store(struct radix_tree_root *, unsigned long, void **);
 bool	radix_tree_iter_find(struct radix_tree_root *, struct radix_tree_iter *, void ***);
 void	radix_tree_iter_delete(struct radix_tree_root *, struct radix_tree_iter *, void **);
+void	*radix_tree_deref_slot(void **);
+void	radix_tree_tag_set(struct radix_tree_root *, unsigned long, unsigned int);
+void	*radix_tree_tag_clear(struct radix_tree_root *, unsigned long, unsigned int);
+int	radix_tree_tagged(const struct radix_tree_root *, unsigned int);
+unsigned int radix_tree_gang_lookup_tag(const struct radix_tree_root *, void **,
+		unsigned long, unsigned int, unsigned int);
 
 #endif	/* _LINUXKPI_LINUX_RADIX_TREE_H_ */
