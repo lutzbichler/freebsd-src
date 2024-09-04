@@ -21,4 +21,10 @@
              start < size; \
              start = end + 1)
 
+#define for_each_or_bit(start, left, right, size) \
+        for (start = 0; \
+             start = find_next_or_bit(left, right, size, start), \
+                    start < size; \
+             start++)
+
 #endif /* _LINUXKPI_FIND_H */
