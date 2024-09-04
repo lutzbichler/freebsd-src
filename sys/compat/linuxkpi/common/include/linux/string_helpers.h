@@ -79,4 +79,13 @@ str_enable_disable(bool value)
 		return "disable";
 }
 
+static inline const char *
+str_plural(size_t value)
+{
+	if (value == 1)
+		return "";
+	else
+		return "s";
+}
+
 #endif
