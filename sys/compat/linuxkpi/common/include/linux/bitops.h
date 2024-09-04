@@ -265,6 +265,31 @@ find_next_zero_bit(const unsigned long *addr, unsigned long size,
 	return (bit);
 }
 
+static inline unsigned long
+find_next_or_bit(const unsigned long *left, const unsigned long *right,
+	unsigned long size, unsigned long offset)
+{
+	unsigned long val;
+	unsigned long mask;
+	int pos;
+	int end;
+
+	if (offset >= size)
+		return (size);
+
+	mask = BITMAP_FIRST_WORD_MASK(offset);
+	pos = offset / BITS_PER_LONG;
+	end = size / BITS_PER_LONG;
+
+	val = (left[pos] | right[pos]) & mask;
+	while (!val && pos < end) {
+		pos++;
+		val = left[pos] | right[pos];
+	}
+
+	return (val ? pos * BITS_PER_LONG + ffsl(val) - 1 : size);
+}
+
 #define	__set_bit(i, a)							\
     atomic_set_long(&((volatile unsigned long *)(a))[BIT_WORD(i)], BIT_MASK(i))
 
