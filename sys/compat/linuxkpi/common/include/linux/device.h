@@ -741,6 +741,7 @@ devm_kmemdup_array(struct device *dev, const void *src, size_t n, size_t len,
 int lkpi_devm_add_action(struct device *dev, void (*action)(void *), void *data);
 #define	devm_add_action(dev, action, data)	\
 	lkpi_devm_add_action(dev, action, data);
+#define devm_release_action(dev, action, data)
 int lkpi_devm_add_action_or_reset(struct device *dev, void (*action)(void *), void *data);
 #define	devm_add_action_or_reset(dev, action, data)	\
 	lkpi_devm_add_action_or_reset(dev, action, data)
