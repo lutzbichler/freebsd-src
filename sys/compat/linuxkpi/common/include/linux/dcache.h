@@ -32,6 +32,7 @@
 #include <fs/pseudofs/pseudofs.h>
 
 struct dentry {
+	struct dentry *d_parent;
 	struct vnode *d_inode;
 	struct pfs_node *d_pfs_node;	/* FreeBSD specific field */
 };
