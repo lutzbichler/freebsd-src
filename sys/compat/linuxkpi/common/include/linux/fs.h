@@ -394,6 +394,16 @@ simple_read_from_buffer(void __user *dest, size_t read_size, loff_t *ppos,
 	return (read_size);
 }
 
+static inline ssize_t
+simple_write_to_buffer(void *dest, size_t write_size, loff_t *ppos,
+	const void __user *orig, size_t buf_size)
+{
+
+
+
+	return (write_size);
+}
+
 MALLOC_DECLARE(M_LSATTR);
 
 #define	__DEFINE_SIMPLE_ATTRIBUTE(__fops, __get, __set, __fmt, __wrfunc)\
