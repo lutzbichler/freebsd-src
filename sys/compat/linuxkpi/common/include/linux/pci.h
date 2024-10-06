@@ -1628,6 +1628,13 @@ pci_sriov_get_totalvfs(struct pci_dev *pdev)
 }
 
 static inline int
+pci_sriov_set_totalvfs(struct pci_dev *pdev, uint16_t numvfs)
+{
+
+	return (0);
+}
+
+static inline int
 pci_msix_vec_count(struct pci_dev *pdev)
 {
 
