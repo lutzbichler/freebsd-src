@@ -82,6 +82,8 @@
 #define	S64_C(x) x ## LL
 #define	U64_C(x) x ## ULL
 
+#define ULL(x)	(x##ULL)
+
 #define	BUG()			panic("BUG at %s:%d", __FILE__, __LINE__)
 #define	BUG_ON(cond)		do {				\
 	if (cond) {						\
