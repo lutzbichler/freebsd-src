@@ -74,4 +74,11 @@ guid_copy(guid_t *dst, const guid_t *src)
 	memcpy(dst, src, sizeof(*dst));
 }
 
+static inline bool
+uuid_is_valid(const char *uuid)
+{
+
+	return (false);
+}
+
 #endif	/* _LINUXKPI_LINUX_UUID_H */
