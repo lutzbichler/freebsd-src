@@ -29,6 +29,9 @@
 #ifndef _LINUXKPI_LINUX_SIZES_H_
 #define	_LINUXKPI_LINUX_SIZES_H_
 
+#define SZ_2	2
+#define SZ_4	4
+#define SZ_8	8
 #define SZ_16	16
 #define SZ_64	64
 #define SZ_128	128
