@@ -69,6 +69,8 @@ CTASSERT((VM_PROT_ALL & -(1 << 8)) == 0);
 #define	VM_DONTEXPAND		(1 << 15)
 #define	VM_DONTDUMP		(1 << 16)
 #define	VM_SHARED		(1 << 17)
+#define	VM_MAYSHARE		(1 << 18)
+#define	VM_MAYEXEC		(1 << 19)
 
 #define	VMA_MAX_PREFAULT_RECORD	1
 
