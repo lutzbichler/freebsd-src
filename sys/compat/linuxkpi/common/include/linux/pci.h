@@ -811,6 +811,13 @@ pci_enable_msi(struct pci_dev *pdev)
 	return (_lkpi_pci_enable_msi_range(pdev, 1, 1));
 }
 
+static inline bool
+pci_dev_msi_enabled(struct pci_dev *pdev)
+{
+
+	return (pdev->msi_enabled || pdev->msix_enabled);
+}
+
 static inline int
 pci_channel_offline(struct pci_dev *pdev)
 {
@@ -1571,13 +1578,11 @@ static inline int
 pci_irq_vector(struct pci_dev *pdev, unsigned int vector)
 {
 
-	if (!pdev->msix_enabled && !pdev->msi_enabled) {
+	if (!pci_dev_msi_enabled(pdev)) {
 		if (vector != 0)
 			return (-EINVAL);
 		return (pdev->irq);
-	}
-
-	if (pdev->msix_enabled || pdev->msi_enabled) {
+	} else {
 		if ((pdev->dev.irq_start + vector) >= pdev->dev.irq_end)
 			return (-EINVAL);
 		return (pdev->dev.irq_start + vector);
