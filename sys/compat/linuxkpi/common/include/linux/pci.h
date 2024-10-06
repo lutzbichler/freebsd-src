@@ -411,6 +411,13 @@ dev_is_pci(struct device *dev)
 	return (device_get_devclass(dev->bsddev) == devclass_find("pci"));
 }
 
+static inline bool
+dev_is_pf(struct device *dev)
+{
+
+	return (false);
+}
+
 static inline uint16_t
 pci_dev_id(struct pci_dev *pdev)
 {
