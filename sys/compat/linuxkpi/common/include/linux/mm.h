@@ -396,6 +396,12 @@ vm_flags_clear(struct vm_area_struct *vma, unsigned long flags)
 	vma->vm_flags &= ~flags;
 }
 
+static inline void
+vm_flags_mod(struct vm_area_struct *vma, unsigned long set, unsigned long clear)
+{
+	vma->vm_flags = ((vma->vm_flags | set) & ~clear);
+}
+
 static inline struct page *
 vmalloc_to_page(const void *addr)
 {
