@@ -346,6 +346,13 @@ i_size_write(struct inode *inode, loff_t i_size)
 {
 }
 
+static inline struct dentry *
+file_dentry(const struct linux_file *file)
+{
+
+	return (file->f_dentry);
+}
+
 /*
  * simple_read_from_buffer: copy data from kernel-space origin
  * buffer into user-space destination buffer
