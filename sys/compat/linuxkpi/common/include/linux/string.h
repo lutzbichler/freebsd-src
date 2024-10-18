@@ -98,6 +98,12 @@ kmemdup(const void *src, size_t len, gfp_t gfp)
 	return (dst);
 }
 
+static inline void *
+kmemdup_array(const void *src, size_t count, size_t size, gfp_t gfp)
+{
+	return (kmemdup(src, size_mul(count, size), gfp));
+}
+
 /* See slab.h for kvmalloc/kvfree(). */
 static inline void *
 kvmemdup(const void *src, size_t len, gfp_t gfp)
@@ -309,7 +315,7 @@ memzero_explicit(void *p, size_t s)
 }
 
 static inline bool
-mem_is_zero(void *p, size_t s)
+mem_is_zero(const void *p, size_t s)
 {
 	return (NULL == memchr_inv(p, 0, s));
 }

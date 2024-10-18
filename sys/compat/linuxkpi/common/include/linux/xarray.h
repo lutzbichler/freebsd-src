@@ -57,6 +57,9 @@ struct xarray {
 	uint32_t flags; /* see XA_FLAGS_XXX */
 };
 
+#define DEFINE_XARRAY_ALLOC(name)	\
+	struct xarray name = { .flags = XA_FLAGS_ALLOC }; 	
+
 /*
  * Extensible arrays API implemented as a wrapper
  * around the radix tree implementation.
