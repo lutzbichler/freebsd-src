@@ -33,6 +33,7 @@
 
 #include <linux/random.h>
 
+#define	UUID_SIZE	16
 #define	UUID_STRING_LEN	36
 
 #define	GUID_INIT(x0_3, x4_5, x6_7, x8, x9, x10, x11, x12, x13, x14, x15) \
@@ -56,7 +57,7 @@
 }})
 
 typedef struct {
-	char	x[16];
+	char	x[UUID_SIZE];
 } guid_t;
 
 static inline void
@@ -72,6 +73,32 @@ static inline void
 guid_copy(guid_t *dst, const guid_t *src)
 {
 	memcpy(dst, src, sizeof(*dst));
+}
+
+static inline void
+import_guid(guid_t *guid, const char *buf)
+{
+
+}
+
+static inline void
+export_guid(const char *buf, const guid_t *guid)
+{
+
+}
+
+static inline bool
+guid_is_null(const guid_t *guid)
+{
+
+	return (!guid);
+}
+
+static inline bool
+guid_equal(const guid_t *lhs, const guid_t *rhs)
+{
+
+	return (false);
 }
 
 static inline bool
