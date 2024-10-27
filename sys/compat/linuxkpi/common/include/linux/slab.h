@@ -209,6 +209,13 @@ kfree_sensitive(const void *ptr)
 	zfree(__DECONST(void *, ptr), M_KMALLOC);
 }
 
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION >= 61200
+static inline void *
+kvrealloc(const void *ptr, size_t size, gfp_t flags)
+{
+	return (realloc(__DECONST(void *, ptr), size, M_KMALLOC, linux_check_m_flags(flags)));
+}
+#else
 static inline void *
 kvrealloc(const void *ptr, size_t oldsize, size_t newsize, gfp_t flags)
 {
@@ -225,6 +232,7 @@ kvrealloc(const void *ptr, size_t oldsize, size_t newsize, gfp_t flags)
 
 	return (newptr);
 }
+#endif
 
 static inline size_t
 ksize(const void *ptr)
