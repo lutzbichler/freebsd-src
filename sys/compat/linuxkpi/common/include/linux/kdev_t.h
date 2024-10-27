@@ -34,6 +34,7 @@
 #define MAJOR(dev)      major(dev)
 #define MINOR(dev)      minor(dev)
 #define MKDEV(ma, mi)   makedev(ma, mi)
+#define MINORBITS       20
 
 static inline uint16_t
 old_encode_dev(dev_t dev)
