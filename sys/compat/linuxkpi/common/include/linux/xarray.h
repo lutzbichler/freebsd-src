@@ -34,12 +34,17 @@
 #include <sys/lock.h>
 #include <sys/mutex.h>
 
-#define	XA_LIMIT(min, max) \
-    ({ CTASSERT((min) >= 0); (uint32_t)(max); })
-
 #define	XA_FLAGS_ALLOC (1U << 0)
 #define	XA_FLAGS_LOCK_IRQ (1U << 1)
 #define	XA_FLAGS_ALLOC1 (1U << 2)
+
+struct xa_limit {
+	uint32_t min;
+	uint32_t max;
+};
+
+#define	XA_LIMIT(l, u) \
+    (struct xa_limit) { .min = (uint32_t)(l), .max = (uint32_t)(u) }
 
 #define	XA_ERROR(x) \
 	ERR_PTR(x)
@@ -47,7 +52,7 @@
 #define	xa_is_err(x) \
 	IS_ERR(x)
 
-#define	xa_limit_32b XA_LIMIT(0, 0xFFFFFFFF)
+#define	xa_limit_32b XA_LIMIT(0, 0xffffffff)
 
 #define	XA_ASSERT_LOCKED(xa) mtx_assert(&(xa)->xa_lock, MA_OWNED)
 #define	xa_lock(xa) mtx_lock(&(xa)->xa_lock)
@@ -65,9 +70,11 @@ struct xarray {
  */
 void *xa_erase(struct xarray *, uint32_t);
 void *xa_load(struct xarray *, uint32_t);
-int xa_alloc(struct xarray *, uint32_t *, void *, uint32_t, gfp_t);
-int xa_alloc_cyclic(struct xarray *, uint32_t *, void *, uint32_t, uint32_t *, gfp_t);
-int xa_alloc_cyclic_irq(struct xarray *, uint32_t *, void *, uint32_t, uint32_t *, gfp_t);
+int xa_alloc(struct xarray *, uint32_t *, void *, struct xa_limit, gfp_t);
+int xa_alloc_cyclic(struct xarray *, uint32_t *, void *, struct xa_limit,
+    uint32_t *, gfp_t);
+int xa_alloc_cyclic_irq(struct xarray *, uint32_t *, void *, struct xa_limit,
+    uint32_t *, gfp_t);
 int xa_insert(struct xarray *, uint32_t, void *, gfp_t);
 void *xa_store(struct xarray *, uint32_t, void *, gfp_t);
 void xa_init_flags(struct xarray *, uint32_t);
@@ -83,8 +90,8 @@ void *xa_next(struct xarray *, unsigned long *, bool);
  * Unlocked version of functions above.
  */
 void *__xa_erase(struct xarray *, uint32_t);
-int __xa_alloc(struct xarray *, uint32_t *, void *, uint32_t, gfp_t);
-int __xa_alloc_cyclic(struct xarray *, uint32_t *, void *, uint32_t, uint32_t *, gfp_t);
+int __xa_alloc(struct xarray *, uint32_t *, void *, struct xa_limit, gfp_t);
+int __xa_alloc_cyclic(struct xarray *, uint32_t *, void *, struct xa_limit, uint32_t *, gfp_t);
 int __xa_insert(struct xarray *, uint32_t, void *, gfp_t);
 void *__xa_store(struct xarray *, uint32_t, void *, gfp_t);
 bool __xa_empty(struct xarray *);
