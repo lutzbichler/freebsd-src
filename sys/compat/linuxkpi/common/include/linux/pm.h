@@ -40,6 +40,12 @@
 
 struct device;
 
+enum rpm_status {
+        RPM_RESUMING,
+        RPM_SUSPENDING,
+};
+
+
 typedef struct pm_message {
 	int event;
 } pm_message_t;
@@ -49,6 +55,7 @@ struct dev_pm_domain {
 
 struct dev_pm_info {
 	atomic_t usage_count;
+	enum rpm_status runtime_status;
 };
 
 #define	PM_EVENT_FREEZE		0x0001
