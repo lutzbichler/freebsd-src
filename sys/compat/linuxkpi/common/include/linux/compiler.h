@@ -130,4 +130,6 @@
 #define is_signed_type(t)	((t)-1 < (t)1)
 #define is_unsigned_type(t)	((t)-1 > (t)1)
 
+#define	unreachable()		__builtin_unreachable()
+
 #endif	/* _LINUXKPI_LINUX_COMPILER_H_ */
