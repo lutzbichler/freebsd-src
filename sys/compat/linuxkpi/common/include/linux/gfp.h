@@ -52,6 +52,7 @@
 #define	__GFP_MOVABLE	0
 #define	__GFP_COMP	0
 #define	__GFP_KSWAPD_RECLAIM 0
+#define	__GFP_THISNODE	0
 
 #define	__GFP_IO	0
 #define	__GFP_NO_KSWAPD	0
