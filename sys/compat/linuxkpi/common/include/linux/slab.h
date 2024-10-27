@@ -237,6 +237,13 @@ kvmalloc_array(size_t n, size_t size, gfp_t flags)
 	return (kvmalloc(size * n, flags));
 }
 
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION >= 61200
+static inline void *
+kvrealloc(const void *ptr, size_t size, gfp_t flags)
+{
+	return (realloc(__DECONST(void *, ptr), size, M_KMALLOC, linux_check_m_flags(flags)));
+}
+#else
 static inline void *
 kvrealloc(const void *ptr, size_t oldsize, size_t newsize, gfp_t flags)
 {
@@ -253,6 +260,7 @@ kvrealloc(const void *ptr, size_t oldsize, size_t newsize, gfp_t flags)
 
 	return (newptr);
 }
+#endif
 
 /*
  * Misc.
