@@ -249,6 +249,9 @@ show_class_attr_string(struct class *class,
 	}					\
 } while (0)
 
+#define	dev_err_probe(dev, ...) do {		\
+} while (0)
+
 #define	dev_err_ratelimited(dev, ...) do {	\
 	static linux_ratelimit_t __ratelimited;	\
 	if (linux_ratelimited(&__ratelimited))	\
