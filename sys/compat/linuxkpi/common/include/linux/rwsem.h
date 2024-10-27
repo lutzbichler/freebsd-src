@@ -52,6 +52,8 @@ struct rw_semaphore {
 #define	init_rwsem(_rw)			linux_init_rwsem(_rw, rwsem_name("lnxrwsem"))
 #define	down_write_nest_lock(sem, _rw)	down_write(_rw)
 #define	down_read_interruptible(_rw)	down_read_killable(_rw)
+#define	rwsem_is_contended(_rw)		false
+
 
 #ifdef WITNESS_ALL
 /* NOTE: the maximum WITNESS name is 64 chars */
