@@ -130,6 +130,8 @@ extern int linuxkpi_warn_dump_stack;
 #define	__KERNEL_DIV_ROUND_UP(x, n)	howmany(x, n)
 #define	FIELD_SIZEOF(t, f)	sizeof(((t *)0)->f)
 
+#define	might_fault()
+
 #define	printk(...)		printf(__VA_ARGS__)
 #define	vprintk(f, a)		vprintf(f, a)
 
