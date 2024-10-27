@@ -333,7 +333,7 @@ memzero_explicit(void *p, size_t s)
 }
 
 static inline bool
-mem_is_zero(void *p, size_t s)
+mem_is_zero(const void *p, size_t s)
 {
 	return (NULL == memchr_inv(p, 0, s));
 }
