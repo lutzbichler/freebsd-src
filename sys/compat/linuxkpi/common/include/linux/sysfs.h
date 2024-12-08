@@ -70,6 +70,8 @@ struct bin_attribute {
 #define	__ATTR_WO(_name)	__ATTR(_name, 0200, NULL, _name##_store)
 #define	__ATTR_RW(_name)	__ATTR(_name, 0644, _name##_show, _name##_store)
 #define	__ATTR_NULL	{ .attr = { .name = NULL } }
+#define __ATTR_RW_MODE(_name, _mode) \
+	__ATTR(_name, _mode, _name##_show, _name##_store)
 
 #define	ATTRIBUTE_GROUPS(_name)						\
 	static struct attribute_group _name##_group = {			\
