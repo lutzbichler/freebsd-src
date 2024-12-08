@@ -71,5 +71,6 @@
 #define	ENAVAIL		535
 #define	ENOPKG		536
 #define	EREMCHG		537
+#define	EKEYREJECTED	538
 
 #endif					/* _LINUXKPI_LINUX_ERRNO_H_ */
