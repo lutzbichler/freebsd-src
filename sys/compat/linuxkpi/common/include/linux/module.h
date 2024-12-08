@@ -124,4 +124,6 @@ _module_run(void *arg)
 
 #define	postcore_initcall(fn)	module_init(fn)
 
+#define ALLOW_ERROR_INJECTION(x, y)
+
 #endif	/* _LINUXKPI_LINUX_MODULE_H_ */
