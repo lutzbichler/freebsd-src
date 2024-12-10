@@ -349,4 +349,10 @@ strim(char *src)
 	return (s);
 }
 
+static inline int
+isgraph(int c)
+{
+	return (c > ' ' && c <= '~');
+}
+
 #endif	/* _LINUXKPI_LINUX_STRING_H_ */
