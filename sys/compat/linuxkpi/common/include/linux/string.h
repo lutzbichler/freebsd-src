@@ -347,4 +347,10 @@ strtomem_pad(void *dst, const void *src, int ch)
 	memcpy_and_pad(dst, dstlen, src, srclen, ch);
 }
 
+static inline int
+isgraph(int c)
+{
+	return (c > ' ' && c <= '~');
+}
+
 #endif	/* _LINUXKPI_LINUX_STRING_H_ */
