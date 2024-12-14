@@ -72,6 +72,12 @@ usleep_range(unsigned long min, unsigned long max)
 	pause_sbt("lnxsleep", ustosbt(min), 0, C_HARDCLOCK);
 }
 
+static inline void
+usleep_range_state(unsigned long min, unsigned long max, unsigned int state)
+{
+	usleep_range(min, max);
+}
+
 extern unsigned int linux_msleep_interruptible(unsigned int ms);
 
 static inline void
