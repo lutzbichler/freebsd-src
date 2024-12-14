@@ -77,4 +77,22 @@ str_plural(size_t value)
 		return "s";
 }
 
+static inline const char *
+str_up_down(bool value)
+{
+        if (value)
+                return "up";
+        else
+                return "down";
+}
+
+static inline const char *
+str_read_write(bool value)
+{
+        if (value)
+                return "read";
+        else
+                return "write";
+}
+
 #endif
