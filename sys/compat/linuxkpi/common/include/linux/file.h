@@ -50,7 +50,8 @@ struct linux_file;
 
 extern const struct fileops linuxfileops;
 
-#define fd_file(f) (f.linux_file)
+#define fd_file(f)	(f.linux_file)
+#define fd_empty(f)	!fd_file(f)
 
 static inline struct linux_file *
 linux_fget(unsigned int fd)
