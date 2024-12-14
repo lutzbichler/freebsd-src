@@ -118,4 +118,11 @@ pm_vt_switch_unregister(struct device *dev __unused)
 {
 }
 
+static inline bool
+pm_resume_via_firmware(void)
+{
+
+	return (false);
+}
+
 #endif	/* _LINUXKPI_LINUX_PM_H */
