@@ -104,4 +104,11 @@ pm_wakeup_event(struct device *dev __unused, unsigned int x __unused)
 	pr_debug("%s: TODO\n", __func__);
 }
 
+static inline bool
+pm_resume_via_firmware(void)
+{
+
+	return (false);
+}
+
 #endif	/* _LINUXKPI_LINUX_PM_H */
