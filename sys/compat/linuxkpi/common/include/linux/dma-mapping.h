@@ -190,6 +190,13 @@ dma_map_page_attrs(struct device *dev, struct page *page, size_t offset,
 	    direction, attrs));
 }
 
+static inline void
+dma_unmap_page_attrs(struct device *dev, dma_addr_t dma_address, size_t size,
+    enum dma_data_direction dir, unsigned long attrs)
+{
+	linux_dma_unmap(dev, dma_address, size);
+}
+
 /* linux_dma_(un)map_sg_attrs does not support attrs yet */
 #define	dma_map_sg_attrs(dev, sgl, nents, dir, attrs)	\
 	linux_dma_map_sg_attrs(dev, sgl, nents, dir, 0)
