@@ -2662,9 +2662,6 @@ ieee80211_ampdu_enable(struct ieee80211_node *ni,
 {
 	struct ieee80211vap *vap = ni->ni_vap;
 
-	if (tap->txa_avgpps <
-	    vap->iv_ampdu_mintraffic[TID_TO_WME_AC(tap->txa_tid)])
-		return 0;
 	/* XXX check rssi? */
 	if (tap->txa_attempts >= ieee80211_addba_maxtries &&
 	    ieee80211_time_after(ticks, tap->txa_nextrequest)) {
