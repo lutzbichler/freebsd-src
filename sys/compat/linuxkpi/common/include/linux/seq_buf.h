@@ -67,7 +67,6 @@ seq_buf_buffer_left(struct seq_buf *s)
 {
 	if (seq_buf_has_overflowed(s))
 		return (0);
-
 	return (s->size - s->len);
 }
 
