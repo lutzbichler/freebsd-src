@@ -57,6 +57,13 @@ seq_buf_has_overflowed(const struct seq_buf *s)
 	return (s->cur > s->len);
 }
 
+static inline void
+seq_buf_clear(struct seq_buf *s)
+{
+	s->len = 0;
+	s->cur = 0;
+}
+
 void lkpi_seq_buf_vprintf(struct seq_buf *s, const char *fmt, va_list args);
 void lkpi_seq_buf_printf(struct seq_buf *s, const char *fmt, ...);
 
