@@ -10,6 +10,7 @@
 #include <linux/mm.h>
 
 typedef int suspend_state_t;
+struct notifier_block;
 
 extern suspend_state_t pm_suspend_target_state;
 
@@ -20,10 +21,27 @@ extern suspend_state_t pm_suspend_target_state;
 #define	PM_SUSPEND_MIN		PM_SUSPEND_TO_IDLE
 #define	PM_SUSPEND_MAX		4
 
+#define PM_SUSPEND_PREPARE	1
+#define PM_HIBERNATION_PREPARE	2
+
 static inline int
 pm_suspend_via_firmware(void)
 {
 	return 0;
+}
+
+static inline int
+register_pm_notifier(struct notifier_block *nb __unused)
+{
+
+	return (0);
+}
+
+static inline int
+unregister_pm_notifier(struct notifier_block *nb __unused)
+{
+
+	return (0);
 }
 
 #endif	/* _LINUXKPI_LINUX_SUSPEND_H_ */
