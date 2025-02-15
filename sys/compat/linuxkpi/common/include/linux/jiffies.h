@@ -69,6 +69,13 @@ extern uint64_t lkpi_msec2hz_div;
 extern uint64_t lkpi_msec2hz_max;
 
 static inline int
+secs_to_jiffies(uint64_t sec)
+{
+
+	return (sec * hz);
+}
+
+static inline int
 msecs_to_jiffies(uint64_t msec)
 {
 	uint64_t result;
