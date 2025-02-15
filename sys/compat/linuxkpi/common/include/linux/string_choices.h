@@ -1,7 +1,7 @@
 /*-
  * SPDX-License-Identifier: BSD-2-Clause
  *
- * Copyright (c) 2023 Jean-Sébastien Pédron <dumbbell@FreeBSD.org>
+ * Copyright (c) 2025 Lutz Bichler <lutz.bichler@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,23 +25,72 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef	_LINUXKPI_LINUX_STRING_HELPERS_H_
-#define	_LINUXKPI_LINUX_STRING_HELPERS_H_
+#ifndef	_LINUXKPI_LINUX_STRING_CHOICES_H_
+#define	_LINUXKPI_LINUX_STRING_CHOICES_H_
 
-#include <linux/string_choices.h>
+#include <sys/types.h>
 
-enum string_size_units {
-        STRING_UNITS_10,
-        STRING_UNITS_2,
-};
-
-static inline int
-string_get_size(uint64_t size, uint64_t blk_size, enum string_size_units units,
-		char* buf, int len)
+static inline const char *
+str_yes_no(bool value)
 {
-	buf[0] = '\0';
-	return (-1);
+	if (value)
+		return "yes";
+	else
+		return "no";
 }
 
+static inline const char *
+str_on_off(bool value)
+{
+	if (value)
+		return "on";
+	else
+		return "off";
+}
+
+static inline const char *
+str_enabled_disabled(bool value)
+{
+	if (value)
+		return "enabled";
+	else
+		return "disabled";
+}
+
+static inline const char *
+str_enable_disable(bool value)
+{
+	if (value)
+		return "enable";
+	else
+		return "disable";
+}
+
+static inline const char *
+str_plural(size_t value)
+{
+	if (value == 1)
+		return "";
+	else
+		return "s";
+}
+
+static inline const char *
+str_up_down(bool value)
+{
+	if (value)
+		return "up";
+	else
+		return "down";
+}
+
+static inline const char *
+str_read_write(bool value)
+{
+	if (value)
+		return "read";
+	else
+		return "write";
+}
 
 #endif
