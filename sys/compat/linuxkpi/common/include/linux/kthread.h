@@ -99,6 +99,7 @@ int linux_in_atomic(void);
 task_fn_t lkpi_kthread_work_fn;
 task_fn_t lkpi_kthread_worker_init_fn;
 
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION >= 61400
 #define kthread_create_worker(flags, fmt, ...) ({			\
 	struct kthread_worker *__w;					\
 	struct task __task;						\
@@ -106,12 +107,35 @@ task_fn_t lkpi_kthread_worker_init_fn;
 	__w = malloc(sizeof(*__w), M_KMALLOC, M_WAITOK | M_ZERO);	\
 	__w->tq = taskqueue_create("lkpi kthread taskq", M_WAITOK,	\
 	    taskqueue_thread_enqueue, &__w->tq);			\
+	__w;								\
+})
+
+#define kthread_run_worker(flags, fmt, ...) ({                          \
+        struct kthread_worker *__w;					\
+	struct task __task;						\
+									\
+	__w = kthread_create_worker(flags, fmt, __VA_ARGS__);		\
 	taskqueue_start_threads(&__w->tq, 1, PWAIT, fmt, ##__VA_ARGS__);\
 	TASK_INIT(&__task, 0, lkpi_kthread_worker_init_fn, __w);	\
 	taskqueue_enqueue(__w->tq, &__task);				\
 	taskqueue_drain(__w->tq, &__task);				\
 	__w;								\
 })
+#else
+#define kthread_create_worker(flags, fmt, ...) ({                       \
+        struct kthread_worker *__w;                                     \
+        struct task __task;                                             \
+                                                                        \
+        __w = malloc(sizeof(*__w), M_KMALLOC, M_WAITOK | M_ZERO);       \
+        __w->tq = taskqueue_create("lkpi kthread taskq", M_WAITOK,      \
+            taskqueue_thread_enqueue, &__w->tq);                        \
+        taskqueue_start_threads(&__w->tq, 1, PWAIT, fmt, ##__VA_ARGS__);\
+        TASK_INIT(&__task, 0, lkpi_kthread_worker_init_fn, __w);        \
+        taskqueue_enqueue(__w->tq, &__task);                            \
+        taskqueue_drain(__w->tq, &__task);                              \
+        __w;                                                            \
+})
+#endif
 
 static inline void
 kthread_destroy_worker(struct kthread_worker *worker)
