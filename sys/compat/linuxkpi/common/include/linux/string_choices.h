@@ -25,8 +25,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef	_LINUXKPI_LINUX_STRING_CHOICES_H_
-#define	_LINUXKPI_LINUX_STRING_CHOICES_H_
+#ifndef	_LINUXKPI_STRING_CHOICES_H
+#define	_LINUXKPI_STRING_CHOICES_H
 
 #include <sys/types.h>
 
@@ -76,4 +76,4 @@ str_up_down(bool value)
 }
 #endif
 
-#endif
+#endif /* _LINUXKPI_STRING_CHOICES_H */
