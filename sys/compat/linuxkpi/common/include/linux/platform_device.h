@@ -43,8 +43,19 @@ struct platform_driver {
 	struct device_driver		driver;
 };
 
+#define PLATFORM_DEVID_AUTO     (-2)
+
 #define	dev_is_platform(dev)	(false)
 #define	to_platform_device(dev)	(NULL)
+
+static __inline struct platform_device *
+platform_device_register_data(struct device *dev, const char *name, int id,
+	void *data, size_t size)
+{
+
+	pr_debug("%s: TODO\n", __func__);
+	return (NULL);
+}
 
 static __inline int
 platform_driver_register(struct platform_driver *pdrv)
