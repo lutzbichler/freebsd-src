@@ -326,4 +326,19 @@ memzero_explicit(void *p, size_t s)
 	__asm__ __volatile__("": :"r"(p) :"memory");
 }
 
+static inline bool
+mem_is_zero(void *p, size_t s)
+{
+	return (NULL == memchr_inv(p, 0, s));
+}
+
+static inline void
+strtomem_pad(void *dst, const void *src, int ch)
+{
+	size_t dstlen = __builtin_object_size(dst, 1);
+	size_t srclen = __builtin_object_size(src, 1);
+
+	memcpy_and_pad(dst, dstlen, src, srclen, ch);
+}
+
 #endif	/* _LINUXKPI_LINUX_STRING_H_ */
