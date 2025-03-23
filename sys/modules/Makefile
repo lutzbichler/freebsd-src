@@ -200,6 +200,8 @@ SUBDIR=	\
 	${_iwm} \
 	${_iwn} \
 	${_iwnfw} \
+	${_iwx} \
+	${_iwxfw} \
 	${_ix} \
 	${_ixv} \
 	${_ixl} \
@@ -802,6 +804,8 @@ _ipw=		ipw
 _iwi=		iwi
 _iwm=		iwm
 _iwn=		iwn
+_iwx=		iwx
+_iwxfw=		iwxfw
 .if ${MK_SOURCELESS_UCODE} != "no"
 _ipwfw=		ipwfw
 _iwifw=		iwifw
