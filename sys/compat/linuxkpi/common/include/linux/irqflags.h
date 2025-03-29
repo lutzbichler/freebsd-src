@@ -3,7 +3,10 @@
 #ifndef LINUXKPI_IRQFLAGS_H_
 #define LINUXKPI_IRQFLAGS_H_
 
-#define local_irq_save(flags) 		preempt_disable()
-#define local_irq_restore(flags)	preempt_enable()
+#define	local_irq_disable()		preempt_disable()
+#define	local_irq_enable()		preempt_enable()
+
+#define local_irq_save(flags) 		do { (void)flags; preempt_disable(); } while (0)
+#define local_irq_restore(flags)	do { (void)flags; preempt_enable(); } while (0)
 
 #endif /* LINUXKPI_IRQFLAGS_H_ */
