@@ -36,6 +36,8 @@
 
 #define	ACPI_VIDEO_NOTIFY_PROBE	0x81
 
+#define acpi_backlight_native	0
+
 static inline int
 acpi_video_register(void)
 {
@@ -51,6 +53,12 @@ acpi_video_unregister(void)
 static inline void
 acpi_video_register_backlight(void)
 {
+}
+
+static inline int
+acpi_video_get_backlight_type(void)
+{
+	return (acpi_backlight_native);
 }
 
 static inline bool
