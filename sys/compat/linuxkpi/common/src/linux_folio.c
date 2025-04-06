@@ -1,7 +1,8 @@
 /*-
- * Copyright (c) 2020 The FreeBSD Foundation
+ * Copyright (c) 2024-2025 The FreeBSD Foundation
+ * Copyright (c) 2024-2025 Jean-Sébastien Pédron
  *
- * This software was developed by Emmanuel Vadot under sponsorship
+ * This software was developed by Jean-Sébastien Pédron under sponsorship
  * from the FreeBSD Foundation.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -16,7 +17,7 @@
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
@@ -26,24 +27,32 @@
  * SUCH DAMAGE.
  */
 
-#ifndef _LINUXKPI_LINUX_PAGEMAP_H_
-#define _LINUXKPI_LINUX_PAGEMAP_H_
-
+#include <linux/gfp.h>
 #include <linux/mm.h>
-#include <linux/highmem.h>
-#include <linux/vmalloc.h>
+#include <linux/mm_types.h>
+#include <linux/page.h>
+#include <linux/pagevec.h>
 
-struct folio_batch;
-
-#define	invalidate_mapping_pages(...) \
-  linux_invalidate_mapping_pages(__VA_ARGS__)
-
-unsigned long linux_invalidate_mapping_pages(vm_object_t obj, pgoff_t start,
-    pgoff_t end);
-
-static inline void
-mapping_clear_unevictable(vm_object_t mapping)
+struct folio *
+folio_alloc(gfp_t gfp, unsigned int order)
 {
+	struct page *page;
+	struct folio *folio;
+
+	/*
+	 * Allocated pages are wired already. There is no need to increase a
+	 * refcount here.
+	 */
+	page = alloc_pages(gfp | __GFP_COMP, order);
+	folio = (struct folio *)page;
+
+	return (folio);
 }
 
-#endif
+void
+__folio_batch_release(struct folio_batch *fbatch)
+{
+	release_pages(fbatch->folios, folio_batch_count(fbatch));
+
+	folio_batch_reinit(fbatch);
+}

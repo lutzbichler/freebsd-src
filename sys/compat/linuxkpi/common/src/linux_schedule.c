@@ -30,7 +30,6 @@
 #include <sys/signalvar.h>
 #include <sys/sleepqueue.h>
 
-#include <asm/barrier.h>
 #include <linux/delay.h>
 #include <linux/errno.h>
 #include <linux/kernel.h>
@@ -183,28 +182,36 @@ default_wake_function(wait_queue_t *wq, unsigned int state, int flags,
 	return (wake_up_task(wq->private, state));
 }
 
-int
-woken_wake_function(wait_queue_t *wq, unsigned int state, int flags,
-    void *key)
-{
-	smp_mb();
-	wq->flags |= WQ_FLAG_WOKEN;
-
-	return (default_wake_function(wq, state, flags, key));
-}
-
 long
-wait_woken(wait_queue_t *wq, unsigned state, long timeout)
+linux_wait_woken(wait_queue_t *wq, unsigned state, long timeout)
 {
-	set_task_state(current, state);
-	if (!(wq->flags & WQ_FLAG_WOKEN)) {
-		timeout = linux_schedule_timeout(timeout);
-	}
-	set_task_state(current, TASK_RUNNING);
+	void *wchan = wq->private;
 
-	smp_store_mb(wq->flags, wq->flags & ~WQ_FLAG_WOKEN);
+	sleepq_lock(wchan);
+	set_task_state(current, state);
+	if (!(wq->flags & WQ_FLAG_WOKEN))
+		timeout = linux_schedule_timeout(timeout);
+	else
+		set_task_state(current, TASK_RUNNING);
+
+	wq->flags &= ~WQ_FLAG_WOKEN;
+	sleepq_release(wchan);
 
 	return (timeout);
+}
+
+int
+woken_wake_function(wait_queue_t *wq, unsigned int state,
+    int flags __unused, void *key __unused)
+{
+	void *wchan = wq->private;
+
+	sleepq_lock(wchan);
+	wq->flags |= WQ_FLAG_WOKEN;
+	sleepq_signal(wchan, SLEEPQ_SLEEP, 0, 0);
+	sleepq_release(wchan);
+
+	return (1);
 }
 
 void

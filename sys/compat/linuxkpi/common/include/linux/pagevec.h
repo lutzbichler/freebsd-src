@@ -90,30 +90,23 @@ folio_batch_reinit(struct folio_batch *fbatch)
 static inline unsigned int
 folio_batch_count(struct folio_batch *fbatch)
 {
-	return fbatch->nr;
+	return (fbatch->nr);
 }
 
 static inline unsigned int
 folio_batch_space(struct folio_batch *fbatch)
 {
-	return PAGEVEC_SIZE - fbatch->nr;
+	return (PAGEVEC_SIZE - fbatch->nr);
 }
 
 static inline unsigned int
 folio_batch_add(struct folio_batch *fbatch, struct folio *folio)
 {
 	fbatch->folios[fbatch->nr++] = folio;
-	return PAGEVEC_SIZE - fbatch->nr;
+	return (folio_batch_space(fbatch));
 }
 
-static inline void
-__folio_batch_release(struct folio_batch *fbatch)
-{
-	release_pages(
-	    (struct page **)fbatch->folios,
-	    folio_batch_count(fbatch));
-	folio_batch_reinit(fbatch);
-}
+void __folio_batch_release(struct folio_batch *fbatch);
 
 static inline void
 folio_batch_release(struct folio_batch *fbatch)
