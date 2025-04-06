@@ -121,7 +121,6 @@ folio_batch_add(struct folio_batch *fbatch, struct folio *folio)
 	    ("struct folio_batch %p is full", fbatch));
 
 	fbatch->folios[fbatch->nr++] = folio;
-
 	return (folio_batch_space(fbatch));
 }
 
