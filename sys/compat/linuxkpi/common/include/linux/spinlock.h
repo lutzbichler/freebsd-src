@@ -41,6 +41,7 @@
 #include <linux/rwlock.h>
 #include <linux/bottom_half.h>
 #include <linux/lockdep.h>
+#include <linux/irqflags.h>
 
 typedef struct mtx spinlock_t;
 
@@ -153,14 +154,6 @@ typedef struct mtx spinlock_t;
 	if (SPIN_SKIP())			\
 		break;				\
 	mtx_assert(_l, MA_OWNED);		\
-} while (0)
-
-#define	local_irq_save(flags) do {		\
-	(flags) = 0;				\
-} while (0)
-
-#define	local_irq_restore(flags) do {		\
-	(void)(flags);				\
 } while (0)
 
 #define	atomic_dec_and_lock_irqsave(cnt, lock, flags) \
