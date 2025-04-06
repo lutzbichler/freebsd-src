@@ -51,6 +51,7 @@
 #define	__GFP_COMP	0
 #define	__GFP_KSWAPD_RECLAIM 0
 
+#define	__GFP_ACCOUNT	0
 #define	__GFP_IO	0
 #define	__GFP_NO_KSWAPD	0
 #define	__GFP_KSWAPD_RECLAIM	0

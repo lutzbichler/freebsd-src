@@ -69,7 +69,15 @@ struct pin_cookie {
 	LOCK_CLASS(__lock)->lc_assert(__lock, LA_LOCKED | LA_NOTRECURSED); \
 } while (0)
 
-#define	lockdep_assert_none_held_once() do { } while (0)
+static __inline bool
+lockdep_is_held(void *__m __diagused)
+{
+	struct lock_object *__lock;
+	struct thread *__td;
+
+	__lock = __m;
+	return (LOCK_CLASS(__lock)->lc_owner(__lock, &__td) != 0);
+}
 
 #else
 #define	lockdep_assert(cond) do { } while (0)
@@ -77,25 +85,20 @@ struct pin_cookie {
 
 #define	lockdep_assert_not_held(m) do { (void)(m); } while (0)
 #define	lockdep_assert_held(m) do { (void)(m); } while (0)
-#define	lockdep_assert_none_held_once() do { } while (0)
 
 #define	lockdep_assert_held_once(m) do { (void)(m); } while (0)
-
-#endif
 
 static __inline bool
 lockdep_is_held(void *__m __diagused)
 {
-#ifdef INVARIANTS
-	struct lock_object *__lock;
-	struct thread *__td;
-
-	__lock = __m;
-	return (LOCK_CLASS(__lock)->lc_owner(__lock, &__td) != 0);
-#else
 	return (true);
-#endif
 }
+
+#endif
+
+#define lockdep_assert_none_held_once()	do { } while (0)
+#define lockdep_assert_held_read(m)	lockdep_assert_held(m)
+#define lockdep_assert_held_write(m)	lockdep_assert_held(m)
 #define	lockdep_is_held_type(_m, _t)	lockdep_is_held(_m)
 
 #define	might_lock(m)	do { } while (0)
