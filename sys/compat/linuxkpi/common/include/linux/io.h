@@ -410,11 +410,19 @@ _ioremap_attr(vm_paddr_t _phys_addr, unsigned long _size, int _attr)
 #endif
 
 struct device;
+
 static inline void *
 devm_ioremap(struct device *dev, resource_size_t offset, resource_size_t size)
 {
 	return (NULL);
 }
+
+static inline void *
+devm_ioremap_wc(struct device *dev, resource_size_t offset, resource_size_t size)
+{
+	return (NULL);
+}
+
 
 #ifdef VM_MEMATTR_DEVICE
 #define	ioremap_nocache(addr, size)					\
