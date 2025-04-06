@@ -67,6 +67,9 @@ struct kthread_work {
 	__task;								\
 })
 
+#define	kthread_use_mm(t)
+#define	kthread_unuse_mm(t)
+
 int linux_kthread_stop(struct task_struct *);
 bool linux_kthread_should_stop_task(struct task_struct *);
 bool linux_kthread_should_stop(void);
