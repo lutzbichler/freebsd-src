@@ -75,7 +75,7 @@ static inline void
 io_mapping_free(struct io_mapping *mapping)
 {
 
-	io_mapping_fini(mapping->mem);
+	io_mapping_fini(mapping);
 	kfree(mapping);
 }
 
