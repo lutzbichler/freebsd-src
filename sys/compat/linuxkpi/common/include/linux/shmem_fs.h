@@ -61,7 +61,7 @@ shmem_read_folio_gfp(vm_object_t obj, int pindex, gfp_t gfp)
 
 	page = shmem_read_mapping_page_gfp(obj, pindex, gfp);
 
-	return page_folio(page);
+	return (page_folio(page));
 }
 
 #endif /* _LINUXKPI_LINUX_SHMEM_FS_H_ */

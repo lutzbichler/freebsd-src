@@ -95,8 +95,6 @@ void debugfs_remove_recursive(struct dentry *dentry);
 
 void debugfs_create_bool(const char *name, umode_t mode, struct dentry *parent,
     bool *value);
-void debugfs_create_str(const char *name, umode_t mode, struct dentry *parent,
-    char **value);
 void debugfs_create_u8(const char *name, umode_t mode, struct dentry *parent,
     uint8_t *value);
 void debugfs_create_u16(const char *name, umode_t mode, struct dentry *parent,
@@ -117,6 +115,8 @@ void debugfs_create_ulong(const char *name, umode_t mode, struct dentry *parent,
     unsigned long *value);
 void debugfs_create_atomic_t(const char *name, umode_t mode, struct dentry *parent,
     atomic_t *value);
+void debugfs_create_str(const char *name, umode_t mode, struct dentry *parent,
+    char **value);
 
 struct dentry *debugfs_create_blob(const char *name, umode_t mode,
     struct dentry *parent, struct debugfs_blob_wrapper *value);

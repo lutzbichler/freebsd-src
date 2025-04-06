@@ -30,7 +30,9 @@
 #include <linux/radix-tree.h>
 #include <linux/err.h>
 #include <linux/kconfig.h>
-#include <linux/spinlock.h>
+
+#include <sys/lock.h>
+#include <sys/mutex.h>
 
 #define	XA_LIMIT(min, max) \
     ({ CTASSERT((min) == 0); (uint32_t)(max); })

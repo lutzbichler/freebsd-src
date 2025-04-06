@@ -527,15 +527,26 @@ pci_upstream_bridge(struct pci_dev *pdev)
 	if (pdev == pdev->bus->self) {
 		device_t bridge;
 
-		bridge = device_get_parent(pdev->dev.bsddev);
+		/*
+		 * In the case of DRM drivers, the passed device is a child of
+		 * `vgapci` and has a devclass of `drmn`. We want to start the
+		 * lookup from `vgapci`, so the parent of the passed `drmn`.
+		 */
+		bridge = pdev->dev.bsddev;
+		if (device_get_devclass(bridge) == devclass_find("drmn"))
+			bridge = device_get_parent(bridge);
 		if (bridge == NULL)
-			return (NULL);
+			goto done;
+
 		bridge = device_get_parent(bridge);
 		if (bridge == NULL)
-			return (NULL);
+			goto done;
+		bridge = device_get_parent(bridge);
+		if (bridge == NULL)
+			goto done;
 		if (device_get_devclass(device_get_parent(bridge)) !=
 		    devclass_find("pci"))
-			return (NULL);
+			goto done;
 
 		/*
 		 * "bridge" is a PCI-to-PCI bridge.  Create a Linux pci_dev
@@ -543,7 +554,7 @@ pci_upstream_bridge(struct pci_dev *pdev)
 		 */
 		pdev->bus->self = lkpinew_pci_dev(bridge);
 	}
-
+done:
 	return (pdev->bus->self);
 }
 

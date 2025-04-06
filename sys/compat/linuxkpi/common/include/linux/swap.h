@@ -60,7 +60,7 @@ current_is_kswapd(void)
 static inline void
 folio_mark_accessed(struct folio *folio)
 {
-	vm_page_reference(&folio->page);
+	mark_page_accessed(&folio->page);
 }
 
 static inline void

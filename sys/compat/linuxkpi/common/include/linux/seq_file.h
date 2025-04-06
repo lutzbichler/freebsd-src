@@ -71,8 +71,6 @@ int seq_write(struct seq_file *seq, const void *data, size_t len);
 void seq_putc(struct seq_file *m, char c);
 void seq_puts(struct seq_file *m, const char *str);
 bool seq_has_overflowed(struct seq_file *m);
-void seq_hex_dump(struct seq_file *seq, const char *str, int t,
-	int rs, int gs, const void *b, size_t l, bool ascii);
 
 void *__seq_open_private(struct linux_file *, const struct seq_operations *, int);
 int seq_release_private(struct inode *, struct linux_file *);
@@ -87,6 +85,9 @@ int single_release(struct inode *, struct linux_file *);
 
 void lkpi_seq_vprintf(struct seq_file *m, const char *fmt, va_list args);
 void lkpi_seq_printf(struct seq_file *m, const char *fmt, ...);
+
+void seq_hex_dump(struct seq_file *m, const char *prefix_str, int prefix_type,
+    int rowsize, int groupsize, const void *buf, size_t len, bool ascii);
 
 #define	seq_vprintf(...)	lkpi_seq_vprintf(__VA_ARGS__)
 #define	seq_printf(...)		lkpi_seq_printf(__VA_ARGS__)

@@ -59,6 +59,7 @@ typedef unsigned short ushort;
 typedef unsigned int    uint;
 #endif
 typedef unsigned long ulong;
+typedef unsigned long long ullong;
 typedef unsigned gfp_t;
 typedef off_t loff_t;
 typedef vm_paddr_t resource_size_t;
