@@ -89,11 +89,14 @@ struct wait_queue_head {
  * This function is referenced by at least one DRM driver, so it may not be
  * renamed and furthermore must be the default wait queue callback.
  */
-extern wait_queue_func_t autoremove_wake_function;
-extern wait_queue_func_t default_wake_function;
-extern wait_queue_func_t woken_wake_function;
+wait_queue_func_t autoremove_wake_function;
+wait_queue_func_t default_wake_function;
+wait_queue_func_t woken_wake_function;
 
-long wait_woken(wait_queue_t *wq, unsigned state, long timeout);
+long linux_wait_woken(wait_queue_t *wq, unsigned state, long timeout);
+
+#define	wait_woken(wq, state, timeout) \
+	linux_wait_woken((wq), (state), (timeout))
 
 #define	DEFINE_WAIT_FUNC(name, function)				\
 	wait_queue_t name = {						\
