@@ -64,4 +64,14 @@ shmem_read_folio_gfp(vm_object_t obj, int pindex, gfp_t gfp)
 	return (page_folio(page));
 }
 
+static inline struct folio *
+shmem_read_mapping_folio(vm_object_t obj, int pindex)
+{
+	struct page *page;
+
+	page = shmem_read_mapping_page(obj, pindex);
+
+	return (page_folio(page));
+}
+
 #endif /* _LINUXKPI_LINUX_SHMEM_FS_H_ */
