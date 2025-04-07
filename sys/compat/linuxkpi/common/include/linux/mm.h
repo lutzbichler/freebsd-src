@@ -265,7 +265,8 @@ vma_pages(struct vm_area_struct *vma)
 	return ((vma->vm_end - vma->vm_start) >> PAGE_SHIFT);
 }
 
-#define	offset_in_page(off)	((unsigned long)(off) & (PAGE_SIZE - 1))
+#define	offset_in_page(off)		((unsigned long)(off) & (PAGE_SIZE - 1))
+#define offset_in_folio(folio, off)	((unsigned long)(off) & (folio_size(folio) - 1))
 
 static inline void
 set_page_dirty(struct page *page)
