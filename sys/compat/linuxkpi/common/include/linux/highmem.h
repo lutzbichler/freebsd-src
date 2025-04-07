@@ -122,6 +122,12 @@ kunmap(struct page *page)
 	}
 }
 
+static inline void *
+kmap_local_folio(struct folio *folio, size_t offset)
+{
+	return (kmap(&folio->page));
+}
+
 static inline void
 kunmap_atomic(void *vaddr)
 {
@@ -153,6 +159,13 @@ memcpy_from_page(char *to, struct page *page, size_t offset, size_t len)
 }
 
 static inline void
+memcpy_from_folio(char *to, struct folio *folio, size_t offset, size_t len)
+{
+
+	memcpy_from_page(to, &folio->page, offset, len);
+}
+
+static inline void
 memcpy_to_page(struct page *page, size_t offset, const char *from, size_t len)
 {
 	char *to;
@@ -165,6 +178,13 @@ memcpy_to_page(struct page *page, size_t offset, const char *from, size_t len)
 	to = kmap_local_page(page);
 	memcpy(to + offset, from, len);
 	kunmap_local(to);
+}
+
+static inline void
+memcpy_to_folio(struct folio *folio, size_t offset, const char *from, size_t len)
+{
+
+	memcpy_to_page(&folio->page, offset, from, len);
 }
 
 #endif	/* _LINUXKPI_LINUX_HIGHMEM_H_ */
