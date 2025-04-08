@@ -43,6 +43,7 @@
 #include <linux/irqflags.h>
 
 typedef struct mtx spinlock_t;
+typedef struct mtx raw_spinlock_t;
 
 /*
  * By defining CONFIG_SPIN_SKIP LinuxKPI spinlocks and asserts will be
@@ -154,6 +155,11 @@ typedef struct mtx spinlock_t;
 		break;				\
 	mtx_assert(_l, MA_OWNED);		\
 } while (0)
+
+#define raw_spin_lock_irqsave(_l, flags)	spin_lock_irqsave(_l, flags)
+#define raw_spin_unlock_irqrestore(_l, flags)	spin_unlock_irqrestore(_l, flags)
+#define raw_spin_lock_init(_l)			spin_lock_init(_l)
+#define raw_spin_lock_destroy(_l)		spin_lock_destroy(_l)
 
 #define	atomic_dec_and_lock_irqsave(cnt, lock, flags) \
 	_atomic_dec_and_lock_irqsave(cnt, lock, &(flags))
