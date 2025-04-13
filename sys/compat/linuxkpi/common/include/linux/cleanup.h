@@ -90,13 +90,13 @@
 	return (_tmp);							\
     }
 
-#define LKPI_DEFINE_CLASS(_n, _t, _e, _i, _a...)		\
-typedef _t class_##_n##_##t;							\
+#define LKPI_DEFINE_CLASS(_n, _t, _e, _i, _a...)			\
+typedef _t class_##_n##_##t;						\
 static inline void class_##_n##_dtor(_t *obj)				\
 {									\
-    _t _T = *obj; _e;						\
+    _t _T = *obj; _e;							\
 }									\
-static inline _t class_##_n##_ctor(_a)				\
+static inline _t class_##_n##_ctor(_a)					\
 {									\
     _t obj = _i;							\
     return obj;								\
