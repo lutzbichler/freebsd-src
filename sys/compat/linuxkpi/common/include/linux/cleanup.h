@@ -90,4 +90,19 @@
 	return (_tmp);							\
     }
 
+#define LKPI_DEFINE_CLASS(_n, _t, _exit, _init, _args...)		\
+typedef _t lkpi_##_n;							\
+static inline void lkpi_##_n##_dtor(_t *obj)				\
+{									\
+    _t _T = *obj; _exit;						\
+}									\
+static inline _t lkpi_##_n##_ctor(_args)				\
+{									\
+    _t obj = _init;							\
+    return obj;								\
+}
+
+#define LKPI_CLASS(_n, _v)						\
+        lkpi_##_n _v __cleanup(lkpi_##_n##_dtor) = lkpi_##_n##_ctor
+
 #endif	/* _LINUXKPI_LINUX_CLEANUP_H */
