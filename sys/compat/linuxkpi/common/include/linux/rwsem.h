@@ -82,6 +82,15 @@ linux_init_rwsem(struct rw_semaphore *rw, const char *name)
 	sx_init_flags(&rw->sx, name, SX_NOWITNESS);
 }
 
+struct lock_class_key;
+
+static inline void
+__init_rwsem(struct rw_semaphore *rw, const char *name,
+	struct lock_class_key *key __unused)
+{
+	linux_init_rwsem(rw, name);
+}
+
 extern int linux_down_read_killable(struct rw_semaphore *);
 extern int linux_down_write_killable(struct rw_semaphore *);
 
