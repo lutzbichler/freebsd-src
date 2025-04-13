@@ -235,9 +235,6 @@ vmf_insert_pfn_prot(struct vm_area_struct *vma, unsigned long addr,
 
 	return (ret);
 }
-#define	vmf_insert_pfn_prot(...)	\
-	_Static_assert(false,		\
-"This function is always called in a loop. Consider using the locked version")
 
 static inline int
 apply_to_page_range(struct mm_struct *mm, unsigned long address,
