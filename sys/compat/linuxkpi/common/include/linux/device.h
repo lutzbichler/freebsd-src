@@ -169,6 +169,9 @@ struct device_attribute {
 #define	DEVICE_ATTR_RW(_name)						\
 	struct device_attribute dev_attr_##_name = __ATTR_RW(_name)
 
+#define	DEVICE_ATTR_ADMIN_RO(_name)						\
+	struct device_attribute dev_attr_##_name = __ATTR_RO_MODE(_name, 0400)
+
 /* Simple class attribute that is just a static string */
 struct class_attribute_string {
 	struct class_attribute attr;
