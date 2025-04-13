@@ -32,6 +32,8 @@
 #ifndef _LINUXKPI_LINUX_MATH_H_
 #define	_LINUXKPI_LINUX_MATH_H_
 
+#include <sys/libkern.h>
+
 #include <linux/types.h>
 
 /*
@@ -63,6 +65,25 @@
 	_x > _y ? _x - _y : _y - _x;	\
 })
 #endif
+
+static inline unsigned long
+int_sqrt(unsigned long x)
+{
+        unsigned long bit, root, tmp;
+
+        bit = x != 0 ? (1u << ((fls(x) - 1) & ~1)) : 0;
+        root = 0;
+        while (bit != 0) {
+                tmp = root + bit;
+                root >>= 1;
+                if (x >= tmp) {
+                        x -= tmp;
+                        root += bit;
+                }
+                bit >>= 2;
+        }
+        return (root);
+}
 
 static inline uintmax_t
 mult_frac(uintmax_t x, uintmax_t multiplier, uintmax_t divisor)
