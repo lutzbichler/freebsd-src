@@ -41,6 +41,9 @@
 #define	min(x, y)	((x) < (y) ? (x) : (y))
 #define	max(x, y)	((x) > (y) ? (x) : (y))
 
+#define	umin(x, y)	min(x, y)
+#define	umax(x, y)	max(x, y)
+
 #define __minmax_array(_op, _array, _len) ({			\
 	__typeof((_array)[0]) __result = (_array)[0];		\
 	for (__typeof(_len) __i = 1; __i < (_len); __i++) {	\
