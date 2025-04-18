@@ -434,13 +434,6 @@ linux_wait_on_bit_timeout(unsigned long *word, int bit, unsigned int state,
 	return (ret);
 }
 
-void
-linux_wake_up_atomic_t(atomic_t *a)
-{
-
-	wake_up_sleepers(a);
-}
-
 int
 linux_wait_on_atomic_t(atomic_t *a, unsigned int state)
 {
@@ -458,7 +451,8 @@ linux_wait_on_atomic_t(atomic_t *a, unsigned int state)
 			break;
 		}
 		set_task_state(task, state);
-		ret = linux_add_to_sleepqueue(wchan, task, "watomic", 0, state);
+		ret = linux_add_to_sleepqueue(wchan, task, "watomic", 0,
+		    state);
 		if (ret != 0)
 			break;
 	}
