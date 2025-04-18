@@ -61,6 +61,11 @@ struct hrtimer {
 	linux_hrtimer_init(hrtimer);				\
 } while (0)
 
+#define hrtimer_setup(hrtimer, func, clock, mode) do {		\
+	hrtimer_init((hrtimer), clock, mode);			\
+	(hrtimer)->function = func;				\
+} while (0)
+
 #define	hrtimer_set_expires(hrtimer, time)			\
 	linux_hrtimer_set_expires(hrtimer, time)
 
