@@ -284,16 +284,16 @@ get_page(struct page *page)
 }
 
 static inline void
-folio_get(struct folio *folio)
-{
-	get_page(&folio->page);
-}
-
-static inline void
 put_page(struct page *page)
 {
 	/* `__free_page()` takes care of the refcounting (unwire). */
 	__free_page(page);
+}
+
+static inline void
+folio_get(struct folio *folio)
+{
+	get_page(&folio->page);
 }
 
 static inline void
@@ -305,14 +305,15 @@ folio_put(struct folio *folio)
 /*
  * Linux uses the following "transparent" union so that `release_pages()`
  * accepts both a list of `struct page` or a list of `struct folio`. This
- * relies on the fact that a `struct folio` can be casted to a `struct page`.
+ * relies on the fact that a `struct folio` can be cast to a `struct page`.
  */
 typedef union {
 	struct page **pages;
 	struct folio **folios;
 } release_pages_arg __attribute__ ((__transparent_union__));
 
-void release_pages(release_pages_arg arg, int nr);
+void linux_release_pages(release_pages_arg arg, int nr);
+#define	release_pages(arg, nr) linux_release_pages((arg), (nr))
 
 extern long
 lkpi_get_user_pages(unsigned long start, unsigned long nr_pages,

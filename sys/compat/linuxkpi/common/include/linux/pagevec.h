@@ -66,7 +66,21 @@ check_move_unevictable_pages(struct pagevec *pvec)
 {
 }
 
-/* ------------------------------------------------------------------- */
+/*
+ * struct folio
+ *
+ * On Linux, `struct folio` replaces `struct page`. To manage a list of folios,
+ * there is `struct folio_batch` on top of this, which replaces `struct
+ * pagevec` above.
+ *
+ * Here is the original description when `struct folio` was added to the Linux
+ * kernel:
+ *   "A struct folio is a new abstraction to replace the venerable struct page.
+ *   A function which takes a struct folio argument declares that it will
+ *   operate on the entire (possibly compound) page, not just PAGE_SIZE bytes.
+ *   In return, the caller guarantees that the pointer it is passing does not
+ *   point to a tail page.  No change to generated code."
+ */
 
 struct folio;
 
