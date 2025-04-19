@@ -38,4 +38,6 @@
 	_n != 0 && (_n & (_n - 1)) == 0;	\
 })
 
+#define	const_ilog2(n)	ilog2_const(n)
+
 #endif	/* _LINUXKPI_LINUX_LOG2_H_ */
