@@ -43,6 +43,14 @@
     guard_ ## _n ## _t guard_ ## _n ## _ ## __COUNTER__			\
 	__cleanup(guard_ ## _n ## _destroy) = guard_ ## _n ## _create
 
+#define DEFINE_FREE(_n, _t, _free)					\
+static inline void __free_##_n(void *p) {				\
+	_t _T = *(_t *)p;						\
+	 _free;								\
+}
+
+#define __free(_n)   __cleanup(__free_##_n)
+
 #define LKPI_DEFINE_CLASS(_n, _t, _exit, _init, _args...)		\
 typedef _t lkpi_##_n;							\
 static inline void lkpi_##_n##_dtor(_t *obj)				\
