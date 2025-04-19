@@ -45,4 +45,22 @@ anon_inode_getfile(const char *name __unused,
 	return (file);
 }
 
+static inline int
+anon_inode_getfd(const char *name __unused,
+    const struct file_operations *fops, void *priv, int flags)
+{
+	int fd;
+	struct file *file;
+
+	fd = get_unused_fd_flags(flags);
+	if (0 > fd)
+		return (fd);
+
+	file = anon_inode_getfile(name, fops, priv, flags);
+
+	fd_install(fd, file);
+
+	return (fd);
+}
+
 #endif	/* _LINUXKPI_LINUX_ANON_INODES_H_ */
