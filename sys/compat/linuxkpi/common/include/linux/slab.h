@@ -37,7 +37,9 @@
 #include <sys/malloc.h>
 #include <sys/limits.h>
 
+#include <linux/cleanup.h>
 #include <linux/compat.h>
+#include <linux/err.h>
 #include <linux/types.h>
 #include <linux/gfp.h>
 #include <linux/err.h>
@@ -154,8 +156,6 @@ kfree(const void *ptr)
 {
 	lkpi_kfree(ptr);
 }
-
-DEFINE_FREE(kfree, void *, if (!IS_ERR_OR_NULL(_T)) kfree(_T))
 
 /*
  * Other k*alloc() funtions using the above as underlying allocator.
@@ -293,5 +293,7 @@ kmalloc_size_roundup(size_t size)
 		return (size);
 	return (malloc_size(size));
 }
+
+DEFINE_FREE(kfree, void *, if (!IS_ERR_OR_NULL(_T)) kfree(_T))
 
 #endif					/* _LINUXKPI_LINUX_SLAB_H_ */
