@@ -37,6 +37,7 @@
 #include <sys/proc.h>
 
 #include <linux/fs.h>
+#include <linux/nospec.h>
 #include <linux/slab.h>
 
 #include <linux/compiler.h>
