@@ -444,6 +444,8 @@ device_add(struct device *dev)
 	return (0);
 }
 
+#define DL_FLAG_AUTOREMOVE_CONSUMER     0
+
 struct device_link;
 
 static inline struct device_link *
