@@ -965,6 +965,11 @@ static inline struct pci_dev *pci_physfn(struct pci_dev *dev)
 	return dev;
 }
 
+static inline int pci_iov_virtfn_devfn(struct pci_dev *dev, int id)
+{
+        return -ENOSYS;
+}
+
 static inline bool pci_is_pcie(struct pci_dev *dev)
 {
 	return !!pci_pcie_cap(dev);
