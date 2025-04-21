@@ -448,6 +448,14 @@ device_add(struct device *dev)
 	return (0);
 }
 
+struct device_link;
+
+static inline struct device_link *
+device_link_add(struct device *dev, struct device *link, u32 flags)
+{
+	return (NULL);
+}
+
 static inline void
 device_create_release(struct device *dev)
 {
