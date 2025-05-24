@@ -16,10 +16,6 @@
 #include "util.h"
 #include "wow.h"
 
-#if defined(__FreeBSD__)
-DEFINE_GUARD(mutex, struct mutex *, mutex_lock(_T), mutex_unlock(_T))
-#endif
-
 static void rtw89_ops_tx(struct ieee80211_hw *hw,
 			 struct ieee80211_tx_control *control,
 			 struct sk_buff *skb)
