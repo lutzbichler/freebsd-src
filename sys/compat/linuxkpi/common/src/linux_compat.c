@@ -2138,6 +2138,10 @@ uint64_t lkpi_msec2hz_rem;
 uint64_t lkpi_msec2hz_div = 1000ULL;
 uint64_t lkpi_msec2hz_max;
 
+uint64_t lkpi_sec2hz_rem;
+uint64_t lkpi_sec2hz_div = 1ULL;
+uint64_t lkpi_sec2hz_max;
+
 static void
 linux_timer_init(void *arg)
 {
@@ -2158,6 +2162,7 @@ linux_timer_init(void *arg)
 	lkpi_nsec2hz_rem = hz;
 	lkpi_usec2hz_rem = hz;
 	lkpi_msec2hz_rem = hz;
+	lkpi_sec2hz_rem = hz;
 
 	gcd = lkpi_gcd_64(lkpi_nsec2hz_rem, lkpi_nsec2hz_div);
 	lkpi_nsec2hz_rem /= gcd;
@@ -2173,6 +2178,11 @@ linux_timer_init(void *arg)
 	lkpi_msec2hz_rem /= gcd;
 	lkpi_msec2hz_div /= gcd;
 	lkpi_msec2hz_max = -1ULL / lkpi_msec2hz_rem;
+
+	gcd = lkpi_gcd_64(lkpi_sec2hz_rem, lkpi_sec2hz_div);
+	lkpi_sec2hz_rem /= gcd;
+	lkpi_sec2hz_div /= gcd;
+	lkpi_sec2hz_max = -1ULL / lkpi_sec2hz_rem;
 }
 SYSINIT(linux_timer, SI_SUB_DRIVERS, SI_ORDER_FIRST, linux_timer_init, NULL);
 
