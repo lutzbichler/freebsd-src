@@ -34,6 +34,7 @@
 #include <sys/lock.h>
 #include <sys/sx.h>
 
+#include <linux/cleanup.h>
 #include <linux/kernel.h>
 #include <linux/cleanup.h>
 #include <linux/list.h>
@@ -156,6 +157,8 @@ static inline int atomic_dec_and_mutex_lock(atomic_t *cnt, struct mutex *m)
 #define	DEFINE_MUTEX(lock)						\
 	mutex_t lock;							\
 	SX_SYSINIT_FLAGS(lock, &(lock).sx, mutex_name(#lock), SX_DUPOK)
+
+DEFINE_GUARD(mutex, struct mutex *, mutex_lock(_T), mutex_unlock(_T));
 
 static inline void
 linux_mutex_init(mutex_t *m, const char *name, int flags)
