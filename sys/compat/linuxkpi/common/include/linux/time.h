@@ -153,4 +153,10 @@ get_seconds(void)
 	return time_uptime;
 }
 
+static inline void
+time64_to_tm(time64_t total, int offset, struct tm *tm)
+{
+	/* TODO: implement */
+}
+
 #endif /* _LINUXKPI_LINUX_TIME_H_ */
