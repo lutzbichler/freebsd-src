@@ -35,6 +35,9 @@
 extern wait_queue_head_t linux_bit_waitq;
 extern wait_queue_head_t linux_var_waitq;
 
+#define	wait_var_event(var, cond) \
+	wait_event(linux_var_waitq, cond)
+
 #define	wait_var_event_killable(var, cond) \
 	wait_event_killable(linux_var_waitq, cond)
 
