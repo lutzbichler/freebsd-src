@@ -105,4 +105,9 @@ static inline _t lkpi_##_n##_ctor(_args)				\
 #define LKPI_CLASS(_n, _v)						\
         lkpi_##_n _v __cleanup(lkpi_##_n##_dtor) = lkpi_##_n##_ctor
 
+#define __scoped_guard(_n, _l, _a)
+
+#define scoped_guard(_n, _a)						\
+	__scoped_guard(_n, _l ## __COUNTER__, _a)
+
 #endif	/* _LINUXKPI_LINUX_CLEANUP_H */
