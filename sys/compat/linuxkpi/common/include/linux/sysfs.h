@@ -57,6 +57,10 @@ struct bin_attribute {
 			struct bin_attribute *, char *, loff_t, size_t);
 	ssize_t (*write)(struct linux_file *, struct kobject *,
 			 struct bin_attribute *, char *, loff_t, size_t);
+	ssize_t (*read_new)(struct linux_file *, struct kobject *,
+			const struct bin_attribute *, char *, loff_t, size_t);
+	ssize_t (*write_new)(struct linux_file *, struct kobject *,
+			const struct bin_attribute *, char *, loff_t, size_t);
 };
 
 #define	__ATTR(_name, _mode, _show, _store) {				\
@@ -85,21 +89,36 @@ struct bin_attribute {
 		NULL,							\
 	}
 
-#define	__BIN_ATTR(_name, _mode, _read, _write, _size) {		\
-	.attr = { .name = __stringify(_name), .mode = _mode },		\
-	.read = _read, .write  = _write, .size = _size,			\
+typedef ssize_t (rw_new)(struct linux_file *, struct kobject *,
+                         const struct bin_attribute *, char *, loff_t, size_t);
+
+#define	__BIN_ATTR(_name, _mode, _read, _write, _size) {			\
+	.attr = { .name = __stringify(_name), .mode = _mode },			\
+	.read = _Generic(_read, rw_new * : NULL, default : _read),		\
+	.read_new = _Generic(_read, rw_new * : _read, default : NULL),		\
+	.write  = _Generic(_write, rw_new * : NULL, default : NULL),		\
+	.write_new = _Generic(_write, rw_new * : _write, default : NULL),	\
+	.size = _size,								\
 }
-#define	__BIN_ATTR_RO(_name, _size) {					\
-	.attr = { .name = __stringify(_name), .mode = 0444 },		\
-	.read = _name##_read, .size = _size,				\
+#define	__BIN_ATTR_RO(_name, _size) {						\
+	.attr = { .name = __stringify(_name), .mode = 0444 },			\
+	.read = _Generic(_read, rw_new * : NULL, default : _name##_read),	\
+	.read_new = _Generic(_read, rw_new * : _name##_read, default : NULL),	\
+	.size = _size,								\
 }
-#define	__BIN_ATTR_WO(_name, _size) {					\
-	.attr = { .name = __stringify(_name), .mode = 0200 },		\
-	.write = _name##_write, .size = _size,				\
+#define	__BIN_ATTR_WO(_name, _size) {						\
+	.attr = { .name = __stringify(_name), .mode = 0200 },			\
+	.write  = _Generic(_write, rw_new * : NULL, default : _name##_write),	\
+	.write_new = _Generic(_write, rw_new * : _name##_write, default : NULL),\
+	.size = _size,								\
 }
-#define	__BIN_ATTR_WR(_name, _size) {					\
-	.attr = { .name = __stringify(_name), .mode = 0644 },		\
-	.read = _name##_read, .write = _name##_write, .size = _size,	\
+#define	__BIN_ATTR_WR(_name, _size) {						\
+	.attr = { .name = __stringify(_name), .mode = 0644 },			\
+	.read = _Generic(_read, rw_new * : NULL, default :_name##_read),	\
+	.read_new = _Generic(_read, rw_new * : _name##_read, default : NULL),	\
+	.write  = _Generic(_write, rw_new * : NULL, default : _name##_write),	\
+	.write_new = _Generic(_write, rw_new * : _name##_write, default : NULL),\
+	.size = _size,								\
 }
 
 #define	BIN_ATTR(_name, _mode, _read, _write, _size) \
