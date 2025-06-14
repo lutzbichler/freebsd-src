@@ -65,6 +65,12 @@ shmem_read_folio_gfp(vm_object_t obj, int pindex, gfp_t gfp)
 }
 
 static inline struct folio *
+shmem_read_folio(vm_object_t obj, int pindex)
+{
+	return (shmem_read_folio_gfp(obj, pindex, 0));
+}
+
+static inline struct folio *
 shmem_read_mapping_folio(vm_object_t obj, int pindex)
 {
 	struct page *page;
