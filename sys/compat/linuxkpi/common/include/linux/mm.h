@@ -471,6 +471,12 @@ folio_nr_pages(struct folio *folio)
 	return (1);
 }
 
+static inline struct page *
+folio_file_page(struct folio *folio, pgoff_t index)
+{
+	return (&folio->page);
+}
+
 static inline size_t
 folio_size(struct folio *folio)
 {
