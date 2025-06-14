@@ -418,13 +418,6 @@ trylock_page(struct page *page)
 }
 
 static inline void
-lock_page(struct page *page)
-{
-
-	vm_page_lock(page);
-}
-
-static inline void
 unlock_page(struct page *page)
 {
 
