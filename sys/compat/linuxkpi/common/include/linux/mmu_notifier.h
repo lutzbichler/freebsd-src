@@ -30,4 +30,10 @@
 struct mmu_notifier {
 };
 
+struct mmu_notifier_range {
+};
+
+struct mmu_interval_notifier {
+};
+
 #endif /* _LINUXKPI_LINUX_MMU_NOTIFIER_H_ */
