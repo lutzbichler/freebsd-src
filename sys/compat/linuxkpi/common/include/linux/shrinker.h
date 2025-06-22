@@ -47,6 +47,7 @@ struct shrinker {
 	TAILQ_ENTRY(shrinker)	next;
 };
 
+#define	SHRINK_EMPTY	(~0UL - 1)
 #define	SHRINK_STOP	(~0UL)
 
 #define	DEFAULT_SEEKS	2
