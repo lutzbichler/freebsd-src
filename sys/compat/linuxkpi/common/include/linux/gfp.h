@@ -41,6 +41,7 @@
 #include <vm/vm_kern.h>
 
 #define	__GFP_NOWARN	0
+#define	__GFP_HIGH	0
 #define	__GFP_HIGHMEM	0
 #define	__GFP_ZERO	M_ZERO
 #define	__GFP_NOMEMALLOC 0
