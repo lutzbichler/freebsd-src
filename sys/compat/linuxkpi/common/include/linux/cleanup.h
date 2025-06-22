@@ -90,20 +90,20 @@
 	return (_tmp);							\
     }
 
-#define LKPI_DEFINE_CLASS(_n, _t, _exit, _init, _args...)		\
-typedef _t lkpi_##_n;							\
-static inline void lkpi_##_n##_dtor(_t *obj)				\
+#define LKPI_DEFINE_CLASS(_n, _t, _e, _i, _a...)		\
+typedef _t class_##_n##_##t;							\
+static inline void class_##_n##_dtor(_t *obj)				\
 {									\
-    _t _T = *obj; _exit;						\
+    _t _T = *obj; _e;						\
 }									\
-static inline _t lkpi_##_n##_ctor(_args)				\
+static inline _t class_##_n##_ctor(_a)				\
 {									\
-    _t obj = _init;							\
+    _t obj = _i;							\
     return obj;								\
 }
 
 #define LKPI_CLASS(_n, _v)						\
-        lkpi_##_n _v __cleanup(lkpi_##_n##_dtor) = lkpi_##_n##_ctor
+        class_##_n##_t _v __cleanup(class_##_n##_dtor) = class_##_n##_ctor
 
 #define __scoped_guard(_n, _l, _a)
 
