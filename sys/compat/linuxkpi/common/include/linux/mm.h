@@ -31,6 +31,7 @@
 #ifndef	_LINUXKPI_LINUX_MM_H_
 #define	_LINUXKPI_LINUX_MM_H_
 
+#include <linux/completion.h>
 #include <linux/spinlock.h>
 #include <linux/gfp.h>
 #include <linux/kernel.h>
@@ -107,6 +108,9 @@ CTASSERT((VM_PROT_ALL & -(1 << 8)) == 0);
 	(((flags) & (FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_TRIED)) == FAULT_FLAG_ALLOW_RETRY)
 
 typedef int (*pte_fn_t)(linux_pte_t *, unsigned long addr, void *data);
+
+struct dev_pagemap {
+};
 
 struct vm_area_struct {
 	vm_offset_t vm_start;
