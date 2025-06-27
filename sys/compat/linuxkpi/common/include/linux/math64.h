@@ -85,6 +85,15 @@ div_u64(uint64_t dividend, uint32_t divisor)
 	return (dividend / divisor);
 }
 
+static inline uint32_t
+div_u64_round_up(uint64_t dividend, uint32_t divisor)
+{
+	return (uint32_t)((dividend + divisor - 1) / divisor);
+}
+
+#define DIV_U64_ROUND_UP(...) \
+	div_u64_round_up(__VA_ARGS__)
+
 static inline uint64_t
 mul_u32_u32(uint32_t a, uint32_t b)
 {
