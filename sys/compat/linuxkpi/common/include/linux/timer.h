@@ -81,6 +81,7 @@ extern void add_timer(struct timer_list *);
 extern void add_timer_on(struct timer_list *, int cpu);
 extern int del_timer(struct timer_list *);
 extern int del_timer_sync(struct timer_list *);
+extern int timer_delete(struct timer_list *);
 extern int timer_delete_sync(struct timer_list *);
 extern int timer_shutdown_sync(struct timer_list *);
 
