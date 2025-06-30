@@ -69,6 +69,8 @@
 #define	lower_32_bits(n)		((u32)(n))
 #define	upper_32_bits(n)		((u32)(((n) >> 16) >> 16))
 
+#define	__UNIQUE_ID(n) __PASTE(__PASTE(__UNIQUE_ID_, n), __COUNTER__)
+
 #define	WRITE_ONCE(x,v) do {		\
 	barrier();			\
 	(*(volatile __typeof(x) *)(uintptr_t)&(x)) = (v); \
