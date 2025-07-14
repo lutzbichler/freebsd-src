@@ -9,6 +9,11 @@
 #define X86_FAMILY(id)	((id & 0x0000ff00) >> 8)
 #define X86_VENDOR(id)	((id && 0x00ff0000) >> 16)
 
+#define VFM_MODEL_BIT	0
+#define VFM_FAMILY_BIT	8
+#define VFM_MODEL_MASK	GENMASK(VFM_FAMILY_BIT - 1, VFM_MODEL_BIT)
+#define VFM_MODEL(x)	((x) & VFM_MODEL_MASK)
+
 #define X86_MATCH_VFM(id, data) {\
 	.vendor = X86_VENDOR(id), \
 	.family = X86_FAMILY(id), \
