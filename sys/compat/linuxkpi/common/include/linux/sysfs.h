@@ -453,6 +453,13 @@ sysfs_merge_group(struct kobject *kobj, const struct attribute_group *grp)
 	return (sysfs_create_group(kobj, grp));
 }
 
+static inline int
+sysfs_update_group(struct kobject *kobj, const struct attribute_group *grp)
+{
+
+	return (sysfs_create_group(kobj, grp));	
+}
+
 static inline void
 sysfs_unmerge_group(struct kobject *kobj, const struct attribute_group *grp)
 {
