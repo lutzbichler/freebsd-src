@@ -24,6 +24,7 @@ extern suspend_state_t pm_suspend_target_state;
 #define PM_SUSPEND_PREPARE	1
 #define PM_HIBERNATION_PREPARE	2
 #define PM_POST_HIBERNATION	3
+#define PM_POST_SUSPEND	4
 
 static inline int
 pm_suspend_via_firmware(void)
