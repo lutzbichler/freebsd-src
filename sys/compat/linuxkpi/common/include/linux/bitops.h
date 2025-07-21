@@ -51,6 +51,18 @@
 #define	BITS_PER_TYPE(t)	(sizeof(t) * BITS_PER_BYTE)
 #define	BITS_TO_BYTES(n)	howmany((n), BITS_PER_BYTE)
 
+#define BIT_TYPE(t, nr)	(((typeof(t))1) << (nr))
+#define BIT_U8(nr)		BIT_TYPE(uint8_t, nr)
+#define BIT_U16(nr)	 	BIT_TYPE(uint16_t, nr)
+#define BIT_U32(nr)		BIT_TYPE(uint32_t, nr)
+#define BIT_U64(nr)		BIT_TYPE(uint64_t, nr)
+
+#define GENMASK_TYPE(t, h, l)	((((typeof(t))~0) >> (BITS_PER_TYPE(t) - (h) - 1)) & (((typeof(t))~0) << (l)))
+#define GENMASK_U8(h, l)	GENMASK_TYPE(uint8_t, h, l)
+#define GENMASK_U16(h, l)	GENMASK_TYPE(uint16_t, h, l)
+#define GENMASK_U32(h, l)	GENMASK_TYPE(uint32_t, h, l)
+#define GENMASK_U64(h, l)	GENMASK_TYPE(uint64_t, h, l)
+
 #define	hweight8(x)	bitcount((uint8_t)(x))
 #define	hweight16(x)	bitcount16(x)
 #define	hweight32(x)	bitcount32(x)
