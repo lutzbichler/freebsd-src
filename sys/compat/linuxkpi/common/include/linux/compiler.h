@@ -134,4 +134,6 @@
 
 #define	unreachable()		__builtin_unreachable()
 
+#define OPTIMIZER_HIDE_VAR(var)	__asm__	("" : "=r" (var) : "0" (var))                                         \
+
 #endif	/* _LINUXKPI_LINUX_COMPILER_H_ */
