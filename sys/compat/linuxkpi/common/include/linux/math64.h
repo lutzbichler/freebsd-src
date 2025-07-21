@@ -183,4 +183,11 @@ mul_u64_u32_shr(uint64_t x, uint32_t y, unsigned int shift)
 		(mul_u32_u32(hi, y) << (32 - shift));
 }
 
+#define DIV64_U64_ROUND_CLOSEST(x, divisor) ({	\
+	uint64_t __d = (divisor);		\
+	uint64_t __ret = (x) + __d / 2;		\
+	__ret /= __d;				\
+	__ret;					\
+})
+
 #endif /* _LINUXKPI_LINUX_MATH64_H */
