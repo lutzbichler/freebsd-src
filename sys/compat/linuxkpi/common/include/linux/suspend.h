@@ -45,4 +45,11 @@ unregister_pm_notifier(struct notifier_block *nb __unused)
 	return (0);
 }
 
+static inline bool
+pm_suspend_in_progress(void)
+{
+
+        return (pm_suspend_target_state != PM_SUSPEND_ON);
+}
+
 #endif	/* _LINUXKPI_LINUX_SUSPEND_H_ */
