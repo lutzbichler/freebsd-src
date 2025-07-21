@@ -13,5 +13,6 @@ struct ratelimit_state {
 
 #define ratelimit_state_init(x, y, z)
 #define ratelimit_set_flags(x, y)
+#define ratelimit_state_reset_interval(x, y)
 
 #endif
