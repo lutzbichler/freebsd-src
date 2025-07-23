@@ -44,6 +44,9 @@ extern wait_queue_head_t linux_var_waitq;
 #define	wait_var_event_interruptible(var, cond) \
 	wait_event_interruptible(linux_var_waitq, cond)
 
+#define	wait_var_event_timeout(var, cond, timeout) \
+	wait_event_timeout(linux_var_waitq, cond, timeout)
+
 static inline void
 clear_and_wake_up_bit(int bit, void *word)
 {
