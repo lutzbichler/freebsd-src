@@ -1894,7 +1894,7 @@ void
 lkpi_hex_dump(int(*_fpf)(void *, const char *, ...), void *arg1,
     const char *level, const char *prefix_str,
     const int prefix_type, const int rowsize, const int groupsize,
-    const void *buf, size_t len, const bool ascii)
+    const void *buf, size_t len, const bool ascii, const bool trailing_newline)
 {
 	typedef const struct { long long value; } __packed *print_64p_t;
 	typedef const struct { uint32_t value; } __packed *print_32p_t;
