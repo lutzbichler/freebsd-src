@@ -1,0 +1,9 @@
+/* Public domain */
+
+#ifndef _LINUXKPI_KUNIT_VISIBILITY_H_
+#define _LINUXKPI_KUNIT_VISIBILITY_H_
+
+#define	EXPORT_SYMBOL_IF_KUNIT(x)
+
+#endif /* _LINUXKPI_KUNIT_VISIBILITY_H_ */
+
