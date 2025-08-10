@@ -138,4 +138,7 @@ _uX_replace_bits(8)
 #define	FIELD_GET(_mask, _value)					\
 	((typeof(_mask))(((_value) & (_mask)) >> __bf_shf(_mask)))
 
+#define	FIELD_MAX(_mask)	                                        \
+        ((typeof(_mask))((_mask) >> __bf_shf(_mask)))
+
 #endif	/* _LINUXKPI_LINUX_BITFIELD_H */
