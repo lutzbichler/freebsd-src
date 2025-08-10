@@ -355,6 +355,14 @@ pin_user_pages_fast(unsigned long start, int nr_pages,
 	    start, nr_pages, !!(gup_flags & FOLL_WRITE), pages);
 }
 
+static inline int
+get_user_pages_fast(unsigned long start, int nr_pages,
+    unsigned int gup_flags, struct page **pages)
+{
+	return __get_user_pages_fast(
+	    start, nr_pages, gup_flags, pages);
+}
+
 extern long
 get_user_pages_remote(struct task_struct *, struct mm_struct *,
     unsigned long start, unsigned long nr_pages,
