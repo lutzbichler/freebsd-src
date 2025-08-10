@@ -41,6 +41,7 @@
 #include <vm/vm_extern.h>
 #include <vm/vm_kern.h>
 
+#define	__GFP_ACCOUNT   0
 #define	__GFP_NOWARN	0
 #define	__GFP_HIGHMEM	0
 #define	__GFP_ZERO	M_ZERO
