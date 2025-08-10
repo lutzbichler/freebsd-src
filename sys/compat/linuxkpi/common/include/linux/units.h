@@ -37,4 +37,6 @@
 #define	KHZ_PER_MHZ	1000UL
 #define	HZ_PER_MHZ	1000000UL
 
+#define	MICRO		1000000
+
 #endif /* _LINUXKPI_LINUX_UNITS_H_ */
