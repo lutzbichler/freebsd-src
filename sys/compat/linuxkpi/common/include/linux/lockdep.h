@@ -96,6 +96,8 @@ lockdep_is_held(void *__m __diagused)
 	return (true);
 #endif
 }
+#define lockdep_assert_held_read(m)	lockdep_assert_held(m)
+#define lockdep_assert_held_write(m)	lockdep_assert_held(m)
 #define	lockdep_is_held_type(_m, _t)	lockdep_is_held(_m)
 
 #define	might_lock(m)	do { } while (0)
