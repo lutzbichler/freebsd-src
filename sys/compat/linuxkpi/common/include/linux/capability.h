@@ -48,4 +48,11 @@ capable(const int tryme)
 	return (priv_check(curthread, tryme) == 0);
 }
 
+static inline bool
+perfmon_capable(void)
+{
+
+	return (false);
+}
+
 #endif /* _LINUXKPI_LINUX_CAPABILITY_H */
