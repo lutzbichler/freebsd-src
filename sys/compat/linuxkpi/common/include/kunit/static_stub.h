@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  * Copyright (c) 2025 The FreeBSD Foundation
  *
