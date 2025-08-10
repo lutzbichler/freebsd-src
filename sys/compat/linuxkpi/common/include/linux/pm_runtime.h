@@ -16,7 +16,7 @@
 #define pm_runtime_put_noidle(x) (void)(x)
 #define pm_runtime_forbid(x) (void)(x)
 #define pm_runtime_get_noresume(x) (void)(x)
-#define pm_runtime_put(x) (void)(x)
+#define pm_runtime_put(x) (int)(0)
 #define pm_runtime_enable(x) (void)(x)
 #define pm_runtime_disable(x) (void)(x)
 #define pm_runtime_autosuspend(x) (void)(x)
