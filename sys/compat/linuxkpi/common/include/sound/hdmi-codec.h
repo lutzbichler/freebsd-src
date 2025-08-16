@@ -16,6 +16,7 @@ struct hdmi_codec_ops {
 
 struct hdmi_codec_pdata {
 	const struct hdmi_codec_ops *ops;
+	u64 i2s_formats;
 	unsigned int max_i2s_channels;
 	bool i2s;
 	bool spdif;
