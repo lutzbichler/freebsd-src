@@ -383,4 +383,11 @@ mac_pton(const char *macin, uint8_t *macout)
 #define	DECLARE_FLEX_ARRAY(_t, _n)					\
     struct { struct { } __dummy_ ## _n; _t _n[0]; }
 
+#define might_sleep()                                                   \
+        WITNESS_WARN(WARN_GIANTOK | WARN_SLEEPOK, NULL, "might_sleep()")
+
+#define might_sleep_if(cond) do { \
+        if (cond) { might_sleep(); } \
+} while (0)
+
 #endif	/* _LINUXKPI_LINUX_KERNEL_H_ */
