@@ -1,5 +1,7 @@
 /*-
- * Copyright (c) 2018 Intel Corporation
+ * SPDX-License-Identifier: BSD-2-Clause
+ *
+ * Copyright (c) 2025 Jean-Sébastien Pédron <dumbbell@FreeBSD.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -24,55 +26,10 @@
  * SUCH DAMAGE.
  */
 
-#ifndef	_LINUXKPI_LINUX_SWAP_H_
-#define	_LINUXKPI_LINUX_SWAP_H_
+#ifndef _LINUXKPI_LINUX_REGULATOR_CONSUMER_H_
+#define _LINUXKPI_LINUX_REGULATOR_CONSUMER_H_
 
-#include <sys/param.h>
-#include <sys/domainset.h>
-#include <sys/queue.h>
-#include <sys/proc.h>
-#include <sys/pcpu.h>
+#include <linux/err.h>
+#include <linux/suspend.h>
 
-#include <vm/vm.h>
-#include <vm/swap_pager.h>
-#include <vm/vm_pageout.h>
-
-#include <linux/spinlock.h>
-#include <linux/mmzone.h>
-#include <linux/list.h>
-#include <linux/memcontrol.h>
-#include <linux/sched.h>
-#include <linux/fs.h>
-#include <linux/pagemap.h>
-#include <linux/atomic.h>
-#include <linux/page-flags.h>
-
-static inline long
-get_nr_swap_pages(void)
-{
-	int i, j;
-
-	/* NB: This could be done cheaply by obtaining swap_total directly */
-	swap_pager_status(&i, &j);
-	return i - j;
-}
-
-static inline int
-current_is_kswapd(void)
-{
-
-	return (curproc == pageproc);
-}
-
-static inline void
-folio_mark_accessed(struct folio *folio)
-{
-	mark_page_accessed(&folio->page);
-}
-
-static inline void
-check_move_unevictable_folios(struct folio_batch *fbatch)
-{
-}
-
-#endif
+#endif	/* _LINUXKPI_LINUX_REGULATOR_CONSUMER_H_ */
