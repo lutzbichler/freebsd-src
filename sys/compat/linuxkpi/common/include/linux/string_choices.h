@@ -37,6 +37,15 @@ str_yes_no(bool value)
 }
 
 static inline const char *
+str_true_false(bool value)
+{
+	if (value)
+		return "true";
+	else
+		return "false";
+}
+
+static inline const char *
 str_on_off(bool value)
 {
 	return (value ? "on" : "off");
