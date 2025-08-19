@@ -53,10 +53,17 @@ struct attribute_group {
 struct bin_attribute {
 	struct attribute	attr;
 	size_t			size;
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION < 61700
 	ssize_t (*read)(struct linux_file *, struct kobject *,
 			struct bin_attribute *, char *, loff_t, size_t);
 	ssize_t (*write)(struct linux_file *, struct kobject *,
 			 struct bin_attribute *, char *, loff_t, size_t);
+#else
+        ssize_t (*read)(struct linux_file *, struct kobject *,
+                        const struct bin_attribute *, char *, loff_t, size_t);
+        ssize_t (*write)(struct linux_file *, struct kobject *,
+                         const struct bin_attribute *, char *, loff_t, size_t);
+#endif
 	ssize_t (*read_new)(struct linux_file *, struct kobject *,
 			const struct bin_attribute *, char *, loff_t, size_t);
 	ssize_t (*write_new)(struct linux_file *, struct kobject *,
