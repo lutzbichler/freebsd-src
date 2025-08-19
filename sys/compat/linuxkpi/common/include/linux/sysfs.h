@@ -37,6 +37,8 @@
 #include <linux/stringify.h>
 #include <linux/mm.h>
 
+struct bin_attribute;
+
 struct sysfs_ops {
 	ssize_t (*show)(struct kobject *, struct attribute *, char *);
 	ssize_t (*store)(struct kobject *, struct attribute *, const char *,
@@ -44,10 +46,14 @@ struct sysfs_ops {
 };
 
 struct attribute_group {
-	const char		*name;
-	mode_t			(*is_visible)(struct kobject *,
-				    struct attribute *, int);
-	struct attribute	**attrs;
+	const char			*name;
+	mode_t				(*is_visible)(struct kobject *,
+							struct attribute *, int);
+	struct attribute		**attrs;
+
+	mode_t				(*is_bin_visible)(struct kobject *,
+							const struct bin_attribute *, int);
+	const struct bin_attribute	*const *bin_attrs;
 };
 
 struct bin_attribute {
