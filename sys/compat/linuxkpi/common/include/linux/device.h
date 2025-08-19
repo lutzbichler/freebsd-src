@@ -629,6 +629,8 @@ device_iommu_mapped(struct device *dev __unused)
 #define	dev_pm_set_driver_flags(dev, flags) do { \
 } while (0)
 
+#define	dev_fwnode(dev)	dev->fwnode
+
 static inline void
 linux_class_kfree(struct class *class)
 {
