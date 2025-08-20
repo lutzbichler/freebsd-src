@@ -335,7 +335,11 @@ file_inode(const struct linux_file *file)
 }
 
 static inline int
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION < 61701
 call_mmap(struct linux_file *file, struct vm_area_struct *vma)
+#else
+vfs_mmap(struct linux_file *file, struct vm_area_struct *vma)
+#endif
 {
 
 	return (file->f_op->mmap(file, vma));
