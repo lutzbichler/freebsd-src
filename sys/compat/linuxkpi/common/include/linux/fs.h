@@ -350,6 +350,12 @@ i_size_write(struct inode *inode, loff_t i_size)
 {
 }
 
+static inline ssize_t
+kernel_write(struct linux_file *file, const void *buf, size_t size, loff_t *pos)
+{
+	return (file->f_op->write(file, buf, size, pos));
+}
+
 static inline struct dentry *
 file_dentry(const struct linux_file *file)
 {
