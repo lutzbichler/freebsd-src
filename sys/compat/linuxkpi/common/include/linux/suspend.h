@@ -53,4 +53,11 @@ pm_suspend_in_progress(void)
         return (pm_suspend_target_state != PM_SUSPEND_ON);
 }
 
+static inline bool
+pm_hibernate_is_recovering(void)
+{
+
+	return false;
+}
+
 #endif	/* _LINUXKPI_LINUX_SUSPEND_H_ */
