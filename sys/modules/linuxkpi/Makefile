@@ -19,6 +19,7 @@ SRCS=	linux_compat.c \
 	linux_kthread.c \
 	linux_lock.c \
 	linux_netdev.c \
+	linux_math.c \
 	linux_page.c \
 	linux_pci.c \
 	linux_radix.c \
