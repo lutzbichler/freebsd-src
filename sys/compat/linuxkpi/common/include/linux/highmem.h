@@ -105,6 +105,13 @@ kmap_local_page_prot(struct page *page, pgprot_t prot)
 	return (kmap_atomic_prot(page, prot));
 }
 
+static inline void *
+kmap_local_page_try_from_panic(struct page *page)
+{
+
+	return (NULL);
+}
+
 static inline void
 kunmap(struct page *page)
 {
