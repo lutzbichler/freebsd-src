@@ -202,6 +202,9 @@ do {									\
 #define	cancel_delayed_work_sync(dwork) \
 	linux_cancel_delayed_work_sync(dwork)
 
+#define	disable_work_sync(work)	\
+	linux_cancel_work_sync(work)
+
 #define	flush_work(work) \
 	linux_flush_work(work)
 
