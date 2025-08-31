@@ -970,6 +970,16 @@ static inline int pci_iov_virtfn_devfn(struct pci_dev *dev, int id)
         return -ENOSYS;
 }
 
+static inline int pci_iov_vf_bar_get_sizes(struct pci_dev *dev, int resno, int num_vfs)
+{
+	return -ENOSYS;
+}
+
+static inline int pci_iov_vf_bar_set_size(struct pci_dev *dev, int resno, int num_vfs)
+{
+        return -ENOSYS;
+}
+
 static inline bool pci_is_pcie(struct pci_dev *dev)
 {
 	return !!pci_pcie_cap(dev);
