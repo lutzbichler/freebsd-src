@@ -12,6 +12,7 @@ struct pci_dev;
 #define VSEC_CAP_CRASHLOG	0x02
 
 struct intel_vsec_header {
+	uint8_t rev;
 	uint16_t id;
 	uint16_t length;
 	uint8_t entry_size;
