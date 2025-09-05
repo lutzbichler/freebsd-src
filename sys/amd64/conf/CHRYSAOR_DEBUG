@@ -1,5 +1,5 @@
 #
-# MEDUSA_DEBUG -- Kernel configuration file for FreeBSD/amd64
+# CHRYSAOR_DEBUG -- Kernel configuration file for FreeBSD/amd64
 #
 # For more information on this file, please read the config(5) manual page,
 # and/or the handbook section on Kernel Configuration Files:
@@ -19,7 +19,7 @@
 # $FreeBSD$
 
 cpu		HAMMER
-ident		MEDUSADBG
+ident		CHRYSAORDBG
 
 makeoptions	DEBUG=-g		# Build kernel with gdb(1) debug symbols
 makeoptions	WITH_CTF=1		# Run ctfconvert(1) for DTrace support
@@ -27,19 +27,20 @@ makeoptions	WITH_CTF=1		# Run ctfconvert(1) for DTrace support
 options 	SCHED_ULE		# ULE scheduler
 options 	NUMA			# Non-Uniform Memory Architecture support
 options 	PREEMPTION		# Enable kernel thread preemption
+options 	EXTERR_STRINGS
 options 	VIMAGE			# Subsystem virtualization, e.g. VNET
 options 	INET			# InterNETworking
 options 	INET6			# IPv6 communications protocols
 options 	IPSEC_SUPPORT		# Allow kldload of ipsec and tcpmd5
-options		NETLINK			# netlink(4) support
-options		ROUTE_MPATH		# Multipath routing support
-options		FIB_ALGO		# Modular fib lookups
+options 	IPSEC_OFFLOAD		# Inline ipsec offload infra
+options 	ROUTE_MPATH		# Multipath routing support
+options 	FIB_ALGO		# Modular fib lookups
 options 	TCP_OFFLOAD		# TCP offload
 options 	TCP_BLACKBOX		# Enhanced TCP event logging
 options 	TCP_HHOOK		# hhook(9) framework for TCP
-options		TCP_RFC7413		# TCP Fast Open
+options 	TCP_RFC7413		# TCP Fast Open
 options 	SCTP_SUPPORT		# Allow kldload of SCTP
-options		KERN_TLS		# TLS transmit & receive offload
+options 	KERN_TLS		# TLS transmit & receive offload
 options 	FFS			# Berkeley Fast Filesystem
 options 	SOFTUPDATES		# Enable FFS soft updates support
 options 	UFS_ACL			# Support for access control lists
@@ -64,6 +65,7 @@ options 	COMPAT_FREEBSD10	# Compatible with FreeBSD10
 options 	COMPAT_FREEBSD11	# Compatible with FreeBSD11
 options 	COMPAT_FREEBSD12	# Compatible with FreeBSD12
 options 	COMPAT_FREEBSD13	# Compatible with FreeBSD13
+options 	COMPAT_FREEBSD14	# Compatible with FreeBSD14
 options 	SCSI_DELAY=5000		# Delay (in ms) before probing SCSI
 options 	KTRACE			# ktrace(1) support
 options 	STACK			# stack(9) support
@@ -81,7 +83,7 @@ options 	MAC			# TrustedBSD MAC Framework
 options 	KDTRACE_FRAME		# Ensure frames are compiled in
 options 	KDTRACE_HOOKS		# Kernel DTrace hooks
 options 	DDB_CTF			# Kernel ELF linker loads CTF data
-options 	INCLUDE_CONFIG_FILE     # Include this file in kernel
+options 	INCLUDE_CONFIG_FILE	# Include this file in kernel
 
 # Debugging support.  Always need this:
 options 	KDB			# Enable kernel debugger support.
@@ -151,6 +153,7 @@ device		kbdmux			# keyboard multiplexer
 
 device		splash		# Splash screen and screen saver support
 
+# vt is the default video console driver
 device		vt
 device		vt_efifb
 
@@ -184,6 +187,7 @@ device		firmware	# firmware assist module
 device		bpf		# Berkeley packet filter
 
 # USB support
+device		ehci
 device		xhci
 device		usb
 device 		ums
@@ -212,9 +216,15 @@ device		uinput			# install /dev/uinput cdev
 # HID support
 device		hid			# Generic HID support
 options 	IICHID_SAMPLING		# Workaround missing GPIO INTR support
+options 	U2F_MAKE_UHID_ALIAS	# install /dev/uhid alias for /dev/u2f/
+
 device		iichid
 device		hidbus
 device		hidmap
 device		hconf
 device		hmt
 device		hms
+
+# EFI devices
+device		efidev			# EFI pseudo-device
+device		efirtc			# EFI RTC

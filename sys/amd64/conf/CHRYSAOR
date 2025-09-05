@@ -1,10 +1,10 @@
 #
-# MEDUSA_DEBUG -- Kernel configuration file for FreeBSD/amd64
+# CHRYSAOR -- Kernel configuration file for FreeBSD/amd64
 #
 # For more information on this file, please read the config(5) manual page,
 # and/or the handbook section on Kernel Configuration Files:
 #
-#    https://www.FreeBSD.org/doc/en_US.ISO8859-1/books/handbook/kernelconfig-config.html
+#    https://docs.freebsd.org/en/books/handbook/kernelconfig/#kernelconfig-config
 #
 # The handbook is also available locally in /usr/share/doc/handbook
 # if you've installed the doc distribution, otherwise always see the
@@ -16,30 +16,27 @@
 # If you are in doubt as to the purpose or necessity of a line, check first
 # in NOTES.
 #
-# $FreeBSD$
 
 cpu		HAMMER
-ident		MEDUSADBG
-
-makeoptions	DEBUG=-g		# Build kernel with gdb(1) debug symbols
-makeoptions	WITH_CTF=1		# Run ctfconvert(1) for DTrace support
+ident		CHRYSAOR
 
 options 	SCHED_ULE		# ULE scheduler
 options 	NUMA			# Non-Uniform Memory Architecture support
 options 	PREEMPTION		# Enable kernel thread preemption
+options 	EXTERR_STRINGS
 options 	VIMAGE			# Subsystem virtualization, e.g. VNET
 options 	INET			# InterNETworking
 options 	INET6			# IPv6 communications protocols
 options 	IPSEC_SUPPORT		# Allow kldload of ipsec and tcpmd5
-options		NETLINK			# netlink(4) support
-options		ROUTE_MPATH		# Multipath routing support
-options		FIB_ALGO		# Modular fib lookups
+options 	IPSEC_OFFLOAD		# Inline ipsec offload infra
+options 	ROUTE_MPATH		# Multipath routing support
+options 	FIB_ALGO		# Modular fib lookups
 options 	TCP_OFFLOAD		# TCP offload
 options 	TCP_BLACKBOX		# Enhanced TCP event logging
 options 	TCP_HHOOK		# hhook(9) framework for TCP
-options		TCP_RFC7413		# TCP Fast Open
+options 	TCP_RFC7413		# TCP Fast Open
 options 	SCTP_SUPPORT		# Allow kldload of SCTP
-options		KERN_TLS		# TLS transmit & receive offload
+options 	KERN_TLS		# TLS transmit & receive offload
 options 	FFS			# Berkeley Fast Filesystem
 options 	SOFTUPDATES		# Enable FFS soft updates support
 options 	UFS_ACL			# Support for access control lists
@@ -64,6 +61,7 @@ options 	COMPAT_FREEBSD10	# Compatible with FreeBSD10
 options 	COMPAT_FREEBSD11	# Compatible with FreeBSD11
 options 	COMPAT_FREEBSD12	# Compatible with FreeBSD12
 options 	COMPAT_FREEBSD13	# Compatible with FreeBSD13
+options 	COMPAT_FREEBSD14	# Compatible with FreeBSD14
 options 	SCSI_DELAY=5000		# Delay (in ms) before probing SCSI
 options 	KTRACE			# ktrace(1) support
 options 	STACK			# stack(9) support
@@ -81,31 +79,11 @@ options 	MAC			# TrustedBSD MAC Framework
 options 	KDTRACE_FRAME		# Ensure frames are compiled in
 options 	KDTRACE_HOOKS		# Kernel DTrace hooks
 options 	DDB_CTF			# Kernel ELF linker loads CTF data
-options 	INCLUDE_CONFIG_FILE     # Include this file in kernel
+options 	INCLUDE_CONFIG_FILE	# Include this file in kernel
 
 # Debugging support.  Always need this:
 options 	KDB			# Enable kernel debugger support.
 options 	KDB_TRACE		# Print a stack trace for a panic.
-# For full debugger support use (turn off in stable branch):
-options 	BUF_TRACKING		# Track buffer history
-options 	DDB			# Support DDB.
-options 	FULL_BUF_TRACKING	# Track more buffer history
-options 	GDB			# Support remote GDB.
-options 	DEADLKRES		# Enable the deadlock resolver
-options 	INVARIANTS		# Enable calls of extra sanity checking
-options 	INVARIANT_SUPPORT	# Extra sanity checks of internal structures, required by INVARIANTS
-options 	QUEUE_MACRO_DEBUG_TRASH	# Trash queue(2) internal pointers on invalidation
-options 	WITNESS			# Enable checks to detect deadlocks and cycles
-options 	WITNESS_SKIPSPIN	# Don't run witness on spinlocks for speed
-options 	MALLOC_DEBUG_MAXZONES=8	# Separate malloc(9) zones
-options 	VERBOSE_SYSINIT=0	# Support debug.verbose_sysinit, off by default
-
-# Kernel Sanitizers
-#options 	COVERAGE		# Generic kernel coverage. Used by KCOV
-#options 	KCOV			# Kernel Coverage Sanitizer
-# Warning: KUBSAN can result in a kernel too large for loader to load
-#options 	KUBSAN			# Kernel Undefined Behavior Sanitizer
-#options 	KCSAN			# Kernel Concurrency Sanitizer
 
 # Kernel dump features.
 options 	EKCD			# Support for encrypted kernel dumps
@@ -126,7 +104,9 @@ device		cpufreq
 device		acpi
 options 	IOMMU
 device		pci
-options		PCI_IOV
+options	PCI_IOV
+
+options	COMPAT_LINUXKPI
 
 # ATA controllers
 device		ahci		# AHCI-compatible SATA controllers
@@ -151,6 +131,7 @@ device		kbdmux			# keyboard multiplexer
 
 device		splash		# Splash screen and screen saver support
 
+# vt is the default video console driver
 device		vt
 device		vt_efifb
 
@@ -184,6 +165,7 @@ device		firmware	# firmware assist module
 device		bpf		# Berkeley packet filter
 
 # USB support
+device		ehci
 device		xhci
 device		usb
 device 		ums
@@ -212,9 +194,15 @@ device		uinput			# install /dev/uinput cdev
 # HID support
 device		hid			# Generic HID support
 options 	IICHID_SAMPLING		# Workaround missing GPIO INTR support
+options 	U2F_MAKE_UHID_ALIAS	# install /dev/uhid alias for /dev/u2f/
+
 device		iichid
 device		hidbus
 device		hidmap
 device		hconf
 device		hmt
 device		hms
+
+# EFI devices
+device		efidev			# EFI pseudo-device
+device		efirtc			# EFI RTC
