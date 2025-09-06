@@ -23,10 +23,12 @@ ident		MEDUSA
 options 	SCHED_ULE		# ULE scheduler
 options 	NUMA			# Non-Uniform Memory Architecture support
 options 	PREEMPTION		# Enable kernel thread preemption
+options 	EXTERR_STRINGS
 options 	VIMAGE			# Subsystem virtualization, e.g. VNET
 options 	INET			# InterNETworking
 options 	INET6			# IPv6 communications protocols
 options 	IPSEC_SUPPORT		# Allow kldload of ipsec and tcpmd5
+options 	IPSEC_OFFLOAD		# Inline ipsec offload infra
 options 	ROUTE_MPATH		# Multipath routing support
 options 	FIB_ALGO		# Modular fib lookups
 options 	TCP_OFFLOAD		# TCP offload
@@ -83,13 +85,6 @@ options 	INCLUDE_CONFIG_FILE     # Include this file in kernel
 options 	KDB			# Enable kernel debugger support.
 options 	KDB_TRACE		# Print a stack trace for a panic.
 
-# Kernel Sanitizers
-#options 	COVERAGE		# Generic kernel coverage. Used by KCOV
-#options 	KCOV			# Kernel Coverage Sanitizer
-# Warning: KUBSAN can result in a kernel too large for loader to load
-#options 	KUBSAN			# Kernel Undefined Behavior Sanitizer
-#options 	KCSAN			# Kernel Concurrency Sanitizer
-
 # Kernel dump features.
 options 	EKCD			# Support for encrypted kernel dumps
 options 	GZIO			# gzip-compressed kernel and user dumps
@@ -136,6 +131,7 @@ device		kbdmux			# keyboard multiplexer
 
 device		splash		# Splash screen and screen saver support
 
+# vt is the default video console driver
 device		vt
 device		vt_efifb
 
@@ -154,19 +150,21 @@ device		wlan_amrr	# AMRR transmit rate control algorithm
 # Pseudo devices.
 device		crypto			# core crypto support
 device		aesni			# AES-NI OpenCrypto module
-device		loop		# Network loopback
-device		rdrand_rng	# Intel Bull Mountain RNG
-device		ether		# Ethernet support
-device		vlan		# 802.1Q VLAN support
+device		loop			# Network loopback
+device		padlock_rng		# VIA Padlock RNG
+device		rdrand_rng		# Intel Bull Mountain RNG
+device		ether			# Ethernet support
+device		vlan			# 802.1Q VLAN support
 device		tuntap			# Packet tunnel.
-device		md		# Memory "disks"
-device		gif		# IPv6 and IPv4 tunneling
-device		firmware	# firmware assist module
+device		md			# Memory "disks"
+device		gif			# IPv6 and IPv4 tunneling
+device		firmware		# firmware assist module
+device		xz			# lzma decompression
 
 # The `bpf' device enables the Berkeley Packet Filter.
 # Be aware of the administrative consequences of enabling this!
 # Note that 'bpf' is required for DHCP.
-device		bpf		# Berkeley packet filter
+device		bpf			# Berkeley packet filter
 
 # USB support
 device		xhci
@@ -203,3 +201,7 @@ device		hidmap
 device		hconf
 device		hmt
 device		hms
+
+# EFI devices
+device		efidev			# EFI pseudo-device
+device		efirtc			# EFI RTC
