@@ -57,10 +57,10 @@
 #define	hweight64(x)	bitcount64(x)
 #define	hweight_long(x)	bitcountl(x)
 
-#define	HWEIGHT8(x)	(__builtin_popcountg((uint8_t)(x)))
-#define	HWEIGHT16(x)	(__builtin_popcountg((uint16_t)(x)))
-#define	HWEIGHT32(x)	(__builtin_popcountg((uint32_t)(x)))
-#define	HWEIGHT64(x)	(__builtin_popcountg((uint64_t)(x)))
+#define	HWEIGHT8(x)	(__const_bitcount8((uint8_t)(x)))
+#define	HWEIGHT16(x)	(__const_bitcount16((uint16_t)(x)))
+#define	HWEIGHT32(x)	(__const_bitcount32((uint32_t)(x)))
+#define	HWEIGHT64(x)	(__const_bitcount64((uint64_t)(x)))
 
 static inline int
 __ffs(int mask)
