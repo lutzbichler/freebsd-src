@@ -68,4 +68,13 @@ str_enable_disable(bool value)
 
 #define	str_disable_enable(_v)		str_enable_disable(!(_v))
 
+static inline const char *
+str_plural(size_t value)
+{
+	if (value == 1)
+		return "";
+	else
+		return "s";
+}
+
 #endif
