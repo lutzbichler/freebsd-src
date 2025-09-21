@@ -57,9 +57,15 @@ str_enable_disable(bool value)
 #define	str_disable_enable(_v)		str_enable_disable(!(_v))
 
 static inline const char *
+str_plural(size_t value)
+{
+	return (value == 1 ? "" : "s");
+}
+
+static inline const char *
 str_read_write(bool value)
 {
-	return (value ? "read" : "write");
+        return (value ? "read" : "write");
 }
 
 #endif
