@@ -1,5 +1,5 @@
 #
-# CHRYSAOR -- Kernel configuration file for FreeBSD/amd64
+# MEDUSA_DEBUG -- Kernel configuration file for FreeBSD/amd64
 #
 # For more information on this file, please read the config(5) manual page,
 # and/or the handbook section on Kernel Configuration Files:
