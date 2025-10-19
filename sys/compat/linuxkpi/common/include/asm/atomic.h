@@ -91,6 +91,12 @@ atomic_read(const atomic_t *v)
 }
 
 static inline int
+atomic_read_acquire(const atomic_t *v)
+{
+	return atomic_load_acq_int(&v->counter);
+}
+
+static inline int
 atomic_inc(atomic_t *v)
 {
 	return atomic_fetchadd_int(&v->counter, 1) + 1;
