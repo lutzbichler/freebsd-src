@@ -33,6 +33,7 @@
 #include <linux/device.h>
 #include <linux/err.h>
 #include <linux/dma-attrs.h>
+#include <linux/dma-direction.h>
 #include <linux/scatterlist.h>
 #include <linux/mm.h>
 #include <linux/page.h>
@@ -47,13 +48,6 @@
 #include <vm/pmap.h>
 
 #include <machine/bus.h>
-
-enum dma_data_direction {
-	DMA_BIDIRECTIONAL = 0,
-	DMA_TO_DEVICE = 1,
-	DMA_FROM_DEVICE = 2,
-	DMA_NONE = 3,
-};
 
 struct dma_map_ops {
 	void* (*alloc_coherent)(struct device *dev, size_t size,
