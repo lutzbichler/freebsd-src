@@ -97,6 +97,8 @@ const struct dev_pm_ops _name = {				\
 bool linuxkpi_device_can_wakeup(struct device *);
 #define	device_can_wakeup(_dev)		linuxkpi_device_can_wakeup(_dev)
 
+#define pm_ptr(_ptr) PTR_IF(IS_ENABLED(CONFIG_PM), (_ptr))
+
 static inline void
 pm_wakeup_event(struct device *dev __unused, unsigned int x __unused)
 {
