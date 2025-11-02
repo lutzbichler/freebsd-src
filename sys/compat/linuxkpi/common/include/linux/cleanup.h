@@ -183,4 +183,6 @@ static inline _t class_##_n##_create(_a)					\
 
 #endif /* LINUXKPI_VERSION */
 
+#define no_free_ptr(_p)	_p
+
 #endif	/* _LINUXKPI_LINUX_CLEANUP_H */
