@@ -32,7 +32,7 @@
 #include <sys/time.h>
 #include <linux/delay.h>
 
-#define	read_poll_timeout(_pollfp, _var, _cond, _us, _to, _early_sleep, ...)	\
+#define	poll_timeout_us(_op, _cond, _us, _to, _early_sleep) \
 ({										\
 	struct timeval __now, __end;						\
 	if (_to) {								\
@@ -45,7 +45,7 @@
 	if ((_early_sleep) && (_us) > 0)					\
 		usleep_range(_us, _us);						\
 	do {									\
-		(_var) = _pollfp(__VA_ARGS__);					\
+		_op;					\
 		if (_cond)							\
 			break;							\
 		if (_to) {							\
@@ -59,10 +59,14 @@
 	(_cond) ? 0 : (-ETIMEDOUT);						\
 })
 
+#define	read_poll_timeout(_pollfp, _var, _cond, _us, _to, _early_sleep, ...)	\
+	poll_timeout_us(_var = _pollfp(__VA_ARGS__), _cond, _us, _to, _early_sleep)
+
 #define readx_poll_timeout(_pollfp, _addr, _var, _cond, _us, _to)		\
 	read_poll_timeout(_pollfp, _var, _cond, _us, _to, false, _addr)
 
-#define	read_poll_timeout_atomic(_pollfp, _var, _cond, _us, _to, _early_sleep, ...)	\
+
+#define	poll_timeout_us_atomic(_op, _cond, _us, _to, _early_sleep) \
 ({										\
 	struct timeval __now, __end;						\
 	if (_to) {								\
@@ -75,7 +79,7 @@
 	if ((_early_sleep) && (_us) > 0)					\
 		DELAY(_us);							\
 	do {									\
-		(_var) = _pollfp(__VA_ARGS__);					\
+		_op;					\
 		if (_cond)							\
 			break;							\
 		if (_to) {							\
@@ -88,5 +92,8 @@
 	} while (1);								\
 	(_cond) ? 0 : (-ETIMEDOUT);						\
 })
+
+#define	read_poll_timeout_atomic(_pollfp, _var, _cond, _us, _to, _early_sleep, ...)	\
+	poll_timeout_us_atomic(_var = _pollfp(__VA_ARGS__), _cond, _us, _to, _early_sleep)
 
 #endif	/* _LINUXKPI_LINUX_IOPOLL_H */
