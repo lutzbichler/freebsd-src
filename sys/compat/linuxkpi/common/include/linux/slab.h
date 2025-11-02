@@ -56,11 +56,13 @@ MALLOC_DECLARE(M_KMALLOC);
 #define	kfree_const(ptr)		kfree(ptr)
 #define kfree_async(ptr)		kfree(ptr)		/* drm-kmod 5.4 compat */
 #define	vzalloc(size)			__vmalloc(size, GFP_KERNEL | __GFP_NOWARN | __GFP_ZERO, 0)
+#define	vcalloc(n, size)		vzalloc(array_size((n), (size)))
 #define	vfree(arg)			kfree(arg)
 #define	kvfree(arg)			kfree(arg)
 #define	vmalloc_node(size, node)	__vmalloc_node(size, GFP_KERNEL, node)
 #define	vmalloc_user(size)		__vmalloc(size, GFP_KERNEL | __GFP_ZERO, 0)
 #define	vmalloc(size)			__vmalloc(size, GFP_KERNEL, 0)
+#define	vmalloc_array(n, size)	vmalloc(array_size((n), (size)))
 
 /*
  * Prefix some functions with linux_ to avoid namespace conflict
