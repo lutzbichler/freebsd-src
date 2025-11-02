@@ -280,6 +280,7 @@ atomic_cmpxchg(atomic_t *v, int old, int new)
 		*__op = __p;							\
 	(__p == __o);								\
 })
+#define try_cmpxchg64(p, op, n)	try_cmpxchg(p, op, n)
 
 #define __atomic_try_cmpxchg(type, _p, _po, _n)		\
 ({							\
