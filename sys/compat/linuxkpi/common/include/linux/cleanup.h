@@ -110,4 +110,6 @@ static inline _t class_##_n##_ctor(_a)					\
 #define scoped_guard(_n, _a...)						\
 	__scoped_guard(_n, _l ## __COUNTER__, _a)
 
+#define no_free_ptr(_p)	_p
+
 #endif	/* _LINUXKPI_LINUX_CLEANUP_H */
