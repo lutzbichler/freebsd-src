@@ -42,6 +42,7 @@ struct backlight_properties {
 	int max_brightness;
 	int brightness;
 	int power;
+	int scale;
 };
 
 enum backlight_notification {
@@ -51,6 +52,11 @@ enum backlight_notification {
 
 enum backlight_update_reason {
 	BACKLIGHT_UPDATE_HOTKEY = 0
+};
+
+enum backlight_scale {
+	BACKLIGHT_SCALE_NON_LINEAR = 1,
+	BACKLIGHT_SCALE_LINEAR,
 };
 
 struct backlight_ops {
