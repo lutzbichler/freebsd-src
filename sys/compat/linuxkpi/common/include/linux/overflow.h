@@ -240,6 +240,32 @@ static inline bool __must_check __must_check_overflow(bool overflow)
 			      __overflows_type_constexpr(n, T),	\
 			      __overflows_type(n, T))
 
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION >= 61800
+#define range_overflows(start, size, max)			\
+({								\
+        typeof(start) start__ = (start); 			\
+        typeof(size) size__ = (size); 				\
+        typeof(max) max__ = (max); 				\
+        (void)(&start__ == &size__); 				\
+        (void)(&start__ == &max__); 				\
+        start__ >= max__ || size__ > max__ - start__; 		\
+})
+#define range_overflows_t(type, start, size, max)		\
+	range_overflows((type)start, (type)size, (type)max)
+
+#define range_end_overflows(start, size, max)			\
+({								\
+        typeof(start) start__ = (start);			\
+        typeof(size) size__ = (size);				\
+        typeof(max) max__ = (max);				\
+        (void)(&start__ == &size__);				\
+        (void)(&start__ == &max__);				\
+        start__ > max__ || size__ > max__ - start__;		\
+})
+#define range_end_overflows_t(type, start, size, max)		\
+        range_end_overflows((type)start, (type)size, (type)max)
+#endif /* #if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION >= 61800 */
+
 /**
  * castable_to_type - like __same_type(), but also allows for casted literals
  *
