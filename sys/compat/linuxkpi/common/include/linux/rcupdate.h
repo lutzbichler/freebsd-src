@@ -93,11 +93,17 @@ extern int linuxkpi_rcu_debug;
 	    offsetof(__typeof(*(ptr)), rcu_head));		\
 } while (0)
 
-#define	rcu_access_pointer(p)			\
-	((__typeof(*p) *)READ_ONCE(p))
+#define rcu_access_pointer(p)					\
+({								\
+	__typeof(*p) *__p = p;					\
+	((__typeof(*p) *)READ_ONCE(__p));			\
+})
 
-#define	rcu_dereference(p)			\
-	((__typeof(*p) *)READ_ONCE(p))
+#define rcu_dereference(p)					\
+({								\
+	__typeof(*p) *__p = p;					\
+	((__typeof(*p) *)READ_ONCE(__p));			\
+})
 
 #define	__rcu_var_name(n, f, l)						\
 	__CONCAT(__CONCAT(__CONCAT(rcu_, n), _), __COUNTER__)
