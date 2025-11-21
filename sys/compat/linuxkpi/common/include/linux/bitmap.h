@@ -487,4 +487,49 @@ bitmap_free(const unsigned long *bitmap)
 	kfree(bitmap);
 }
 
+static inline unsigned long
+bitmap_read(const unsigned long *src, unsigned long start, unsigned long nr)
+{
+        size_t i = BIT_WORD(start);
+        unsigned long off, space, low, high;
+
+        if (nr == 0 || nr > BITS_PER_LONG)
+            return 0;
+
+	off = start % BITS_PER_LONG;
+	space = BITS_PER_LONG - off;
+
+        if (space >= nr)
+            return (src[i] >> off) & BITMAP_LAST_WORD_MASK(nr);
+
+        low = src[i] & BITMAP_FIRST_WORD_MASK(start);
+        high = src[i + 1] & BITMAP_LAST_WORD_MASK(start + nr);
+        return (low >> off) | (high << space);
+}
+
+static inline void
+bitmap_write(unsigned long *dst, unsigned long src, unsigned long start,
+	unsigned long nr)
+{
+        size_t i;
+        unsigned long off, space, mask;
+
+        if (nr == 0 || nr > BITS_PER_LONG)
+                return;
+
+        mask = BITMAP_LAST_WORD_MASK(nr);
+        src &= mask;
+        off = start % BITS_PER_LONG;
+        space = BITS_PER_LONG - off;
+        i = BIT_WORD(start);
+
+        dst[i] &= (space >= nr ? (~(mask << off)) : ~BITMAP_FIRST_WORD_MASK(start));
+        dst[i] |= src << off;
+        if (space >= nr)
+            return;
+
+        dst[i + 1] &= BITMAP_FIRST_WORD_MASK(start + nr);
+        dst[i + 1] |= (src >> space);
+}
+
 #endif					/* _LINUXKPI_LINUX_BITMAP_H_ */
