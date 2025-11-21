@@ -464,6 +464,13 @@ static inline void list_cut_position(struct list_head *list,
 		__list_cut_position(list, head, entry);
 }
 
+static inline int list_is_head(const struct list_head *list,
+			       const struct list_head *head)
+{
+
+	return (list == head);
+}
+
 static inline int list_is_first(const struct list_head *list,
 				const struct list_head *head)
 {
