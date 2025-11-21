@@ -57,7 +57,14 @@ static inline bool
 pm_hibernate_is_recovering(void)
 {
 
-	return false;
+	return (false);
+}
+
+static inline bool
+pm_hibernation_mode_is_suspend(void)
+{
+
+	return (false);
 }
 
 #endif	/* _LINUXKPI_LINUX_SUSPEND_H_ */
