@@ -88,6 +88,12 @@ memdup_user_nul(const void *ptr, size_t len)
 }
 
 static inline void *
+memdup_array_user(const void *ptr, size_t count, size_t size)
+{
+	return (memdup_user(ptr, size_mul(count, size)));
+}
+
+static inline void *
 kmemdup(const void *src, size_t len, gfp_t gfp)
 {
 	void *dst;
@@ -114,6 +120,27 @@ kvmemdup(const void *src, size_t len, gfp_t gfp)
 	if (dst != NULL)
 		memcpy(dst, src, len);
 	return (dst);
+}
+
+static inline void *
+vmemdup_user(const void *ptr, size_t len)
+{
+        void *retval;
+        int error;
+
+        retval = vmalloc(len);
+        error = linux_copyin(ptr, retval, len);
+        if (error != 0) {
+                vfree(retval);
+                return (ERR_PTR(error));
+        }
+        return (retval);
+}
+
+static inline void *
+vmemdup_array_user(const void *ptr, size_t count, size_t size)
+{
+	return (vmemdup_user(ptr, size_mul(count, size)));
 }
 
 static inline char *
