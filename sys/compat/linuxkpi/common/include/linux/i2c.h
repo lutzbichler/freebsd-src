@@ -117,10 +117,14 @@ struct i2c_adapter_quirks {
 int lkpi_i2c_add_adapter(struct i2c_adapter *adapter);
 int lkpi_i2c_del_adapter(struct i2c_adapter *adapter);
 
+int lkpi_devm_i2c_add_adapter(struct device *dev, struct i2c_adapter *adapter);
+
 int lkpi_i2cbb_transfer(struct i2c_adapter *adapter, struct i2c_msg *msgs, int nmsgs);
 
 #define	i2c_add_adapter(adapter)	lkpi_i2c_add_adapter(adapter)
 #define	i2c_del_adapter(adapter)	lkpi_i2c_del_adapter(adapter)
+
+#define	devm_i2c_add_adapter(dev, adapter)	lkpi_devm_i2c_add_adapter(dev, adapter)
 
 #define	i2c_get_adapter(x)	NULL
 #define	i2c_put_adapter(x)
