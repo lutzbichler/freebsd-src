@@ -270,6 +270,8 @@ extern int linuxkpi_debug;
 
 #define _RET_IP_		__builtin_return_address(0)
 
+#define _THIS_IP_  ({ __label__ __here; __here: (unsigned long)&&__here; })
+
 #define offsetofend(t, m)	\
         (offsetof(t, m) + sizeof((((t *)0)->m)))
 
