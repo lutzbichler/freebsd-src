@@ -379,3 +379,9 @@ out:
 	sx_xunlock(&lkpi_sx_i2c);
 	return (rv);
 }
+
+int
+lkpi_devm_i2c_add_adapter(struct device *dev, struct i2c_adapter *adapter)
+{
+	return (lkpi_iic_add_adapter(dev->bsddev, adapter));	
+}
