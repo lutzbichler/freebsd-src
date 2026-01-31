@@ -25,6 +25,9 @@ enum kmsg_dump_reason {
 	KMSG_DUMP_MAX
 };
 
+struct kmsg_dump_iter {
+};
+
 struct kmsg_dumper {
 	struct list_head list;
 	void (*dump)(struct kmsg_dumper *dumper, enum kmsg_dump_reason reason);
@@ -46,6 +49,21 @@ kmsg_dump_unregister(struct kmsg_dumper *dumper)
 	pr_debug("TODO");
 
 	return (-EINVAL);
+}
+
+static inline void
+kmsg_dump_rewind(struct kmsg_dump_iter *iter)
+{
+	pr_debug("TODO");
+}
+
+static inline bool
+kmsg_dump_get_buffer(struct kmsg_dump_iter *iter, bool syslog,
+                     char *buf, size_t size, size_t *len_out)
+{
+	pr_debug("TODO");
+
+	return (false);
 }
 
 #endif
