@@ -25,12 +25,21 @@ enum kmsg_dump_reason {
 	KMSG_DUMP_MAX
 };
 
+struct kmsg_dump_detail {
+	enum kmsg_dump_reason reason;
+	const char *description;
+};
+
 struct kmsg_dump_iter {
 };
 
 struct kmsg_dumper {
 	struct list_head list;
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION >= 61200
+	void (*dump)(struct kmsg_dumper *dumper, struct kmsg_dump_detail *detail);
+#else
 	void (*dump)(struct kmsg_dumper *dumper, enum kmsg_dump_reason reason);
+#endif
 	enum kmsg_dump_reason max_reason;
 	bool registered;
 };
