@@ -20,6 +20,7 @@
 cpu		HAMMER
 ident		CHRYSAOR
 
+options 	SCHED_4BSD		# 4BSD scheduler
 options 	SCHED_ULE		# ULE scheduler
 options 	NUMA			# Non-Uniform Memory Architecture support
 options 	PREEMPTION		# Enable kernel thread preemption
