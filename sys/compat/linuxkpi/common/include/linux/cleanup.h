@@ -12,7 +12,7 @@
 
 #include <linux/err.h>
 
-#define	CLEANUP_NAME(_n, _s)	__CONCAT(__CONCAT(cleanup_, _n), _s)
+#define	CLEANUP_NAME(_n, _s)	__CONCAT(__CONCAT(class_, _n), _s)
 
 #define	__cleanup(_f)		__attribute__((__cleanup__(_f)))
 
@@ -160,5 +160,27 @@ _l:									\
 
 #define	scoped_guard(_n, ...)						\
     _scoped_guard(_n, ___label_ ## __COUNTER__, ##__VA_ARGS__)
+
+/* DEFINE_CLASS clashes with the FreeBSD api. Use the Linux version,
+   if LINUXKPI_VERSION is defined */
+#ifdef LINUXKPI_VERSION
+
+#undef DEFINE_CLASS
+#define DEFINE_CLASS(_n, _t, _d, _c, _a...) \
+typedef _t class_##_n##_##t;					\
+static inline void class_##_n##_destroy(_t *obj)				\
+{									\
+    _t _T = *obj; _d;							\
+}									\
+static inline _t class_##_n##_create(_a)					\
+{									\
+    _t obj = _c;							\
+     return obj;							\
+}
+
+#define CLASS(_n, _v)							\
+        class_##_n##_t _v __cleanup(class_##_n##_destroy) = class_##_n##_create
+
+#endif /* LINUXKPI_VERSION */
 
 #endif	/* _LINUXKPI_LINUX_CLEANUP_H */

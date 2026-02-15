@@ -111,8 +111,10 @@ struct kobjop_desc {
  * Define a class with no base classes (api backward-compatible. with
  * FreeBSD-5.1 and earlier).
  */
+#ifndef DEFINE_CLASS
 #define DEFINE_CLASS(name, methods, size)     		\
 DEFINE_CLASS_0(name, name ## _class, methods, size)
+#endif
 
 /*
  * Define a class with no base classes. Use like this:
