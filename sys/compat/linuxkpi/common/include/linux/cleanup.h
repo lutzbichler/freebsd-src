@@ -50,7 +50,7 @@
 #define	_guard(_n, _x)							\
     DECLARE(_n, _x)
 #define	guard(_n)							\
-    _guard(_n, guard_ ## _n ## _ ## __COUNTER__)
+    _guard(_n, __CONCAT(guard_, __CONCAT(_n, __CONCAT(_, __COUNTER__))))
 
 #define	DEFINE_FREE(_n, _t, _f)						\
     static inline void							\
@@ -159,7 +159,7 @@ _l:									\
 		} else
 
 #define	scoped_guard(_n, ...)						\
-    _scoped_guard(_n, ___label_ ## __COUNTER__, ##__VA_ARGS__)
+    _scoped_guard(_n, __CONCAT(___label_, __COUNTER__), ##__VA_ARGS__)
 
 /* DEFINE_CLASS clashes with the FreeBSD api. Use the Linux version,
    if LINUXKPI_VERSION is defined */
