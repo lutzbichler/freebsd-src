@@ -62,10 +62,18 @@ str_plural(size_t value)
 	return (value == 1 ? "" : "s");
 }
 
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION >= 61300
 static inline const char *
 str_read_write(bool value)
 {
         return (value ? "read" : "write");
 }
+
+static inline const char *
+str_up_down(bool value)
+{
+        return (value ? "up" : "down");
+}
+#endif
 
 #endif
