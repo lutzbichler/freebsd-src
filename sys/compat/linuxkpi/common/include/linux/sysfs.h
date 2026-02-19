@@ -68,7 +68,13 @@ struct attribute_group {
 	mode_t			(*is_visible)(struct kobject *,
 				    struct attribute *, int);
 	struct attribute	**attrs;
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION < 61701
 	struct bin_attribute	**bin_attrs;
+#else
+	mode_t          (*is_bin_visible)(struct kobject *,
+                    const struct bin_attribute *, int);
+	const struct bin_attribute	*const *bin_attrs;
+#endif
 };
 
 #define	__ATTR(_name, _mode, _show, _store) {				\
@@ -401,7 +407,11 @@ static inline int
 sysfs_create_group(struct kobject *kobj, const struct attribute_group *grp)
 {
 	struct attribute **attr;
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION < 61701
 	struct bin_attribute **bin_attr;
+#else
+	const struct bin_attribute *const *bin_attr;
+#endif
 	struct sysctl_oid *oidp;
 
 	/* Don't create the group node if grp->name is undefined. */
