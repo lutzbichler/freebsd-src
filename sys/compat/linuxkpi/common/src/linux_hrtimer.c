@@ -130,7 +130,8 @@ linux_hrtimer_start_range_ns(struct hrtimer *hrtimer, ktime_t time,
 	mtx_unlock(&hrtimer->mtx);
 }
 
-void
+
+u64
 linux_hrtimer_forward_now(struct hrtimer *hrtimer, ktime_t interval)
 {
 
@@ -138,4 +139,5 @@ linux_hrtimer_forward_now(struct hrtimer *hrtimer, ktime_t interval)
 	callout_reset_sbt(&hrtimer->callout, nstosbt(ktime_to_ns(interval)),
 	    nstosbt(hrtimer->precision), hrtimer_call_handler, hrtimer, 0);
 	mtx_unlock(&hrtimer->mtx);
+	return (0);
 }

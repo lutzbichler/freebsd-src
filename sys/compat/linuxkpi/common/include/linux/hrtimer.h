@@ -83,9 +83,8 @@ struct hrtimer {
 	linux_hrtimer_start_range_ns(hrtimer, time, prec);	\
 } while (0)
 
-#define	hrtimer_forward_now(hrtimer, interval) do {		\
-	linux_hrtimer_forward_now(hrtimer, interval);		\
-} while (0)
+#define	hrtimer_forward_now(hrtimer, interval) \
+	linux_hrtimer_forward_now(hrtimer, interval);
 
 bool	linux_hrtimer_active(struct hrtimer *);
 int	linux_hrtimer_try_to_cancel(struct hrtimer *);
@@ -94,6 +93,6 @@ void	linux_hrtimer_init(struct hrtimer *);
 void	linux_hrtimer_set_expires(struct hrtimer *, ktime_t);
 void	linux_hrtimer_start(struct hrtimer *, ktime_t);
 void	linux_hrtimer_start_range_ns(struct hrtimer *, ktime_t, int64_t);
-void	linux_hrtimer_forward_now(struct hrtimer *, ktime_t);
+u64		linux_hrtimer_forward_now(struct hrtimer *, ktime_t);
 
 #endif /* _LINUXKPI_LINUX_HRTIMER_H_ */
