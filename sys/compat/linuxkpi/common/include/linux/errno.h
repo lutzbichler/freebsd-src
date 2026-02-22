@@ -72,5 +72,6 @@
 #define	ENOPKG		536
 #define	EREMCHG		537
 #define	EKEYREJECTED	538
+#define	EUCLEAN		539
 
 #endif					/* _LINUXKPI_LINUX_ERRNO_H_ */
