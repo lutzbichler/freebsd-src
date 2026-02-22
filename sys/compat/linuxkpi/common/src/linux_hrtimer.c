@@ -44,7 +44,7 @@ hrtimer_call_handler(void *arg)
 
 	if (ret == HRTIMER_RESTART) {
 		callout_schedule_sbt(&hrtimer->callout,
-		    nstosbt(hrtimer->expires), nstosbt(hrtimer->precision), 0);
+		    nstosbt(hrtimer->node.expires), nstosbt(hrtimer->precision), 0);
 	} else {
 		callout_deactivate(&hrtimer->callout);
 	}
@@ -108,7 +108,7 @@ linux_hrtimer_init(struct hrtimer *hrtimer)
 void
 linux_hrtimer_set_expires(struct hrtimer *hrtimer, ktime_t time)
 {
-	hrtimer->expires = ktime_to_ns(time);
+	hrtimer->node.expires = ktime_to_ns(time);
 }
 
 void
