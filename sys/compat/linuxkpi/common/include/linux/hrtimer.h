@@ -43,11 +43,15 @@ enum hrtimer_restart {
 	HRTIMER_NORESTART,
 };
 
+struct hrtimer_node {
+	s64 expires;
+};
+
 struct hrtimer {
 	enum hrtimer_restart (*function)(struct hrtimer *);
 	struct mtx mtx;
 	struct callout callout;
-	s64 expires;	/* relative time in nanoseconds */
+	struct hrtimer_node node;
 	s64 precision;	/* in nanoseconds */
 };
 
