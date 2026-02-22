@@ -10,6 +10,7 @@ struct ratelimit_state {
 	int name __used = 1;
 
 #define __ratelimit(x)	(1)
+#define ___ratelimit(x,y)	(1)
 
 #define ratelimit_state_init(x, y, z)
 #define ratelimit_set_flags(x, y)
