@@ -36,6 +36,8 @@
 #include <sys/types.h>
 #include <sys/tree.h>
 
+#include <linux/rcupdate.h>
+
 struct rb_node {
 	RB_ENTRY(rb_node)	__entry;
 };
