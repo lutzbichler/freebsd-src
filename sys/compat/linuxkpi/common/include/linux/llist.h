@@ -75,6 +75,13 @@ init_llist_head(struct llist_head *head)
 	head->first = NULL;
 }
 
+static inline void
+init_llist_node(struct llist_node *node)
+{
+        WRITE_ONCE(node->next, node);
+}
+
+
 static inline bool
 llist_empty(struct llist_head *head)
 {
