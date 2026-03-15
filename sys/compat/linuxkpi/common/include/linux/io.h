@@ -37,6 +37,7 @@
 #include <linux/compiler.h>
 #include <linux/err.h>
 #include <asm-generic/io.h>
+#include <linux/sizes.h>
 #include <linux/types.h>
 #if !defined(__arm__)
 #include <asm/set_memory.h>
