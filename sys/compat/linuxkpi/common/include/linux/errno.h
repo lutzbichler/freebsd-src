@@ -73,5 +73,6 @@
 #define	EREMCHG		537
 #define	EKEYREJECTED	538
 #define	EUCLEAN		539
+#define	ESTRPIPE	540
 
 #endif					/* _LINUXKPI_LINUX_ERRNO_H_ */
