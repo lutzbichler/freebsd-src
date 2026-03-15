@@ -405,5 +405,11 @@ dma_unmap_sgtable(struct device *dev, struct sg_table *sgt,
 	dma_unmap_sg_attrs(dev, sgt->sgl, sgt->nents, dir, attrs);
 }
 
+static inline bool
+dma_addressing_limited(struct device *dev __unused)
+{
+
+	return (false);
+}
 
 #endif	/* _LINUXKPI_LINUX_DMA_MAPPING_H_ */
