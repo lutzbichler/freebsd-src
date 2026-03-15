@@ -33,6 +33,14 @@
 #include <linux/slab.h>
 #include <linux/gfp.h>
 
+struct kfifo {
+		size_t		total;
+		size_t		count;
+		size_t		first;
+		size_t		last;
+		void*		head;
+};
+
 /*
  * INIT_KFIFO() is used to initialize the structure declared with
  * DECLARE_KFIFO(). It doesn't work with DECLARE_KFIFO_PTR().
@@ -46,7 +54,8 @@
 	})
 
 #define	DECLARE_KFIFO(_name, _type, _size)				\
-	struct kfifo_ ## _name {					\
+	union kfifo_ ## _name {					\
+		struct kfifo kfifo;					\
 		size_t		total;					\
 		size_t		count;					\
 		size_t		first;					\
@@ -55,7 +64,8 @@
 	} _name
 
 #define	DECLARE_KFIFO_PTR(_name, _type)					\
-	struct kfifo_ ## _name {					\
+	union kfifo_ ## _name {					\
+		struct kfifo kfifo;					\
 		size_t		total;					\
 		size_t		count;					\
 		size_t		first;					\
@@ -135,6 +145,31 @@
 	kfree((_kf)->head);						\
 	(_kf)->head = NULL;						\
 	(_kf)->total = (_kf)->count = (_kf)->first = (_kf)->last = 0;	\
+})
+
+#define kfifo_in_spinlocked(_kf, _s, _n, _l)	\
+({												\
+	unsigned int _ret;							\
+	spin_lock(_l);								\
+	_ret = 0;									\
+	spin_unlock(_l);							\
+	_ret;										\
+})
+
+#define kfifo_out_spinlocked(_kf, _s, _n, _l)	\
+({												\
+	unsigned int _ret;							\
+	spin_lock(_l);								\
+	_ret = 0;									\
+	spin_unlock(_l);							\
+	_ret;										\
+})
+
+#define kfifo_out_peek(_kf, _s, _n)				\
+({												\
+	unsigned int _ret;							\
+	_ret = 0;									\
+	_ret;										\
 })
 
 #endif	/* _LINUXKPI_LINUX_KFIFO_H_*/
