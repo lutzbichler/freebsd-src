@@ -49,6 +49,7 @@
 #define	__GFP_ZERO	M_ZERO
 #define	__GFP_NOMEMALLOC 0
 #define	__GFP_RECLAIM   0
+#define	__GFP_DIRECT_RECLAIM	0
 #define	__GFP_RECLAIMABLE   0
 #define	__GFP_RETRY_MAYFAIL 0
 #define	__GFP_MOVABLE	0
