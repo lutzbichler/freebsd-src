@@ -576,7 +576,7 @@ sysfs_emit_at(char *buf, int at, const char *fmt, ...)
 }
 
 static inline int
-_sysfs_match_string(const char * const *a, size_t l, const char *s)
+__sysfs_match_string(const char * const *a, size_t l, const char *s)
 {
 	const char *p;
 	int i;
@@ -591,7 +591,7 @@ _sysfs_match_string(const char * const *a, size_t l, const char *s)
 
 	return (-ENOENT);
 }
-#define	sysfs_match_string(a, s)	_sysfs_match_string(a, ARRAY_SIZE(a), s)
+#define	sysfs_match_string(a, s)	__sysfs_match_string(a, ARRAY_SIZE(a), s)
 
 #define sysfs_attr_init(attr) do {} while(0)
 
