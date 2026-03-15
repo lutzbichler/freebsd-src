@@ -4724,6 +4724,8 @@ compat/linuxkpi/common/src/linux_work.c		optional compat_linuxkpi \
 	compile-with "${LINUXKPI_C}"
 compat/linuxkpi/common/src/linux_xarray.c	optional compat_linuxkpi \
 	compile-with "${LINUXKPI_C}"
+compat/linuxkpi/common/src/linux_mempool.c       optional compat_linuxkpi \
+        compile-with "${LINUXKPI_C}"
 compat/linuxkpi/common/src/lkpi_iic_if.m	optional compat_linuxkpi
 
 compat/linuxkpi/common/src/linux_seq_file.c	optional compat_linuxkpi | lindebugfs \
