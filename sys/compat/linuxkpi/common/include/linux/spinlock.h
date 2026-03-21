@@ -196,6 +196,11 @@ typedef struct raw_spinlock {
 /*
  * cleanup.h related pre-defined cases.
  */
+DEFINE_LOCK_GUARD_1(spinlock,
+	spinlock_t,
+    spin_lock(_T->lock),
+    spin_unlock(_T->lock))
+
 DEFINE_LOCK_GUARD_1(spinlock_irqsave,
     spinlock_t,
     spin_lock_irqsave(_T->lock, _T->flags),
