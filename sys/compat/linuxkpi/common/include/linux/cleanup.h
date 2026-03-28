@@ -46,6 +46,36 @@
 	if (_T) { _unlock; };						\
     }
 
+#define	DEFINE_GUARD_COND(_n, _suffix, _lock, _cond)			\
+									\
+    typedef CLEANUP_NAME(_n, _t)					\
+       CLEANUP_NAME(__CONCAT(_n, _suffix), _t);				\
+									\
+    static inline void							\
+    CLEANUP_NAME(__CONCAT(_n, _suffix), _destroy)(			\
+       CLEANUP_NAME(__CONCAT(_n, _suffix), _t) *t)			\
+    {									\
+       CLEANUP_NAME(_n, _destroy)(t);					\
+    }									\
+									\
+    static inline void *						\
+    CLEANUP_NAME(__CONCAT(_n, _suffix), _ptr)(				\
+       CLEANUP_NAME(__CONCAT(_n, _suffix), _t) *t)			\
+    {									\
+       return (*t);							\
+    }									\
+									\
+    static inline CLEANUP_NAME(__CONCAT(_n, _suffix), _t)		\
+    CLEANUP_NAME(__CONCAT(_n, _suffix), _create)(			\
+       CLEANUP_NAME(_n, _t) _T)						\
+    {									\
+       int _RET = _lock;						\
+									\
+       if (!(_cond))							\
+           _T = NULL;							\
+       return (_T);							\
+    }
+
 /* We need to keep these calls unique. */
 #define	_guard(_n, _x)							\
     DECLARE(_n, _x)
@@ -155,24 +185,39 @@
 	({ goto _l; }))							\
 		if (0) {						\
 _l:									\
-			break;						\
+		    break;						\
 		} else
 
 #define	scoped_guard(_n, ...)						\
     _scoped_guard(_n, __CONCAT(___label_, __COUNTER__), ##__VA_ARGS__)
+
+#define	_scoped_cond_guard(_n, _l, _f, ...)				\
+    for (DECLARE(_n, _scoped)(__VA_ARGS__);				\
+        1 /*__guard_ptr(_n)(&_scoped) || !__is_cond_ptr(_n) */;		\
+        ({ goto _l; }))							\
+                if (0) {						\
+_l:									\
+                    break;						\
+                } else if (!__guard_ptr(_n)(&_scoped)) {		\
+                    _f;							\
+                } else
+
+#define	scoped_cond_guard(_n, _f, ...)					\
+    _scoped_cond_guard(_n, __CONCAT(___label_, __COUNTER__), _f, ##__VA_ARGS__)
+
 
 /* DEFINE_CLASS clashes with the FreeBSD api. Use the Linux version,
    if LINUXKPI_VERSION is defined */
 #ifdef LINUXKPI_VERSION
 
 #undef DEFINE_CLASS
-#define DEFINE_CLASS(_n, _t, _d, _c, _a...) \
-typedef _t class_##_n##_##t;					\
-static inline void class_##_n##_destroy(_t *obj)				\
+#define DEFINE_CLASS(_n, _t, _d, _c, _a...)				\
+typedef _t class_##_n##_##t;						\
+static inline void class_##_n##_destroy(_t *obj)			\
 {									\
     _t _T = *obj; _d;							\
 }									\
-static inline _t class_##_n##_create(_a)					\
+static inline _t class_##_n##_create(_a)				\
 {									\
     _t obj = _c;							\
      return obj;							\
