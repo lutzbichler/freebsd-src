@@ -401,6 +401,29 @@ simple_read_from_buffer(void __user *dest, size_t read_size, loff_t *ppos,
 	return (num_read);
 }
 
+static inline ssize_t
+simple_write_to_buffer(void *dest, size_t write_size, loff_t *ppos,
+       const void __user *orig, size_t buf_size)
+{
+	void *write_pos = ((char *) dest) + *ppos;
+	size_t buf_remain = buf_size - *ppos;
+	ssize_t num_written;
+
+	if (*ppos >= buf_size || write_size == 0)
+		return (0);
+
+	if (write_size > buf_remain)
+		write_size = buf_remain;
+
+	/* copy from user returns number of bytes NOT written */
+	num_written = write_size - copy_from_user(write_pos, orig, write_size);
+	if (num_written == 0)
+		return -EFAULT;
+	*ppos += num_written;
+
+	return (write_size);
+}
+
 MALLOC_DECLARE(M_LSATTR);
 
 #define	__DEFINE_SIMPLE_ATTRIBUTE(__fops, __get, __set, __fmt, __wrfunc)\
