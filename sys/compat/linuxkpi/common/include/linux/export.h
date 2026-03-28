@@ -27,5 +27,6 @@
 
 #define	EXPORT_SYMBOL(name)
 #define	EXPORT_SYMBOL_GPL(name)
+#define	EXPORT_SYMBOL_FOR_MODULES(func, name)
 
 #endif
