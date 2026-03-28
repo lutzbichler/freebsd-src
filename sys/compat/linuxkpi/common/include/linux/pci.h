@@ -971,7 +971,13 @@ static inline int pci_iov_vf_bar_get_sizes(struct pci_dev *dev, int resno, int n
 
 static inline int pci_iov_vf_bar_set_size(struct pci_dev *dev, int resno, int num_vfs)
 {
-        return -ENOSYS;
+    return -ENOSYS;
+}
+
+static inline void *
+pci_iov_get_pf_drvdata(struct pci_dev *dev, struct pci_driver *pf_driver)
+{
+	return ERR_PTR(-EINVAL);
 }
 
 static inline bool pci_is_pcie(struct pci_dev *dev)
