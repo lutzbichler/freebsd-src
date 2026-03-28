@@ -29,6 +29,8 @@
 
 #include <linux/types.h>
 
+#define console_suspend_enabled	true
+
 static inline void
 console_lock(void)
 {
