@@ -101,4 +101,6 @@
 #define	___UNIQUE_ID(name, num)		____UNIQUE_ID(name, num)
 #define	__UNIQUE_ID(name)		___UNIQUE_ID(name, __COUNTER__)
 
+#define OPTIMIZER_HIDE_VAR(var)        __asm__ ("" : "=r" (var) : "0" (var))                                         \
+
 #endif	/* _LINUXKPI_LINUX_COMPILER_H_ */
