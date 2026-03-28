@@ -99,4 +99,6 @@
 #define	__struct_size(_s)	__builtin_object_size(_s, 0)
 #endif
 
+#define OPTIMIZER_HIDE_VAR(var)        __asm__ ("" : "=r" (var) : "0" (var))                                         \
+
 #endif	/* _LINUXKPI_LINUX_COMPILER_H_ */
