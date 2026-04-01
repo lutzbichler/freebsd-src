@@ -82,6 +82,14 @@
 #define	guard(_n)							\
     _guard(_n, __CONCAT(guard_, __CONCAT(_n, __CONCAT(_, __COUNTER__))))
 
+#define ACQUIRE(_n, _x)                         			\
+    DECLARE(_n, _x)
+#define ACQUIRE_ERR(_n, _x)                     			\
+    ({                                          			\
+        void *__ptr = (void *)(*_x);            			\
+        IS_ERR(__ptr) ? PTR_ERR(__ptr) : 0;     			\
+    })
+
 #define	DEFINE_FREE(_n, _t, _f)						\
     static inline void							\
     __free_ ## _n(void *p)						\
