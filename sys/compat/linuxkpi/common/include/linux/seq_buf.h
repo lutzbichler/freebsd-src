@@ -48,6 +48,22 @@ seq_buf_has_overflowed(struct seq_buf *s)
 	return (s->len > s->size);
 }
 
+static inline int
+seq_buf_puts(struct seq_buf *s, const char *str)
+{
+	size_t len = strlen(str);
+
+	if (s->len + len > s->size) {
+		seq_buf_set_overflow(s);
+		return (-1);
+	}
+
+	memcpy(&s->buffer[s->len], str, len);
+	s->len += len;
+
+	return (0);
+}
+
 static inline bool
 seq_buf_buffer_left(struct seq_buf *s)
 {
