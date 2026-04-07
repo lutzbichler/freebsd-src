@@ -354,4 +354,10 @@ mem_is_zero(const void *p, size_t s)
         return (NULL == memchr_inv(p, 0, s));
 }
 
+static inline int
+isgraph(int c)
+{
+	return (c > ' ' && c <= '~');
+}
+
 #endif	/* _LINUXKPI_LINUX_STRING_H_ */
