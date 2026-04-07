@@ -342,4 +342,10 @@ memzero_explicit(void *p, size_t s)
 	__asm__ __volatile__("": :"r"(p) :"memory");
 }
 
+static inline bool
+mem_is_zero(const void *p, size_t s)
+{
+        return (NULL == memchr_inv(p, 0, s));
+}
+
 #endif	/* _LINUXKPI_LINUX_STRING_H_ */
