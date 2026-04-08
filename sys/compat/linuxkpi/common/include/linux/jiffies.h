@@ -56,6 +56,10 @@ extern unsigned long jiffies;	/* defined in sys/kern/subr_ticks.S */
 
 #define	HZ	hz
 
+extern uint64_t lkpi_sec2hz_rem;
+extern uint64_t lkpi_sec2hz_div;
+extern uint64_t lkpi_sec2hz_max;
+
 extern uint64_t lkpi_nsec2hz_rem;
 extern uint64_t lkpi_nsec2hz_div;
 extern uint64_t lkpi_nsec2hz_max;
@@ -67,6 +71,20 @@ extern uint64_t lkpi_usec2hz_max;
 extern uint64_t lkpi_msec2hz_rem;
 extern uint64_t lkpi_msec2hz_div;
 extern uint64_t lkpi_msec2hz_max;
+
+static inline unsigned long
+secs_to_jiffies(uint64_t sec)
+{
+	uint64_t result;
+	
+	if (sec > lkpi_sec2hz_max)
+		sec = lkpi_sec2hz_max;
+	result = howmany(sec * lkpi_sec2hz_rem, lkpi_sec2hz_div);
+	if (result > MAX_JIFFY_OFFSET)
+		result = MAX_JIFFY_OFFSET;
+
+	return ((unsigned long)result);
+}
 
 static inline unsigned long
 msecs_to_jiffies(uint64_t msec)
