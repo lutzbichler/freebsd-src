@@ -66,6 +66,20 @@
 })
 #endif
 
+static inline uint64_t
+int_pow(uint64_t x, unsigned int y)
+{
+	uint64_t r;
+	if (y == 0) {
+		r = 1;
+	} else {
+		r = x;
+		while (--y) r*=x;
+	}
+
+	return (r);
+}
+
 static inline unsigned long
 int_sqrt(unsigned long x)
 {
