@@ -1629,6 +1629,22 @@ pci_pr3_present(struct pci_dev *pdev)
 }
 
 static inline int
+pci_d3cold_enable(struct pci_dev *pdev)
+{
+
+	pr_debug("%s: TODO\n", __func__);
+	return (0);
+}
+
+static inline int
+pci_d3cold_disable(struct pci_dev *pdev)
+{
+
+	pr_debug("%s: TODO\n", __func__);
+	return (0);
+}
+
+static inline int
 pci_sriov_get_totalvfs(struct pci_dev *pdev)
 {
 
