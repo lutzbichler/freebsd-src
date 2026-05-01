@@ -49,6 +49,7 @@ struct rw_semaphore {
 #define	down_write_killable(_rw)	linux_down_write_killable(_rw)
 #define	downgrade_write(_rw)		sx_downgrade(&(_rw)->sx)
 #define	down_read_nested(_rw, _sc)	down_read(_rw)
+#define	down_read_interruptible(_rw)    down_read_killable(_rw)
 #define	init_rwsem(_rw)			linux_init_rwsem(_rw, rwsem_name("lnxrwsem"))
 #define	down_write_nest_lock(sem, _rw)	down_write(_rw)
 #define	rwsem_is_contended(_rw)		sx_has_waiters(&(_rw)->sx);
