@@ -31,6 +31,8 @@
 #ifndef	_LINUXKPI_LINUX_UUID_H
 #define	_LINUXKPI_LINUX_UUID_H
 
+#include <sys/ctype.h>
+
 #include <linux/random.h>
 
 #define	UUID_SIZE	16
@@ -57,7 +59,7 @@
 }})
 
 typedef struct {
-	char	x[16];
+	char	x[UUID_SIZE];
 } guid_t;
 
 extern const guid_t guid_null;
@@ -99,6 +101,27 @@ static inline bool
 guid_is_null(const guid_t *guid)
 {
 	return (guid_equal(guid, &guid_null));
+}
+
+static inline bool
+uuid_is_valid(const char *uuid)
+{
+	int i;
+	
+	/*
+	 * String format of an uuid is "FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF".
+	 * Thus, the character at the indices 8, 13, 18 and 21 must by a hyphen.
+	 * All other characters need to represent a hex value.
+	 */
+	for (i = 0; i < UUID_STRING_LEN; i++) {
+		if (i == 8 || i == 13 || i == 18 || i == 23) {
+			if (uuid[i] != '-')
+				return false;
+		} else if (!isxdigit(uuid[i]))
+			return false;
+	}
+
+	return true;
 }
 
 #endif	/* _LINUXKPI_LINUX_UUID_H */
