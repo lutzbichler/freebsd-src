@@ -9,4 +9,15 @@
 
 #include <linux/string_choices.h>
 
+enum string_size_units {
+    STRING_UNITS_10,
+    STRING_UNITS_2
+};
+
+extern int linux_string_get_size(uint64_t, uint64_t, enum string_size_units,
+    char*, int);
+
+#define string_get_size(size, blk_size, units, buf, len) \
+    linux_string_get_size(size, blk_size, units, buf, len)
+
 #endif
