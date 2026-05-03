@@ -803,6 +803,16 @@ pci_dev_msi_enabled(struct pci_dev *pdev)
 }
 
 static inline int
+pci_msix_vec_count(struct pci_dev *pdev)
+{
+	int count;
+
+	count = pci_msix_count(pdev->dev.bsddev);
+
+	return (count > 0 ? count : -EINVAL);
+}
+
+static inline int
 pci_channel_offline(struct pci_dev *pdev)
 {
 
