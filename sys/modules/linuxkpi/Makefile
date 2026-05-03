@@ -36,6 +36,7 @@ SRCS=	linux_compat.c \
 	linux_siphash.c \
 	linux_skbuff.c \
 	linux_slab.c \
+	linux_string_helpers.c \
 	linux_tasklet.c \
 	linux_timesub.c \
 	linux_usb.c \
