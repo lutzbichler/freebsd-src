@@ -1620,6 +1620,14 @@ pci_wake_from_d3(struct pci_dev *pdev, bool enable)
 }
 
 static inline int
+pci_pr3_present(struct pci_dev *pdev)
+{
+
+	pr_debug("%s: TODO\n", __func__);
+	return (0);
+}
+
+static inline int
 pci_d3cold_enable(struct pci_dev *pdev)
 {
 
