@@ -1257,11 +1257,21 @@ static inline struct pci_dev *
 pcie_find_root_port(struct pci_dev *pdev)
 {
 	device_t root;
+	device_t bsddev;
 
 	if (pdev->root != NULL)
 		return (pdev->root);
 
-	root = pci_find_pcie_root_port(pdev->dev.bsddev);
+	/*
+	 * pci_find_pcie_root_port() expects a PCI device. But for drm
+	 * drivers pdev->dev.bsddev is a child (e.g. drmn0) of the real
+	 * PCI device. Thus, walk up one level before calling.
+	 */
+	bsddev = pdev->dev.bsddev;
+	if (pdev->pdrv != NULL && pdev->pdrv->isdrm)
+		bsddev = device_get_parent(bsddev);
+
+	root = pci_find_pcie_root_port(bsddev);
 	if (root == NULL)
 		return (NULL);
 
