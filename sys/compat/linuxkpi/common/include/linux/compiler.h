@@ -66,6 +66,8 @@
 
 #define	barrier()			__asm__ __volatile__("": : :"memory")
 
+#define	__UNIQUE_ID(n)	__PASTE(__PASTE(__UNIQUE_ID_, n), __COUNTER__)
+
 #define	WRITE_ONCE(x,v) do {		\
 	barrier();			\
 	(*(volatile __typeof(x) *)(uintptr_t)&(x)) = (v); \
