@@ -67,6 +67,9 @@
 unsigned int linuxkpi_int_sqrt(unsigned long val);
 #define	int_sqrt(x)	linuxkpi_int_sqrt(x)
 
+uint64_t linuxkpi_int_pow(uint64_t x, unsigned int y);
+#define	int_pow(x, y)	linuxkpi_int_pow(x, y) 
+
 static inline uintmax_t
 mult_frac(uintmax_t x, uintmax_t multiplier, uintmax_t divisor)
 {

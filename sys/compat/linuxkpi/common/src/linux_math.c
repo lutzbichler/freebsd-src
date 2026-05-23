@@ -6,6 +6,8 @@
 
 #include <linux/math.h>
 
+#include <linux/int_log.h>
+
 /* Copied from `sys/cam/cam_iosched.c`. */
 unsigned int
 linuxkpi_int_sqrt(unsigned long val)
@@ -36,4 +38,41 @@ linuxkpi_int_sqrt(unsigned long val)
 	}
 
 	return res;
+}
+
+uint64_t
+linuxkpi_int_pow(uint64_t x, unsigned int y)
+{
+        uint64_t r;
+        if (y == 0) {
+                r = 1;
+        } else {
+                r = x;
+                while (--y) r*=x;
+        }
+
+        return (r);
+}
+
+unsigned int
+linuxkpi_intlog2(uint32_t v)
+{
+	return (v ? 32 - __builtin_clz(v) : 0);
+}
+
+unsigned int
+linuxkpi_intlog10(uint32_t v)
+{
+	static const unsigned char guess[] = {
+		0, 0, 0, 0, 1, 1, 1, 2, 2, 2,
+		3, 3, 3, 3, 4, 4, 4, 5, 5, 5,
+		6, 6, 6, 6, 7, 7, 7, 8, 8, 8,
+		9, 9, 9
+	};
+	static const unsigned int ttt[] = {
+		1, 10, 100, 1000, 10000, 100000,
+		1000000, 1000000, 10000000, 100000000
+	};
+	unsigned int d = guess[linuxkpi_intlog2(v)];
+	return (d + (v >= ttt[d]));
 }
