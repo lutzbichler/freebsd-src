@@ -1626,12 +1626,12 @@ pci_wake_from_d3(struct pci_dev *pdev, bool enable)
 	return (0);
 }
 
-static inline int
+static inline bool
 pci_pr3_present(struct pci_dev *pdev)
 {
 
 	pr_debug("%s: TODO\n", __func__);
-	return (0);
+	return (false);
 }
 
 static inline int
