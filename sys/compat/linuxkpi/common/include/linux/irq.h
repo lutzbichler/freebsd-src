@@ -14,4 +14,13 @@ generic_handle_irq(unsigned int irq)
 	return (0);
 }
 
+struct irq_domain;
+
+static inline int
+generic_handle_domain_irq(struct irq_domain *domain, unsigned int irq)
+{
+
+	return (0);
+}
+
 #endif /* _LINUXKPI_IRQ_H_ */
