@@ -424,12 +424,21 @@ void *
 vmap(struct page **pages, unsigned int count, unsigned long flags, int prot)
 {
 	void *off;
+	vm_memattr_t attr;
 	size_t size;
+	unsigned int i;
 
 	size = count * PAGE_SIZE;
 	off = kva_alloc(size);
 	if (off == NULL)
 		return (NULL);
+
+	attr = pgprot2cachemode(prot);
+	if (attr != VM_MEMATTR_DEFAULT) {
+		for (i = 0; i < count; i++)
+			pmap_page_set_memattr(pages[i], attr);
+	}
+
 	vmmap_add(off, size);
 	pmap_qenter(off, pages, count);
 
