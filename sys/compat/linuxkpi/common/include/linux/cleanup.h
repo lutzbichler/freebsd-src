@@ -187,4 +187,10 @@ _l:									\
 #define	scoped_guard(_n, ...)						\
     _scoped_guard(_n, ___label_ ## __COUNTER__, ##__VA_ARGS__)
 
+#define no_free_ptr(_p)	({		\
+    __typeof(_p) *p = (_p);		\
+    (_p) = NULL;			\
+    p;					\
+})
+	
 #endif	/* _LINUXKPI_LINUX_CLEANUP_H */
