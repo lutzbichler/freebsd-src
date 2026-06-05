@@ -261,6 +261,15 @@ lkpi_devm_action_release(struct device *dev, void *res)
 	devres->action(devres->data);
 }
 
+static int
+lkpi_devm_action_match(struct device *dev, void *l, void *r)
+{
+	struct devres_action *left = l;
+	struct devres_action *right = r;
+
+	return (left->action == right->action && left->data == right->data);
+}
+
 int
 lkpi_devm_add_action(struct device *dev, void (*action)(void *), void *data)
 {
@@ -276,6 +285,18 @@ lkpi_devm_add_action(struct device *dev, void (*action)(void *), void *data)
 	devres_add(dev, devres);
 
 	return (0);
+}
+
+void
+lkpi_devm_remove_action(struct device *dev, void (*action)(void *), void *data)
+{
+	struct devres_action devres;
+
+	devres.data = data;
+	devres.action = action;
+
+	lkpi_devres_destroy(dev, lkpi_devm_action_release, lkpi_devm_action_match,
+		&devres);
 }
 
 int
