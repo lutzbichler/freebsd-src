@@ -129,6 +129,32 @@ kvmemdup(const void *src, size_t len, gfp_t gfp)
 	return (dst);
 }
 
+static inline void *
+vmemdup_user(const void *ptr, size_t len)
+{
+        void *retval;
+        int error;
+
+        retval = vmalloc(len);
+        error = linux_copyin(ptr, retval, len);
+        if (error != 0) {
+                vfree(retval);
+                return (ERR_PTR(error));
+        }
+        return (retval);
+}
+
+static inline void *
+vmemdup_array_user(const void *ptr, size_t n, size_t size)
+{
+	size_t len;
+
+	if (check_mul_overflow(n, size, &len))
+		return (ERR_PTR(-EOVERFLOW));
+
+	return (vmemdup_user(ptr, len));
+}
+
 static inline char *
 strndup_user(const char __user *ustr, long n)
 {
