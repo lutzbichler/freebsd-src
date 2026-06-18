@@ -87,4 +87,11 @@
 #define	min_array(array, len) __minmax_array(min, array, len)
 #define	max_array(array, len) __minmax_array(max, array, len)
 
+static inline bool
+in_range(uint64_t val, uint64_t start, uint64_t len)
+{
+	return (val >= start && (val - start) < len);
+}
+
+
 #endif /* _LINUXKPI_LINUX_MINMAX_H_ */
