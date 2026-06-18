@@ -44,7 +44,7 @@ hrtimer_call_handler(void *arg)
 
 	if (ret == HRTIMER_RESTART) {
 		callout_schedule_sbt(&hrtimer->callout,
-		    nstosbt(hrtimer->expires), nstosbt(hrtimer->precision), 0);
+		    nstosbt(hrtimer->node.expires), nstosbt(hrtimer->precision), 0);
 	} else {
 		callout_deactivate(&hrtimer->callout);
 	}
@@ -108,7 +108,7 @@ linux_hrtimer_init(struct hrtimer *hrtimer)
 void
 linux_hrtimer_set_expires(struct hrtimer *hrtimer, ktime_t time)
 {
-	hrtimer->expires = ktime_to_ns(time);
+	hrtimer->node.expires = ktime_to_ns(time);
 }
 
 void
@@ -130,7 +130,8 @@ linux_hrtimer_start_range_ns(struct hrtimer *hrtimer, ktime_t time,
 	mtx_unlock(&hrtimer->mtx);
 }
 
-void
+
+u64
 linux_hrtimer_forward_now(struct hrtimer *hrtimer, ktime_t interval)
 {
 
@@ -138,4 +139,5 @@ linux_hrtimer_forward_now(struct hrtimer *hrtimer, ktime_t interval)
 	callout_reset_sbt(&hrtimer->callout, nstosbt(ktime_to_ns(interval)),
 	    nstosbt(hrtimer->precision), hrtimer_call_handler, hrtimer, 0);
 	mtx_unlock(&hrtimer->mtx);
+	return (0);
 }
