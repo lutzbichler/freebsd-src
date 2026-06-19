@@ -12,7 +12,7 @@
 
 #include <linux/err.h>
 
-#define	CLEANUP_NAME(_n, _s)	__CONCAT(__CONCAT(cleanup_, _n), _s)
+#define	CLEANUP_NAME(_n, _s)	__CONCAT(__CONCAT(class_, _n), _s)
 
 #define	__cleanup(_f)		__attribute__((__cleanup__(_f)))
 
@@ -30,21 +30,21 @@
 #define	LINUXKPI_DEFINE_CLASS(_name, _type, _exit, _init, _init_args...)\
     typedef _type class_##_name##_t;					\
 									\
-    static inline _type class_##_name##_constructor(_init_args)		\
+    static inline _type class_##_name##_create(_init_args)		\
     {									\
 	_type v = _init;						\
 	return (v);							\
     }									\
 									\
-    static inline void class_##_name##_destructor(_type *p)		\
+    static inline void class_##_name##_destroy(_type *p)		\
     {									\
 	_type _T = *p;							\
 	_exit;								\
     }
 
 #define	CLASS(_name, _var)						\
-    class_##_name##_t _var __cleanup(class_##_name##_destructor) =	\
-	class_##_name##_constructor
+    class_##_name##_t _var __cleanup(class_##_name##_destroy) =		\
+	class_##_name##_create
 
 /*
  * Note: "_T" are special as they are exposed into common code for
