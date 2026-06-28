@@ -45,7 +45,6 @@ static MALLOC_DEFINE(M_VTBUF, "vtbuf", "vt buffer");
 
 #define	VTBUF_LOCK(vb)		mtx_lock_spin(&(vb)->vb_lock)
 #define	VTBUF_UNLOCK(vb)	mtx_unlock_spin(&(vb)->vb_lock)
-#define	VTBUF_LOCK_OWNED(vb)	mtx_owned(&(vb)->vb_lock)
 
 #define POS_INDEX(c, r) (((r) << 12) + (c))
 #define	POS_COPY(d, s)	do {	\
@@ -741,19 +740,9 @@ vtbuf_flush_mark(struct vt_buf *vb)
 		area.tr_end.tp_col = vb->vb_scr_size.tp_col;
 		area.tr_end.tp_row = MAX(s, e) + 1;
 
-		/* 
-		 * If the request originates from a keyboard, the vtbuf is
-		 * locked by teken for the entire duration of the request.
-		 * For all other sources, we avoid holding the spinlock for
-		 * extended periods.
-		 */
-		if (VTBUF_LOCK_OWNED(vb)) {
-			vtbuf_dirty(vb, &area);
-		} else {
-			VTBUF_LOCK(vb);
-			vtbuf_dirty(vb, &area);
-			VTBUF_UNLOCK(vb);
-		}
+		VTBUF_LOCK(vb);
+		vtbuf_dirty(vb, &area);
+		VTBUF_UNLOCK(vb);
 	}
 }
 
