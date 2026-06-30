@@ -203,6 +203,40 @@ METHOD int pin_config_32 {
 } DEFAULT gpio_default_nosupport;
 
 #
+# Methods for interrupt handling on !INTRNG platforms.
+#
+METHOD void pin_config_intr {
+	device_t dev;
+	uint32_t pin_num;
+	uint32_t intr_mode;
+};
+
+METHOD void pin_enable_intr {
+	device_t dev;
+	uint32_t pin_num;
+};
+
+METHOD void pin_disable_intr {
+	device_t dev;
+	uint32_t pin_num;
+};
+
+METHOD void pin_eoi {
+	device_t dev;
+	uint32_t pin_num;
+};
+
+METHOD void pin_mask_intr {
+	device_t dev;
+	uint32_t pin_num;
+};
+
+METHOD void pin_unmask_intr {
+	device_t dev;
+	uint32_t pin_num;
+};
+
+#
 # Get the controller's pin numbers. pin_list is expected to be an array with at
 # least GPIO_PIN_MAX() elements. Populates pin_list from 0 to GPIO_PIN_MAX() by
 # default.
