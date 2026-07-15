@@ -37,6 +37,7 @@ SRCS=	linux_compat.c \
 	linux_slab.c \
 	linux_string_helpers.c \
 	linux_tasklet.c \
+	linux_time.c \
 	linux_usb.c \
 	linux_work.c \
 	linux_xarray.c
