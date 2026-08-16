@@ -3,6 +3,7 @@
 #ifndef _LINUXKPI_INTEL_VSEC_H_
 #define _LINUXKPI_INTEL_VSEC_H_
 
+struct device;
 struct pci_dev;
 
 #define	VSEC_ID_TELEMETRY	0x01
@@ -28,11 +29,19 @@ struct intel_vsec_platform_info {
 };
 
 struct pmt_callbacks {
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION >= 61800
+	int (*read_telem)(struct device *dev, u32 guid, u64 *data, loff_t off, u32 count);
+#else
 	int (*read_telem)(struct pci_dev *pdev, u32 guid, u64 *data, loff_t off, u32 count);
+#endif
 };
 
 static void
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION >= 61800
+intel_vsec_register(struct device *dev, struct intel_vsec_platform_info *info)
+#else
 intel_vsec_register(struct pci_dev *pdev, struct intel_vsec_platform_info *info)
+#endif
 {
 }
 
