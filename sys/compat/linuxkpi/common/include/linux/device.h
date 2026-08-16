@@ -48,6 +48,7 @@
 #include <linux/overflow.h>
 #include <linux/ratelimit.h>	/* via linux/dev_printk.h */
 #include <linux/fwnode.h>
+#include <linux/io.h>
 #include <asm/atomic.h>
 
 #include <sys/bus.h>
@@ -314,8 +315,12 @@ void lkpi_devres_unlink(struct device *, void *);
 void lkpi_devm_kmalloc_release(struct device *, void *);
 void lkpi_devm_kfree(struct device *, const void *);
 #define	devm_kfree(_d, _p)		lkpi_devm_kfree(_d, _p)
-void *lkpi_devm_memremap(struct device *, resource_size_t, size_t, unsigned long);
-#define devm_memremap(_d, _o, _s, _f)	lkpi_devm_memremap(_d, _o, _s, _f)
+void *lkpi_devm_remap(struct device *, resource_size_t, size_t, unsigned long);
+#define devm_memremap(_d, _o, _s, _f)	lkpi_devm_remap(_d, _o, _s, _f)
+#define devm_ioremap(_d, _o, _s)	lkpi_devm_remap(_d, _o, _s, MEMREMAP_WT)
+#define devm_ioremap_wc(_d, _o, _s)	lkpi_devm_remap(_d, _o, _s, MEMREMAP_WC)
+
+
 
 static inline const char *
 dev_driver_string(const struct device *dev)

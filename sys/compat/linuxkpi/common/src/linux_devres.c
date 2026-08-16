@@ -249,21 +249,21 @@ lkpi_devm_kfree(struct device *dev, const void *p)
 }
 
 static void
-lkpi_devm_memremap_release(struct device *dev, void *res)
+lkpi_devm_unmap(struct device *dev, void *res)
 {
     memunmap(*(void **)res);
 }
 
 void *
-lkpi_devm_memremap(struct device *dev, resource_size_t offset, size_t size,
-				   unsigned long flags)
+lkpi_devm_remap(struct device *dev, resource_size_t offset, size_t size,
+				unsigned long flags)
 {
 	void **p;
 	void *a;
 
-	p = devres_alloc(lkpi_devm_memremap_release, sizeof(*p), GFP_KERNEL);
+	p = devres_alloc(lkpi_devm_unmap, sizeof(*p), GFP_KERNEL);
 	if (!p)
-		return ERR_PTR(-ENOMEM);
+		return (ERR_PTR(-ENOMEM));
 
 	a = memremap(offset, size, flags);
     if (a) {
@@ -271,10 +271,10 @@ lkpi_devm_memremap(struct device *dev, resource_size_t offset, size_t size,
         devres_add(dev, p);
     } else {
         devres_free(p);
-        return ERR_PTR(-ENXIO);
+        return (ERR_PTR(-ENXIO));
     }
 
-    return a;
+    return (a);
 }
 
 struct devres_action {
