@@ -314,6 +314,8 @@ void lkpi_devres_unlink(struct device *, void *);
 void lkpi_devm_kmalloc_release(struct device *, void *);
 void lkpi_devm_kfree(struct device *, const void *);
 #define	devm_kfree(_d, _p)		lkpi_devm_kfree(_d, _p)
+void *lkpi_devm_memremap(struct device *, resource_size_t, size_t, unsigned long);
+#define devm_memremap(_d, _o, _s, _f)	lkpi_devm_memremap(_d, _o, _s, _f)
 
 static inline const char *
 dev_driver_string(const struct device *dev)

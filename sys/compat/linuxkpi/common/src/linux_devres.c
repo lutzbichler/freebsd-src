@@ -31,6 +31,7 @@
 #include <sys/cdefs.h>
 #include <linux/kernel.h>
 #include <linux/device.h>
+#include <linux/io.h>
 #include <linux/slab.h>
 #include <linux/list.h>
 
@@ -245,6 +246,35 @@ lkpi_devm_kfree(struct device *dev, const void *p)
 	if (error != 0)
 		dev_warn(dev, "%s: lkpi_devres_destroy failed with %d\n",
 		    __func__, error);
+}
+
+static void
+lkpi_devm_memremap_release(struct device *dev, void *res)
+{
+    memunmap(*(void **)res);
+}
+
+void *
+lkpi_devm_memremap(struct device *dev, resource_size_t offset, size_t size,
+				   unsigned long flags)
+{
+	void **p;
+	void *a;
+
+	p = devres_alloc(lkpi_devm_memremap_release, sizeof(*p), GFP_KERNEL);
+	if (!p)
+		return ERR_PTR(-ENOMEM);
+
+	a = memremap(offset, size, flags);
+    if (a) {
+        *p = a;
+        devres_add(dev, p);
+    } else {
+        devres_free(p);
+        return ERR_PTR(-ENXIO);
+    }
+
+    return a;
 }
 
 struct devres_action {
