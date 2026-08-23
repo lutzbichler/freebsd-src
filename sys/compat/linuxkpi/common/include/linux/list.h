@@ -35,6 +35,7 @@
  * FreeBSD header which requires it here so it is resolved with the correct
  * definition prior to the undef.
  */
+#include <linux/container_of.h>
 #include <linux/types.h>
 
 #include <sys/param.h>
