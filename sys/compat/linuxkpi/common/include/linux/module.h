@@ -146,6 +146,7 @@ try_module_get(struct module *module)
 }
 
 #define	postcore_initcall(fn)	module_init(fn)
+#define	subsys_initcall(fn)	module_init(fn)
 
 #define ALLOW_ERROR_INJECTION(x, y)
 
