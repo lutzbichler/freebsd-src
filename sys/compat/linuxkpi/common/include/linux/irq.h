@@ -14,6 +14,13 @@ generic_handle_irq(unsigned int irq)
 	return (0);
 }
 
+static inline int
+generic_handle_irq_safe(unsigned int irq)
+{
+
+	return (0);
+}
+
 struct irq_domain;
 
 static inline int
