@@ -1662,4 +1662,11 @@ pci_sriov_set_totalvfs(struct pci_dev *pdev, uint16_t numvfs)
 	return (0);
 }
 
+static inline void *
+pci_iov_get_pf_drvdata(struct pci_dev *dev, struct pci_driver *pf_driver)
+{
+	pr_debug("%s: TODO\n", __func__);
+	return ERR_PTR(-EINVAL);
+}
+
 #endif	/* _LINUXKPI_LINUX_PCI_H_ */
