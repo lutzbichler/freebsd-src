@@ -72,6 +72,36 @@
 	if (_T) { _unlock; };						\
     }
 
+#define        DEFINE_GUARD_COND(_n, _suffix, _lock, _cond)		\
+									\
+    typedef CLEANUP_NAME(_n, _t)					\
+       CLEANUP_NAME(__CONCAT(_n, _suffix), _t);				\
+									\
+    static inline void							\
+    CLEANUP_NAME(__CONCAT(_n, _suffix), _destroy)(			\
+       CLEANUP_NAME(__CONCAT(_n, _suffix), _t) *t)			\
+    {									\
+       CLEANUP_NAME(_n, _destroy)(t);					\
+    }									\
+									\
+    static inline void *						\
+    CLEANUP_NAME(__CONCAT(_n, _suffix), _ptr)(				\
+       CLEANUP_NAME(__CONCAT(_n, _suffix), _t) *t)			\
+    {									\
+       return (*t);							\
+    }									\
+									\
+    static inline CLEANUP_NAME(__CONCAT(_n, _suffix), _t)		\
+    CLEANUP_NAME(__CONCAT(_n, _suffix), _create)(			\
+       CLEANUP_NAME(_n, _t) _T)						\
+    {									\
+       int _RET = _lock;						\
+									\
+       if (!(_cond))							\
+           _T = NULL;							\
+       return (_T);							\
+    }
+
 /* We need to keep these calls unique. */
 #define	_guard(_n, _x)							\
     DECLARE(_n, _x)
