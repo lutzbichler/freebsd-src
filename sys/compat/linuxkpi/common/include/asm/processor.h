@@ -31,6 +31,7 @@
 #include <sys/types.h>
 #include <machine/cpufunc.h>
 #include <machine/cpu.h>
+#include <machine/md_var.h>
 
 #if defined(__i386__) || defined(__amd64__)
 #define	X86_VENDOR_INTEL	0
@@ -44,6 +45,8 @@
 #define	X86_VENDOR_NUM		12
 
 #define	X86_VENDOR_UNKNOWN	0xff
+
+#define	X86_CR4_LA57		(1ul << 12)
 
 struct cpuinfo_x86 {
 	uint8_t		x86;
@@ -60,5 +63,20 @@ extern struct cpuinfo_x86	*__cpu_data;
 #endif
 
 #define	cpu_relax()	cpu_spinwait()
+
+static inline unsigned long
+native_read_cr4(void)
+{
+	unsigned long val;
+
+	/* If CPU has CR4, read it. Else, return 0. */
+	if (cpu_id >= 0x500) {
+		asm volatile("mov %%cr4, %0" : "=r" (val));
+	} else {
+		val = 0;
+	}
+
+	return (val);
+}
 
 #endif	/* _LINUXKPI_ASM_PROCESSOR_H_ */
