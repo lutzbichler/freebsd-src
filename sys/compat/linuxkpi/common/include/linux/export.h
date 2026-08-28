@@ -27,5 +27,6 @@
 
 #define	EXPORT_SYMBOL(name)
 #define	EXPORT_SYMBOL_GPL(name)
+#define	EXPORT_SYMBOL_NS_GPL(name, namespace)
 
 #endif
