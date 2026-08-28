@@ -99,6 +99,12 @@
 #define	__struct_size(_s)	__builtin_object_size(_s, 0)
 #endif
 
-#define OPTIMIZER_HIDE_VAR(var)        __asm__ ("" : "=r" (var) : "0" (var))                                         \
+#define OPTIMIZER_HIDE_VAR(var)        __asm__ ("" : "=r" (var) : "0" (var))
+
+#ifdef __GNUC__
+#define	GCC_VERSION		(__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+#else
+#define	GCC_VERSION		0
+#endif
 
 #endif	/* _LINUXKPI_LINUX_COMPILER_H_ */
