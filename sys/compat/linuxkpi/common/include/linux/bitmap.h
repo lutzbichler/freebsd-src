@@ -49,7 +49,7 @@ bitmap_fill(unsigned long *addr, const unsigned int size)
 }
 
 static inline int
-bitmap_full(unsigned long *addr, const unsigned int size)
+bitmap_full(const unsigned long *addr, const unsigned int size)
 {
 	const unsigned int end = BIT_WORD(size);
 	const unsigned int tail = size & (BITS_PER_LONG - 1);
@@ -70,7 +70,7 @@ bitmap_full(unsigned long *addr, const unsigned int size)
 }
 
 static inline int
-bitmap_empty(unsigned long *addr, const unsigned int size)
+bitmap_empty(const unsigned long *addr, const unsigned int size)
 {
 	const unsigned int end = BIT_WORD(size);
 	const unsigned int tail = size & (BITS_PER_LONG - 1);
