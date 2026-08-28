@@ -101,6 +101,12 @@
 #define	___UNIQUE_ID(name, num)		____UNIQUE_ID(name, num)
 #define	__UNIQUE_ID(name)		___UNIQUE_ID(name, __COUNTER__)
 
-#define OPTIMIZER_HIDE_VAR(var)        __asm__ ("" : "=r" (var) : "0" (var))                                         \
+#define OPTIMIZER_HIDE_VAR(var)        __asm__ ("" : "=r" (var) : "0" (var))
+
+#ifdef __GNUC__
+#define	GCC_VERSION		(__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+#else
+#define	GCC_VERSION		0
+#endif
 
 #endif	/* _LINUXKPI_LINUX_COMPILER_H_ */
