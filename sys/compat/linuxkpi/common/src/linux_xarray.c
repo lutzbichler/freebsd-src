@@ -444,3 +444,35 @@ xa_next(struct xarray *xa, unsigned long *pindex, bool not_first)
 
 	return (retval);
 }
+
+void *
+xa_find(struct xarray *xa, unsigned long *pindex, unsigned long max, xa_mark_t filter)
+{
+	struct radix_tree_iter iter;
+	void **slot;
+	void *temp;
+
+	XA_ASSERT_LOCKED(xa);
+
+	if (*pindex > max)
+		return (NULL);
+
+	iter.index = *pindex;
+
+	while (radix_tree_iter_find(&xa->xa_head, &iter, &slot, filter)) {
+		if (iter.index > max)
+			break;
+
+		temp = *slot;
+
+		if (temp == NULL || temp == (void *)-1) {
+			iter.index++;
+			continue;
+		}
+
+		*pindex = iter.index;
+		return (temp);
+	}
+
+	return (NULL);
+}
