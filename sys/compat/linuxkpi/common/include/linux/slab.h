@@ -48,6 +48,22 @@
 MALLOC_DECLARE(M_KMALLOC);
 
 #define	kvzalloc(size, flags)		kvmalloc(size, (flags) | __GFP_ZERO)
+#define	kvzalloc_obj(_p, ...)						\
+    kvzalloc(sizeof(typeof(_p)), default_gfp(__VA_ARGS__))
+#define	kvzalloc_objs(_p, _n, ...)					\
+    kvzalloc(size_mul((_n), sizeof(typeof(_p))), default_gfp(__VA_ARGS__))
+#define	kvzalloc_flex(_p, _field, _n, ...)				\
+({									\
+	const size_t __n = (_n);					\
+	const size_t __psize = struct_size_t(typeof(_p), _field, __n);	\
+	typeof(_p) *__p_obj;						\
+									\
+	__p_obj = kvzalloc(__psize, default_gfp(__VA_ARGS__));		\
+	if (__p_obj != NULL)						\
+		__set_flex_counter(__p_obj->_field, __n);		\
+									\
+	__p_obj;							\
+})
 #define	kvcalloc(n, size, flags)	kvmalloc_array(n, size, (flags) | __GFP_ZERO)
 #define	kzalloc(size, flags)		kmalloc(size, (flags) | __GFP_ZERO)
 #define	kzalloc_node(size, flags, node)	kmalloc_node(size, (flags) | __GFP_ZERO, node)
@@ -170,9 +186,20 @@ kmalloc_node(size_t size, gfp_t flags, int node)
 
 #define	kmalloc_obj(_p, ...)						\
     kmalloc(sizeof(typeof(_p)), default_gfp(__VA_ARGS__))
-
 #define	kmalloc_objs(_p, _n, ...)					\
-    kmalloc(size_mul((_n) * sizeof(typeof(_p))), default_gfp(__VA_ARGS__))
+    kmalloc(size_mul((_n), sizeof(typeof(_p))), default_gfp(__VA_ARGS__))
+#define	kmalloc_flex(_p, _field, _n, ...)				\
+({									\
+	const size_t __n = (_n);					\
+	const size_t __psize = struct_size_t(typeof(_p), _field, __n);	\
+	typeof(_p) *__p_obj;						\
+									\
+	__p_obj = kmalloc(__psize, default_gfp(__VA_ARGS__));		\
+	if (__p_obj != NULL)						\
+		__set_flex_counter(__p_obj->_field, __n);		\
+									\
+	__p_obj;							\
+})
 
 static inline void *
 krealloc(const void *ptr, size_t size, gfp_t flags)
@@ -272,6 +299,12 @@ kvmalloc_array(size_t n, size_t size, gfp_t flags)
 
 	return (kvmalloc(size * n, flags));
 }
+
+#define	kvmalloc_obj(_p, ...)						\
+    kmalloc(sizeof(typeof(_p)), default_gfp(__VA_ARGS__))
+
+#define	kvmalloc_objs(_p, _n, ...)					\
+    kvmalloc_array((_n), sizeof(typeof(_p)), default_gfp(__VA_ARGS__))
 
 void * lkpi_kvrealloc(const void *ptr, size_t oldsize, size_t newsize, gfp_t flags);
 
