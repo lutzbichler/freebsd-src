@@ -201,6 +201,7 @@ device		evdev			# input event device support
 device		uinput			# install /dev/uinput cdev
 
 # HID support
+device		usbhid
 device		hid			# Generic HID support
 device		hidbus			# Generic HID Bus
 options 	IICHID_SAMPLING		# Workaround missing GPIO INTR support
