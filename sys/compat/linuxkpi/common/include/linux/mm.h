@@ -113,12 +113,18 @@ typedef int (*pte_fn_t)(linux_pte_t *, unsigned long addr, void *data);
 struct dev_pagemap {
 };
 
+typedef unsigned long vma_flags_t;
+#define	EMPTY_VMA_FLAGS			0
+#define	VMA_NORESERVE_BIT		21
+
+#define	mk_vma_flags(bit)		(1u<<(bit))
+
 struct vm_area_struct {
 	vm_offset_t vm_start;
 	vm_offset_t vm_end;
 	vm_offset_t vm_pgoff;
 	pgprot_t vm_page_prot;
-	unsigned long vm_flags;
+	vma_flags_t vm_flags;
 	struct mm_struct *vm_mm;
 	void   *vm_private_data;
 	const struct vm_operations_struct *vm_ops;
