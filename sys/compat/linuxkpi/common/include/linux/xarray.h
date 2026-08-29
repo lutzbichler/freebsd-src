@@ -77,6 +77,9 @@ struct xa_limit {
 #define	xa_limit_31b XA_LIMIT(0, INT_MAX)
 #define	xa_limit_32b XA_LIMIT(0, UINT_MAX)
 
+typedef unsigned xa_mark_t;
+#define	XA_PRESENT	8U
+
 /*
  * Extensible arrays API implemented as a wrapper
  * around the radix tree implementation.
@@ -92,6 +95,7 @@ void xa_init_flags(struct xarray *, uint32_t);
 bool xa_empty(struct xarray *);
 void xa_destroy(struct xarray *);
 void *xa_next(struct xarray *, unsigned long *, bool);
+void *xa_find(struct xarray *, unsigned long *, unsigned long, xa_mark_t);
 
 #define	xa_for_each(xa, index, entry) \
 	for ((entry) = NULL, (index) = 0; \
