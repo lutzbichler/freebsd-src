@@ -521,6 +521,38 @@ radix_tree_store(struct radix_tree_root *root, unsigned long index, void **ppite
 	return (0);
 }
 
+int
+radix_tree_tag_get(const struct radix_tree_root *root, unsigned long index,
+	unsigned int tag)
+{
+	struct radix_tree_node *node;
+	int height, pos;
+
+	if (index > radix_max(root))
+		return (0);
+
+	node = root->rnode;
+	if (node == NULL)
+		return (0);
+
+	height = root->height - 1;
+	while (height > 0) {
+		pos = radix_pos(index, height--);
+		node = node->slots[pos];
+		
+		if (node == NULL)
+			return (0);
+	}
+
+	pos = radix_pos(index, 0);
+
+	if (node->slots[pos] == NULL)
+		return (0);
+
+	return (tag_get(node, tag, pos) != 0);
+}
+
+
 void *
 radix_tree_tag_set(struct radix_tree_root *root, unsigned long index,
     unsigned int tag)

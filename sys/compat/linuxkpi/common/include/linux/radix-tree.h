@@ -102,6 +102,7 @@ int	radix_tree_insert(struct radix_tree_root *, unsigned long, void *);
 int	radix_tree_store(struct radix_tree_root *, unsigned long, void **);
 bool	radix_tree_iter_find(const struct radix_tree_root *, struct radix_tree_iter *, void ***, int);
 void	radix_tree_iter_delete(struct radix_tree_root *, struct radix_tree_iter *, void **);
+int 	radix_tree_tag_get(const struct radix_tree_root *root, unsigned long index, unsigned int tag);
 void	*radix_tree_tag_set(struct radix_tree_root *root, unsigned long index, unsigned int tag);
 void	*radix_tree_tag_clear(struct radix_tree_root *root, unsigned long index, unsigned int tag);
 int	radix_tree_tagged(const struct radix_tree_root *root, unsigned int tag);
