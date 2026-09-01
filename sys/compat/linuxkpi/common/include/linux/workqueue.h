@@ -246,6 +246,7 @@ do {									\
 /* prototypes */
 
 extern struct workqueue_struct *system_wq;
+extern struct workqueue_struct *system_dfl_wq;
 extern struct workqueue_struct *system_long_wq;
 extern struct workqueue_struct *system_unbound_wq;
 extern struct workqueue_struct *system_highpri_wq;
