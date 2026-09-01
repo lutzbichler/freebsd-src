@@ -75,4 +75,8 @@ cpumask_set_cpu(int cpu, cpumask_t *mask)
 
 #define	cpumask_of(_cpu)	(lkpi_get_static_single_cpu_mask(_cpu))
 
+#define for_each_possible_cpu(cpu) \
+    for ((cpu) = 0; (cpu) <= mp_maxid; (cpu)++) \
+        if (CPU_ISSET((cpu), &all_cpus))
+
 #endif	/* _LINUXKPI_LINUX_CPU_H */
