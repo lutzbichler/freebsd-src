@@ -53,6 +53,7 @@ static struct workqueue_struct *linux_system_short_wq;
 static struct workqueue_struct *linux_system_long_wq;
 
 struct workqueue_struct *system_wq;
+struct workqueue_struct *system_dfl_wq;
 struct workqueue_struct *system_long_wq;
 struct workqueue_struct *system_unbound_wq;
 struct workqueue_struct *system_highpri_wq;
@@ -827,6 +828,7 @@ linux_work_init(void *arg)
 	 * characteristics upstream expects.
 	 */
 	system_wq = linux_system_short_wq;
+	system_dfl_wq = linux_system_short_wq;
 	system_percpu_wq = linux_system_short_wq;
 	system_power_efficient_wq = linux_system_short_wq;
 	system_unbound_wq = linux_system_short_wq;
@@ -843,6 +845,7 @@ linux_work_uninit(void *arg)
 	/* clear workqueue pointers */
 	system_long_wq = NULL;
 	system_wq = NULL;
+	system_dfl_wq = NULL;
 	system_percpu_wq = NULL;
 	system_power_efficient_wq = NULL;
 	system_unbound_wq = NULL;
