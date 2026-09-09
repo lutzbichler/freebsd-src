@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <linux/rbtree.h>
+#include <linux/rbtree_augmented.h>
 
 #define	INTERVAL_TREE_DEFINE(type, field, valtype, dummy, START, LAST, 	\
 		attr, name)						\
