@@ -32,6 +32,8 @@
 /* Alias struct acpi_device to device_t; repeated in <acpi/video.h> */
 #define	acpi_device	_device
 
+#define ACPI_AC_CLASS   "ac_adapter"
+
 typedef char acpi_device_class[20];
 
 struct acpi_bus_event {
