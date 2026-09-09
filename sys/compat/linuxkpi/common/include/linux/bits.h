@@ -10,7 +10,10 @@
 
 #include <linux/bitops.h>
 
-#define	GENMASK(h, l)		(((~0UL) >> (BITS_PER_LONG - (h) - 1)) & ((~0UL) << (l)))
-#define	GENMASK_ULL(h, l)	(((~0ULL) >> (BITS_PER_LONG_LONG - (h) - 1)) & ((~0ULL) << (l)))
+#define	__GENMASK(h, l)		(((~0UL) >> (BITS_PER_LONG - (h) - 1)) & ((~0UL) << (l)))
+#define	__GENMASK_ULL(h, l)	(((~0ULL) >> (BITS_PER_LONG_LONG - (h) - 1)) & ((~0ULL) << (l)))
+
+#define GENMASK(h, l)       __GENMASK(h, l)
+#define GENMASK_ULL(h, l)   __GENMASK_ULL(h, l)
 
 #endif /* _LINUXKPI_LINUX_BITS_H_ */
