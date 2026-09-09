@@ -3,8 +3,6 @@
 #ifndef _LINUXKPI_INTEL_VSEC_H_
 #define _LINUXKPI_INTEL_VSEC_H_
 
-struct pci_dev;
-
 #define	VSEC_ID_TELEMETRY	0x01
 #define	VSEC_ID_CRASHLOG	0x02
 
@@ -27,6 +25,20 @@ struct intel_vsec_platform_info {
 	void *priv_data;
 };
 
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION >= 71000
+struct device;
+
+struct pmt_callbacks {
+	int (*read_telem)(struct device *dev, u32 guid, u64 *data, loff_t off, u32 count);
+};
+
+static void
+intel_vsec_register(struct device *dev, struct intel_vsec_platform_info *info)
+{
+}
+#else
+struct pci_dev;
+
 struct pmt_callbacks {
 	int (*read_telem)(struct pci_dev *pdev, u32 guid, u64 *data, loff_t off, u32 count);
 };
@@ -35,5 +47,6 @@ static void
 intel_vsec_register(struct pci_dev *pdev, struct intel_vsec_platform_info *info)
 {
 }
+#endif
 
 #endif /* _LINUXKPI_INTEL_VSEC_H_ */
