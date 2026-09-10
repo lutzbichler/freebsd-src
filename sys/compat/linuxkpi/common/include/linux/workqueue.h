@@ -70,6 +70,7 @@ struct work_struct {
 	struct workqueue_struct *work_queue;
 	work_func_t func;
 	atomic_t state;
+	atomic_t disabled;
 };
 
 struct rcu_work {
@@ -116,6 +117,7 @@ do {									\
 	(work)->func = (fn);						\
 	(work)->work_queue = NULL;					\
 	atomic_set(&(work)->state, 0);					\
+	atomic_set(&(work)->disabled, 0);				\
 	TASK_INIT(&(work)->work_task, 0, linux_work_fn, (work));	\
 } while (0)
 
@@ -203,7 +205,13 @@ do {									\
 	linux_cancel_delayed_work_sync(dwork)
 
 #define	disable_work_sync(work)	\
-	linux_cancel_work_sync(work)
+	linux_disable_work_sync(work)
+
+#define	disable_delayed_work_sync(work) \
+	linux_disable_delayed_work_sync(work)
+
+#define enable_delayed_work(work) \
+	linux_enable_delayed_work(work)
 
 #define	flush_work(work) \
 	linux_flush_work(work)
@@ -257,6 +265,12 @@ extern bool linux_cancel_work(struct work_struct *);
 extern bool linux_cancel_delayed_work(struct delayed_work *);
 extern bool linux_cancel_work_sync(struct work_struct *);
 extern bool linux_cancel_delayed_work_sync(struct delayed_work *);
+extern bool linux_disable_work(struct work_struct *);
+extern bool linux_disable_delayed_work(struct delayed_work *);
+extern bool linux_disable_work_sync(struct work_struct *);
+extern bool linux_disable_delayed_work_sync(struct delayed_work *);
+extern bool linux_enable_work(struct work_struct *);
+extern bool linux_enable_delayed_work(struct delayed_work *);
 extern bool linux_flush_work(struct work_struct *);
 extern bool linux_flush_delayed_work(struct delayed_work *);
 extern bool linux_work_pending(struct work_struct *);

@@ -141,6 +141,9 @@ linux_queue_work_on(int cpu __unused, struct workqueue_struct *wq,
 		[WORK_ST_CANCEL] = WORK_ST_TASK,	/* start queuing task again */
 	};
 
+	if (atomic_read(&work->disabled) != 0)
+		return (false);
+
 	if (atomic_read(&wq->draining) != 0)
 		return (!work_pending(work));
 
@@ -224,6 +227,9 @@ linux_queue_delayed_work_on(int cpu, struct workqueue_struct *wq,
 		[WORK_ST_CANCEL] = WORK_ST_TIMER,	/* start timeout */
 	};
 	bool res;
+
+	if (atomic_read(&dwork->work.disabled) != 0)
+		return (false);
 
 	if (atomic_read(&wq->draining) != 0)
 		return (!work_pending(&dwork->work));
@@ -441,6 +447,43 @@ retry:
 }
 
 /*
+ * This function disables the given work structure in a
+ * non-blocking fashion. It returns non-zero if the work was
+ * successfully cancelled. Else the work may still be busy or already
+ * cancelled.
+ */
+bool
+linux_disable_work(struct work_struct *work)
+{
+	atomic_inc(&work->disabled);
+	
+	return (linux_cancel_work(work));
+}
+
+/*
+ * This function cancels the given work structure in a synchronous
+ * fashion. It returns non-zero if the work was successfully
+ * cancelled. Else the work was already cancelled.
+ */
+bool
+linux_disable_work_sync(struct work_struct *work)
+{
+	atomic_inc(&work->disabled);
+	
+	return (linux_cancel_work_sync(work));
+}
+
+/*
+ * This function enables the given work structure. It returns true
+ * if the work was successfully enabled.
+ */
+bool
+linux_enable_work(struct work_struct *work)
+{
+	return (atomic_dec_return(&work->disabled) == 0);
+}
+
+/*
  * This function atomically stops the timer and callback. The timer
  * callback will not be called after this function returns. This
  * functions returns true when the timeout was cancelled. Else the
@@ -565,6 +608,41 @@ linux_cancel_delayed_work_sync(struct delayed_work *dwork)
 	while (linux_cancel_delayed_work_sync_int(dwork))
 		res = true;
 	return (res);
+}
+
+/*
+ * This function disables the given work structure It returns true if
+ * the work was successfully cancelled. Else the work was already cancelled.
+ */
+bool
+linux_disable_delayed_work(struct delayed_work *dwork)
+{
+	atomic_inc(&dwork->work.disabled);
+
+	return (linux_cancel_delayed_work(dwork));
+}
+
+/*
+ * This function disables the given work structure in a synchronous
+ * fashion. It returns true if the work was successfully
+ * cancelled. Else the work was already cancelled.
+ */
+bool
+linux_disable_delayed_work_sync(struct delayed_work *dwork)
+{
+	atomic_inc(&dwork->work.disabled);
+
+	return (linux_cancel_delayed_work_sync(dwork));
+}
+
+/*
+ * This function enables the given work structure. It returns true
+ * if the work was successfully enabled.
+ */
+bool
+linux_enable_delayed_work(struct delayed_work *dwork)
+{
+	return (atomic_dec_return(&dwork->work.disabled) == 0);
 }
 
 /*
