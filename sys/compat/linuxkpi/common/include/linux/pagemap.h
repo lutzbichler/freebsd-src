@@ -74,4 +74,10 @@ mapping_clear_unevictable(vm_object_t mapping)
 {
 }
 
+static inline gfp_t
+mapping_gfp_mask(vm_object_t mapping)
+{
+	return (0);
+}
+
 #endif
