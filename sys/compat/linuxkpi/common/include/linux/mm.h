@@ -262,6 +262,7 @@ apply_to_page_range(struct mm_struct *mm, unsigned long address,
 
 int zap_vma_ptes(struct vm_area_struct *vma, unsigned long address,
     unsigned long size);
+#define	zap_special_vma_range zap_vma_ptes
 
 int lkpi_remap_pfn_range(struct vm_area_struct *vma,
     unsigned long start_addr, unsigned long start_pfn, unsigned long size,
