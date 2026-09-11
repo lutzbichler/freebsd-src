@@ -30,6 +30,8 @@
 
 #include <linux/kernel.h>	/* pr_debug */
 
+#define	MAX_NUMNODES	1
+
 static inline int
 num_online_nodes(void)
 {
@@ -42,5 +44,8 @@ num_possible_nodes(void)
 	pr_debug("%s: TODO\n", __func__);
 	return (1);
 }
+
+#define for_each_node(n) \
+	for (n = 0; n < 1; n++)
 
 #endif /* _LINUXKPI_LINUX_NODEMASK_H_ */
