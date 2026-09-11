@@ -168,6 +168,12 @@ struct sysinfo {
 	uint32_t mem_unit;	/* Memory unit size in bytes */
 };
 
+static inline int
+page_to_nid(const struct page *page)
+{
+        return (0);
+}
+
 static inline struct page *
 virt_to_head_page(const void *p)
 {
