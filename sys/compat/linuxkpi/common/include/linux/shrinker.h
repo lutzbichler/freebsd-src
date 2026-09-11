@@ -35,6 +35,7 @@ struct shrink_control {
 	gfp_t		gfp_mask;
 	unsigned long	nr_to_scan;
 	unsigned long	nr_scanned;
+	int		nid;
 };
 
 struct shrinker {
