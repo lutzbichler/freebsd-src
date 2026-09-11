@@ -32,4 +32,10 @@
 
 #include <asm/topology.h>
 
+static inline int
+numa_node_id(void)
+{
+    return (0);
+}
+
 #endif /* _LINUXKPI_LINUX_TOPOLOGY_H_ */
