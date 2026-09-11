@@ -55,6 +55,7 @@ struct shrinker {
 
 #define SHRINKER_REGISTERED	BIT(0)
 #define SHRINKER_ALLOCATED	BIT(1)
+#define SHRINKER_NUMA_AWARE	BIT(2)
 
 struct shrinker *linuxkpi_shrinker_alloc(
     unsigned int flags, const char *fmt, ...);
