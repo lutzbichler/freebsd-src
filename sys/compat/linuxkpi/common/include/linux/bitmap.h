@@ -490,46 +490,69 @@ bitmap_free(const unsigned long *bitmap)
 static inline unsigned long
 bitmap_read(const unsigned long *src, unsigned long start, unsigned long nr)
 {
-        size_t i = BIT_WORD(start);
-        unsigned long off, space, low, high;
+    size_t i = BIT_WORD(start);
+	unsigned long off, space, low, high;
 
-        if (nr == 0 || nr > BITS_PER_LONG)
-            return 0;
+	if (nr == 0 || nr > BITS_PER_LONG)
+		return 0;
 
 	off = start % BITS_PER_LONG;
 	space = BITS_PER_LONG - off;
 
-        if (space >= nr)
-            return (src[i] >> off) & BITMAP_LAST_WORD_MASK(nr);
+	if (space >= nr)
+		return (src[i] >> off) & BITMAP_LAST_WORD_MASK(nr);
 
-        low = src[i] & BITMAP_FIRST_WORD_MASK(start);
-        high = src[i + 1] & BITMAP_LAST_WORD_MASK(start + nr);
-        return (low >> off) | (high << space);
+	low = src[i] & BITMAP_FIRST_WORD_MASK(start);
+	high = src[i + 1] & BITMAP_LAST_WORD_MASK(start + nr);
+	return (low >> off) | (high << space);
 }
 
 static inline void
 bitmap_write(unsigned long *dst, unsigned long src, unsigned long start,
 	unsigned long nr)
 {
-        size_t i;
-        unsigned long off, space, mask;
+	size_t i;
+	unsigned long off, space, mask;
 
-        if (nr == 0 || nr > BITS_PER_LONG)
-                return;
+	if (nr == 0 || nr > BITS_PER_LONG)
+		return;
 
-        mask = BITMAP_LAST_WORD_MASK(nr);
-        src &= mask;
-        off = start % BITS_PER_LONG;
-        space = BITS_PER_LONG - off;
-        i = BIT_WORD(start);
+	mask = BITMAP_LAST_WORD_MASK(nr);
+	src &= mask;
+	off = start % BITS_PER_LONG;
+	space = BITS_PER_LONG - off;
+	i = BIT_WORD(start);
 
-        dst[i] &= (space >= nr ? (~(mask << off)) : ~BITMAP_FIRST_WORD_MASK(start));
-        dst[i] |= src << off;
-        if (space >= nr)
-            return;
+	dst[i] &= (space >= nr ? (~(mask << off)) : ~BITMAP_FIRST_WORD_MASK(start));
+	dst[i] |= src << off;
+	if (space >= nr)
+		return;
 
-        dst[i + 1] &= BITMAP_FIRST_WORD_MASK(start + nr);
-        dst[i + 1] |= (src >> space);
+	dst[i + 1] &= BITMAP_FIRST_WORD_MASK(start + nr);
+	dst[i + 1] |= (src >> space);
+}
+
+static inline unsigned int
+bitmap_weighted_or(unsigned long *dst, unsigned long *first,
+	unsigned long *second, unsigned int nr)
+{
+	unsigned int end, i, mask, weight;
+	
+	end = nr / BITS_PER_LONG;
+	weight = 0;
+	
+	for (i = 0; i < end; i++) {
+		dst[i] = first[i] | second[i];
+		weight += hweight_long(dst[i]);
+	}
+
+	if (nr % BITS_PER_LONG) {
+		mask = BITMAP_LAST_WORD_MASK(nr);
+		dst[i] = (dst[i] & ~mask) | ((first[i] | second[i]) & mask);
+		weight += hweight_long(dst[i] & mask);
+	}
+
+	return (weight);
 }
 
 #endif					/* _LINUXKPI_LINUX_BITMAP_H_ */
