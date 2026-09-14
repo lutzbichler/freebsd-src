@@ -905,6 +905,8 @@ static struct resource *
 gpiobus_alloc_resource(device_t bus, device_t child, int type, int rid,
     rman_res_t start, rman_res_t end, rman_res_t count, u_int flags)
 {
+	struct rman *rm;
+	struct resource *r;
 	struct resource_list *rl;
 	struct resource_list_entry *rle;
 	int isdefault;
@@ -932,27 +934,50 @@ gpiobus_alloc_resource(device_t bus, device_t child, int type, int rid,
 		count = rle->count;
 		end = rle->end;
 	}
-	return (bus_generic_rman_alloc_resource(bus, child, type, rid, start,
-	    end, count, flags));
+
+	rm = gpiobus_get_rman(bus, type, flags);
+	r = rman_reserve_resource(rm, start, end, count, flags & ~RF_ACTIVE,
+	    child);
+	if (r == NULL)
+		return (NULL);
+	rman_set_rid(r, rid);
+	rman_set_type(r, type);
+
+	if ((flags & RF_ACTIVE) != 0 && rman_activate_resource(r) != 0) {
+		rman_release_resource(r);
+		return (NULL);
+	}
+
+	return (r);
 }
 
 static int
 gpiobus_release_resource(device_t dev, device_t child, struct resource *r)
 {
+	struct rman *rm;
 	int err;
+	u_int flags;
 #ifdef INTRNG
 	u_int irq;
 
 	irq = rman_get_start(r);
 	MPASS(irq == rman_get_end(r));
 #endif
-	err = bus_generic_rman_release_resource(dev, child, r);
-	if (err != 0)
-		return (err);
+
+	flags = rman_get_flags(r);
+	rm = gpiobus_get_rman(dev, rman_get_type(r), flags);
+	KASSERT(rman_is_region_manager(r, rm),
+	    ("%s: rman %p doesn't match for resource %p", __func__, rm, r));
+	if (flags & RF_ACTIVE) {
+		err = rman_deactivate_resource(r);
+		if (err != 0)
+			return (err);
+	}
+
 #ifdef INTRNG
 	intr_unmap_irq(irq);
 #endif
-	return (0);
+	return (rman_release_resource(r));
 }
 
 static struct resource_list *
