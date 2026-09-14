@@ -96,6 +96,8 @@ bool xa_empty(struct xarray *);
 void xa_destroy(struct xarray *);
 void *xa_next(struct xarray *, unsigned long *, bool);
 void *xa_find(struct xarray *, unsigned long *, unsigned long, xa_mark_t);
+unsigned int xa_extract(struct xarray *, void **, unsigned long,
+	unsigned long, unsigned int, xa_mark_t);
 
 #define	xa_for_each(xa, index, entry) \
 	for ((entry) = NULL, (index) = 0; \
