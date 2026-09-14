@@ -476,3 +476,23 @@ xa_find(struct xarray *xa, unsigned long *pindex, unsigned long max, xa_mark_t f
 
 	return (NULL);
 }
+
+unsigned int
+xa_extract(struct xarray *xa, void **ptr, unsigned long start,
+	unsigned long end, unsigned int n, xa_mark_t mark)
+{
+	unsigned long index;
+	void *entry;
+	unsigned int copied;
+
+	copied = 0;
+
+	xa_for_each(xa, index, entry) {
+		if (index >= start && index <= end && copied < n) {
+			ptr[index - start] = entry;
+			copied++;
+		}
+	}
+
+	return (copied);
+}
