@@ -2,6 +2,10 @@
  * SPDX-License-Identifier: BSD-2-Clause
  *
  * Copyright (c) 2024 Ahmad Khalifa <vexeduxr@FreeBSD.org>
+ * Copyright (c) 2025-2026 The FreeBSD Foundation
+ *
+ * Portions of this software were developed by Aymeric Wibo
+ * <obiwac@freebsd.org> under sponsorship from the FreeBSD Foundation.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +31,9 @@
 
 #include <sys/types.h>
 #include <sys/bus.h>
+#include <sys/eventhandler.h>
 #include <sys/kernel.h>
+#include <sys/malloc.h>
 #include <sys/module.h>
 #include <sys/gpio.h>
 
@@ -39,16 +45,34 @@
 #include <dev/gpio/gpiobus_internal.h>
 #include <sys/sbuf.h>
 
-#include "gpiobus_if.h"
+struct acpi_gpiobus_pin_intr {
+	device_t	busdev;
+	/*
+	 * The ACPI handle to the consumer device the interrupt should be given
+	 * to, in other words the container of _CRS.
+	 */
+	ACPI_HANDLE	consumer;
+	uint16_t	pinnum;
+	gpio_pin_t	pin;
+	uint32_t	flags;
+	struct acpi_cousin_intr_consumers	*cousin_intr_cons;
+	int		intr_rid;
+	struct resource	*intr_res;
+	void		*intr_cookie;
+};
 
 struct acpi_gpiobus_softc {
-	struct gpiobus_softc	super_sc;
-	ACPI_CONNECTION_INFO	handler_info;
+	struct gpiobus_softc		super_sc;
+	ACPI_CONNECTION_INFO		handler_info;
+
+	struct acpi_gpiobus_pin_intr	*pin_intrs;
+	size_t				pin_intr_count;
 };
 
 struct acpi_gpiobus_ctx {
-	struct gpiobus_softc	*sc;
-	ACPI_HANDLE		dev_handle;
+	struct acpi_gpiobus_softc	*sc;
+	ACPI_HANDLE			dev_handle;
+	ACPI_HANDLE			visiting_dev_handle;
 };
 
 struct acpi_gpiobus_ivar
@@ -109,20 +133,25 @@ acpi_gpiobus_convflags(ACPI_RESOURCE_GPIO *gpio_res)
 }
 
 static ACPI_STATUS
-acpi_gpiobus_enumerate_res(ACPI_RESOURCE *res, void *context)
+acpi_gpiobus_visit_crs(ACPI_RESOURCE *res, void *context)
 {
 	ACPI_RESOURCE_GPIO *gpio_res = &res->Data.Gpio;
 	struct acpi_gpiobus_ctx *ctx = context;
-	struct gpiobus_softc *super_sc = ctx->sc;
-	ACPI_HANDLE handle;
+	struct acpi_gpiobus_softc *sc = ctx->sc;
+	struct gpiobus_softc *super_sc = &sc->super_sc;
+	struct acpi_gpiobus_pin_intr *pin_intr;
+	ACPI_HANDLE bus_handle;
+	device_t busdev;
 	uint32_t flags, i;
+	int err, pinnum;
+	gpio_pin_t pin;
 
 	if (res->Type != ACPI_RESOURCE_TYPE_GPIO)
 		return (AE_OK);
 
 	if (ACPI_FAILURE(AcpiGetHandle(ACPI_ROOT_OBJECT,
-	    gpio_res->ResourceSource.StringPtr, &handle)) ||
-	    handle != ctx->dev_handle)
+	    gpio_res->ResourceSource.StringPtr, &bus_handle)) ||
+	    bus_handle != ctx->dev_handle)
 		return (AE_OK);
 
 	if (__predict_false(gpio_res->PinTableLength > super_sc->sc_npins)) {
@@ -132,19 +161,46 @@ acpi_gpiobus_enumerate_res(ACPI_RESOURCE *res, void *context)
 		return (AE_LIMIT);
 	}
 
+	/*
+	 * The bus device here is the specific GPIO controller.  We call
+	 * GPIO_GET_BUS() on it to get the actual generic gpiobus device, which
+	 * is added as a child under the GPIO controller.
+	 *
+	 * TODO What happens if acpi_get_device fails?
+	 */
+	busdev = GPIO_GET_BUS(acpi_get_device(bus_handle));
+
 	flags = acpi_gpiobus_convflags(gpio_res);
 	for (i = 0; i < gpio_res->PinTableLength; i++) {
-		UINT16 pin = gpio_res->PinTable[i];
+		pinnum = gpio_res->PinTable[i];
 
-		if (__predict_false(pin >= super_sc->sc_npins)) {
+		if (__predict_false(pinnum >= super_sc->sc_npins)) {
 			device_printf(super_sc->sc_busdev,
 			    "invalid pin 0x%x, max: 0x%x (bad ACPI tables?)\n",
-			    pin, super_sc->sc_npins - 1);
+			    pinnum, super_sc->sc_npins - 1);
 			return (AE_LIMIT);
 		}
 
-		GPIO_PIN_SETFLAGS(super_sc->sc_dev, pin, flags &
-		    ~GPIO_INTR_MASK);
+		printf("==== %s: Pin=%u, Flags=0x%x\n", __func__, pinnum, flags);
+
+		err = gpio_pin_get_by_bus_pinnum(busdev, pinnum, &pin);
+		if (err != 0) {
+			device_printf(super_sc->sc_busdev, "cannot acquire "
+			    "pin %d\n", pinnum);
+			continue;
+		}
+
+		// TODO Any locking required here? assuming not.
+
+		sc->pin_intrs = realloc(sc->pin_intrs, (sc->pin_intr_count + 1)
+		    * sizeof(*sc->pin_intrs), M_DEVBUF, M_WAITOK | M_ZERO);
+		pin_intr = &sc->pin_intrs[sc->pin_intr_count++];
+
+		pin_intr->busdev = busdev;
+		pin_intr->consumer = ctx->visiting_dev_handle;
+		pin_intr->pinnum = pinnum;
+		pin_intr->pin = pin;
+		pin_intr->flags = flags;
 	}
 
 	return (AE_OK);
@@ -172,9 +228,10 @@ acpi_gpiobus_enumerate_aei(ACPI_RESOURCE *res, void *context)
 }
 
 static ACPI_STATUS
-acpi_gpiobus_enumerate(ACPI_HANDLE handle, UINT32 depth, void *context,
+acpi_gpiobus_visit_device(ACPI_HANDLE handle, UINT32 depth, void *context,
     void **result)
 {
+	struct acpi_gpiobus_ctx *ctx = context;
 	UINT32 sta;
 
 	/*
@@ -189,7 +246,8 @@ acpi_gpiobus_enumerate(ACPI_HANDLE handle, UINT32 depth, void *context,
 		return (AE_OK);
 
 	/* Look for GPIO resources */
-	AcpiWalkResources(handle, "_CRS", acpi_gpiobus_enumerate_res, context);
+	ctx->visiting_dev_handle = handle;
+	AcpiWalkResources(handle, "_CRS", acpi_gpiobus_visit_crs, ctx);
 
 	return (AE_OK);
 }
@@ -332,6 +390,14 @@ acpi_gpiobus_probe(device_t dev)
 	return (BUS_PROBE_DEFAULT);
 }
 
+static void
+acpi_gpiobus_intr(void *context)
+{
+	struct acpi_cousin_intr_consumers *cons = context;
+
+	acpi_cousin_intr_trigger(cons);
+}
+
 static int
 acpi_gpiobus_attach(device_t dev)
 {
@@ -361,27 +427,84 @@ acpi_gpiobus_attach(device_t dev)
 		return (ENXIO);
 	}
 
+	sc->pin_intr_count = 0;
+	sc->pin_intrs = NULL;
+
 	ctx.dev_handle = handle;
-	ctx.sc = &sc->super_sc;
+	ctx.sc = sc;
 
 	status = AcpiWalkNamespace(ACPI_TYPE_DEVICE, ACPI_ROOT_OBJECT,
-	    ACPI_UINT32_MAX, acpi_gpiobus_enumerate, NULL, &ctx, NULL);
+	    ACPI_UINT32_MAX, acpi_gpiobus_visit_device, NULL, &ctx, NULL);
 
 	if (ACPI_FAILURE(status))
 		device_printf(dev, "Failed to enumerate GPIO resources\n");
 
 	/* Look for AEI child */
 	acpi_gpiobus_attach_aei(sc, handle);
+
+	/*
+	 * Look for ACPI cousin interrupt requests we can service.
+	 */
+	// TODO I also need to give consideration to the fact that we want this to work cleanly for when iichid is attached after acpi_gpiobus too.
+	int rid = 0;
+	struct resource *res;
+	struct acpi_gpiobus_pin_intr *pin_intr;
+	gpio_pin_t pin;
+	uint32_t alloc_flags, intr_mode;
+
+	for (size_t i = 0; i < sc->pin_intr_count; i++) {
+		pin_intr = &sc->pin_intrs[i];
+
+		MPASS(pin_intr->cousin_intr_cons == NULL);
+		pin_intr->cousin_intr_cons = acpi_cousin_intr_provide(
+		    NULL, pin_intr->consumer);
+		if (pin_intr->cousin_intr_cons == NULL)
+			continue;
+		if (pin_intr->busdev != dev)
+			continue;
+
+		pin = pin_intr->pin;
+		gpio_pin_setflags(pin, pin_intr->flags & ~GPIO_INTR_MASK);
+
+		/* Allocate interrupt resource for the pin. */
+		alloc_flags = RF_ACTIVE;
+		intr_mode = pin_intr->flags & GPIO_INTR_MODE_MASK;
+
+		res = gpio_alloc_intr_resource(dev, rid, alloc_flags, pin,
+		    intr_mode);
+		if (res == NULL) {
+			device_printf(dev, "cannot allocate interrupt resource "
+			    "for pin %d\n", pin_intr->pinnum);
+			acpi_cousin_intr_detach(pin_intr->cousin_intr_cons);
+			continue;
+		}
+		pin_intr->intr_rid = rid++;
+
+		/* Set up interrupt handler. */
+		// TODO This is very hacky and bad and needs to be changed.
+		err = BUS_SETUP_INTR(dev, dev, res, INTR_TYPE_TTY|INTR_MPSAFE,
+		    NULL, acpi_gpiobus_intr, pin_intr->cousin_intr_cons,
+		    &pin_intr->intr_cookie);
+		if (err != 0) {
+			device_printf(dev, "cannot setup interrupt handler for "
+			    "pin %d (%d)\n", pin_intr->pinnum, err);
+			acpi_cousin_intr_detach(pin_intr->cousin_intr_cons);
+			bus_release_resource(dev, SYS_RES_IRQ, rid, res);
+		}
+	}
+
 	return (0);
 }
 
 static int
 acpi_gpiobus_detach(device_t dev)
 {
-	struct gpiobus_softc *super_sc;
+	struct acpi_gpiobus_softc *sc = device_get_softc(dev);
+	struct gpiobus_softc *super_sc = &sc->super_sc;
+	struct acpi_gpiobus_pin_intr *pin_intr;
+	struct acpi_cousin_intr_consumers *cons;
 	ACPI_STATUS status;
 
-	super_sc = device_get_softc(dev);
 	status = AcpiRemoveAddressSpaceHandler(
 	    acpi_get_handle(super_sc->sc_dev), ACPI_ADR_SPACE_GPIO,
 	    acpi_gpiobus_space_handler
@@ -390,6 +513,25 @@ acpi_gpiobus_detach(device_t dev)
 	if (ACPI_FAILURE(status))
 		device_printf(dev,
 		    "Failed to remove GPIO address space handler\n");
+
+	for (size_t i = 0; i < sc->pin_intr_count; i++) {
+		pin_intr = &sc->pin_intrs[i];
+		if (pin_intr->cousin_intr_cons == NULL)
+			continue;
+		cons = pin_intr->cousin_intr_cons;
+		acpi_cousin_intr_detach(cons);
+
+		if (pin_intr->intr_cookie != 0)
+			BUS_TEARDOWN_INTR(dev, dev, pin_intr->intr_res,
+			    pin_intr->intr_cookie);
+		if (pin_intr->intr_res != NULL)
+			bus_release_resource(dev, SYS_RES_IRQ,
+			    pin_intr->intr_rid, pin_intr->intr_res);
+		acpi_cousin_intr_free_cons(cons);
+	}
+	for (size_t i = 0; i < sc->pin_intr_count; i++)
+		gpio_pin_release(sc->pin_intrs[i].pin);
+	free(sc->pin_intrs, M_DEVBUF);
 
 	return (gpiobus_detach(dev));
 }
