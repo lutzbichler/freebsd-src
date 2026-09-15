@@ -44,6 +44,7 @@
 #include <linux/moduleparam.h>
 #include <linux/slab.h>
 #include <linux/export.h>
+#include <linux/percpu.h>
 
 #define MODULE_AUTHOR(name)
 #define MODULE_DESCRIPTION(name)
