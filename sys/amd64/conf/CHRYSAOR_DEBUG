@@ -4,7 +4,7 @@
 # For more information on this file, please read the config(5) manual page,
 # and/or the handbook section on Kernel Configuration Files:
 #
-#    https://www.FreeBSD.org/doc/en_US.ISO8859-1/books/handbook/kernelconfig-config.html
+#    https://docs.freebsd.org/en/books/handbook/kernelconfig/#kernelconfig-config
 #
 # The handbook is also available locally in /usr/share/doc/handbook
 # if you've installed the doc distribution, otherwise always see the
@@ -33,7 +33,6 @@ options 	INET			# InterNETworking
 options 	INET6			# IPv6 communications protocols
 options 	IPSEC_SUPPORT		# Allow kldload of ipsec and tcpmd5
 options 	IPSEC_OFFLOAD		# Inline ipsec offload infra
-options 	ROUTE_MPATH		# Multipath routing support
 options 	FIB_ALGO		# Modular fib lookups
 options 	TCP_OFFLOAD		# TCP offload
 options 	TCP_BLACKBOX		# Enhanced TCP event logging
@@ -83,36 +82,20 @@ options 	MAC			# TrustedBSD MAC Framework
 options 	KDTRACE_FRAME		# Ensure frames are compiled in
 options 	KDTRACE_HOOKS		# Kernel DTrace hooks
 options 	DDB_CTF			# Kernel ELF linker loads CTF data
-options 	INCLUDE_CONFIG_FILE	# Include this file in kernel
+options 	INCLUDE_CONFIG_FILE     # Include this file in kernel
 
 # Debugging support.  Always need this:
 options 	KDB			# Enable kernel debugger support.
 options 	KDB_TRACE		# Print a stack trace for a panic.
 # For full debugger support use (turn off in stable branch):
-options 	BUF_TRACKING		# Track buffer history
-options 	DDB			# Support DDB.
-options 	FULL_BUF_TRACKING	# Track more buffer history
-options 	GDB			# Support remote GDB.
-options 	DEADLKRES		# Enable the deadlock resolver
-options 	INVARIANTS		# Enable calls of extra sanity checking
-options 	INVARIANT_SUPPORT	# Extra sanity checks of internal structures, required by INVARIANTS
-options 	QUEUE_MACRO_DEBUG_TRASH	# Trash queue(2) internal pointers on invalidation
-options 	WITNESS			# Enable checks to detect deadlocks and cycles
-options 	WITNESS_SKIPSPIN	# Don't run witness on spinlocks for speed
-options 	MALLOC_DEBUG_MAXZONES=8	# Separate malloc(9) zones
-options 	VERBOSE_SYSINIT=0	# Support debug.verbose_sysinit, off by default
+include "std.debug"
 
-# Kernel Sanitizers
-#options 	COVERAGE		# Generic kernel coverage. Used by KCOV
-#options 	KCOV			# Kernel Coverage Sanitizer
-# Warning: KUBSAN can result in a kernel too large for loader to load
-#options 	KUBSAN			# Kernel Undefined Behavior Sanitizer
-#options 	KCSAN			# Kernel Concurrency Sanitizer
+# Compression support
+options 	GZIO			# gzip (dumps)
+options 	ZSTDIO			# zstd (dumps, tarfs, uzip, zfs)
 
 # Kernel dump features.
 options 	EKCD			# Support for encrypted kernel dumps
-options 	GZIO			# gzip-compressed kernel and user dumps
-options 	ZSTDIO			# zstd-compressed kernel and user dumps
 options 	DEBUGNET		# debugnet networking
 options 	NETDUMP			# netdump(4) client support
 options 	NETGDB			# netgdb(4) client support
@@ -172,19 +155,27 @@ device		wlan_amrr	# AMRR transmit rate control algorithm
 # Pseudo devices.
 device		crypto			# core crypto support
 device		aesni			# AES-NI OpenCrypto module
-device		loop		# Network loopback
-device		rdrand_rng	# Intel Bull Mountain RNG
-device		ether		# Ethernet support
-device		vlan		# 802.1Q VLAN support
+device		loop			# Network loopback
+device		ether			# Ethernet support
+device		vlan			# 802.1Q VLAN support
 device		tuntap			# Packet tunnel.
-device		md		# Memory "disks"
-device		gif		# IPv6 and IPv4 tunneling
-device		firmware	# firmware assist module
+device		md			# Memory "disks"
+device		gif			# IPv6 and IPv4 tunneling
+device		firmware		# firmware assist module
+device		xz			# lzma decompression
 
 # The `bpf' device enables the Berkeley Packet Filter.
 # Be aware of the administrative consequences of enabling this!
 # Note that 'bpf' is required for DHCP.
-device		bpf		# Berkeley packet filter
+device		bpf			# Berkeley packet filter
+
+# random(4)
+device		rdrand_rng		# Intel Bull Mountain RNG
+# Disabled for now since tpm(4) breaks suspend/resume.
+#device		tpm			# Trusted Platform Module
+options 	RANDOM_ENABLE_TPM	# enable entropy from TPM 2.0
+options 	RANDOM_ENABLE_KBD
+options 	RANDOM_ENABLE_MOUSE
 
 # USB support
 device		ehci
@@ -215,11 +206,9 @@ device		uinput			# install /dev/uinput cdev
 
 # HID support
 device		hid			# Generic HID support
+device		hidbus			# Generic HID Bus
 options 	IICHID_SAMPLING		# Workaround missing GPIO INTR support
-options 	U2F_MAKE_UHID_ALIAS	# install /dev/uhid alias for /dev/u2f/
-
 device		iichid
-device		hidbus
 device		hidmap
 device		hconf
 device		hmt
