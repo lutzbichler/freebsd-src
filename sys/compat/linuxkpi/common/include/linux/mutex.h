@@ -174,6 +174,15 @@ linux_mutex_destroy(mutex_t *m)
 
 extern int linux_mutex_lock_interruptible(mutex_t *m);
 
+struct device;
+
+static inline int
+devm_mutex_init(struct device *dev __unused, struct mutex *m)
+{
+	mutex_init(m);
+	return (0);
+}
+
 DEFINE_GUARD(mutex, struct mutex *, mutex_lock(_T), mutex_unlock(_T))
 
 #endif					/* _LINUXKPI_LINUX_MUTEX_H_ */
