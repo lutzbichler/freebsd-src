@@ -65,6 +65,7 @@
 #include <linux/idr.h>
 #include <linux/io.h>
 #include <linux/io-mapping.h>
+#include <linux/device.h>
 
 #ifdef __i386__
 DEFINE_IDR(mtrr_idr);
