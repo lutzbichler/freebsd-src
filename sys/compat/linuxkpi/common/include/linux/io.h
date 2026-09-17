@@ -410,20 +410,6 @@ _ioremap_attr(vm_paddr_t _phys_addr, unsigned long _size, int _attr)
 }
 #endif
 
-struct device;
-static inline void *
-devm_ioremap(struct device *dev, resource_size_t offset, resource_size_t size)
-{
-	return (NULL);
-}
-
-static inline void *
-devm_ioremap_wc(struct device *dev, resource_size_t offset, resource_size_t size)
-{
-	return (NULL);
-}
-
-
 #ifdef VM_MEMATTR_DEVICE
 #define	ioremap_nocache(addr, size)					\
     _ioremap_attr((addr), (size), VM_MEMATTR_DEVICE)
@@ -527,6 +513,32 @@ memremap(resource_size_t offset, size_t size, unsigned long flags)
 		goto done;
 done:
 	return (addr);
+}
+
+struct device;
+
+#define	devm_memremap(...)	linuxkpi_devm_memremap(__VA_ARGS__)
+void *linuxkpi_devm_memremap(struct device *dev, resource_size_t offset,
+    size_t size, unsigned long flags);
+
+static inline void *
+devm_ioremap(struct device *dev, resource_size_t offset,
+	resource_size_t size)
+{
+	void *addr;
+
+	addr = devm_memremap(dev, offset, size, MEMREMAP_WB);
+	return (IS_ERR(addr) ? NULL : addr);
+}
+
+static inline void *
+devm_ioremap_wc(struct device *dev, resource_size_t offset,
+    resource_size_t size)
+{
+	void *addr;
+
+	addr = devm_memremap(dev, offset, size, MEMREMAP_WC);
+	return (IS_ERR(addr) ? NULL : addr);
 }
 
 static inline void
