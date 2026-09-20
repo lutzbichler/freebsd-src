@@ -88,9 +88,15 @@
 #define	max_array(array, len) __minmax_array(max, array, len)
 
 static inline bool
+in_range32(uint32_t val, uint32_t start, uint64_t len)
+{
+	return ((val - start) < len);
+}
+
+static inline bool
 in_range(uint64_t val, uint64_t start, uint64_t len)
 {
-	return (val >= start && (val - start) < len);
+	return ((val - start) < len);
 }
 
 
