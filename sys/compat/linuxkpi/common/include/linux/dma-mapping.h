@@ -59,6 +59,9 @@
 #define	DMA_ATTR_NO_WARN		(1 << 8)
 #define	DMA_ATTR_PRIVILEGED		(1 << 9)
 
+struct dma_iova_state {
+};
+
 struct dma_map_ops {
 	void* (*alloc_coherent)(struct device *dev, size_t size,
 	    dma_addr_t *dma_handle, gfp_t gfp);
