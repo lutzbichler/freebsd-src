@@ -65,6 +65,9 @@ enum dma_data_direction {
 	DMA_NONE = 3,
 };
 
+struct dma_iova_state {
+};
+
 struct dma_map_ops {
 	void* (*alloc_coherent)(struct device *dev, size_t size,
 	    dma_addr_t *dma_handle, gfp_t gfp);
