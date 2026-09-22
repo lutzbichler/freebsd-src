@@ -42,7 +42,7 @@
 #include <linux/module.h>
 #include <linux/workqueue.h>
 #include <linux/kdev_t.h>
-#include <linux/backlight.h>
+#include <linux/notifier.h>
 #include <linux/pm.h>
 #include <linux/idr.h>
 #include <linux/overflow.h>
