@@ -185,4 +185,22 @@ i2c_get_adapdata(struct i2c_adapter *adapter)
 	return (adapter->data);
 }
 
+static inline void
+i2c_lock_bus(struct i2c_adapter *adapter, unsigned int flags)
+{
+	adapter->lock_ops->lock_bus(adapter, flags);
+}
+
+static inline int
+i2c_trylock_bus(struct i2c_adapter *adapter, unsigned int flags)
+{
+	return (adapter->lock_ops->trylock_bus(adapter, flags));
+}
+
+static inline void
+i2c_unlock_bus(struct i2c_adapter *adapter, unsigned int flags)
+{
+	adapter->lock_ops->unlock_bus(adapter, flags);
+}
+
 #endif	/* _LINUX_I2C_H_ */
