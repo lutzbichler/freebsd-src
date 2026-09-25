@@ -48,7 +48,8 @@
 #define	DIV_ROUND_UP_ULL(x, n)	DIV_ROUND_UP((unsigned long long)(x), (n))
 #define	DIV_ROUND_DOWN_ULL(x, n) ((unsigned long long)(x) / (n))
 
-#define	DIV_ROUND_CLOSEST(x, divisor)	(((x) + ((divisor) / 2)) / (divisor))
+#define	__KERNEL_DIV_ROUND_CLOSEST(x, divisor)	(((x) + ((divisor) / 2)) / (divisor))
+#define	DIV_ROUND_CLOSEST	__KERNEL_DIV_ROUND_CLOSEST
 #define	DIV_ROUND_CLOSEST_ULL(x, divisor) ({		\
 	__typeof(divisor) __d = (divisor);		\
 	unsigned long long __ret = (x) + (__d) / 2;	\
