@@ -864,6 +864,26 @@ linux_copyout(const void *kaddr, void *uaddr, size_t len)
 	return (-copyout(kaddr, uaddr, len));
 }
 
+long
+linux_strncpy_from_user(char *to, const char *from, long n)
+{
+	size_t copied;
+	int error;
+
+	if (n <= 0)
+		return (0);
+
+	error = copyinstr(from, to, (size_t)n, &copied);
+
+	if (error == 0)
+		return ((long)copied - 1);
+
+	if (error == ENAMETOOLONG)
+		return (n);
+
+	return (-EFAULT);
+}
+
 size_t
 linux_clear_user(void *_uaddr, size_t _len)
 {

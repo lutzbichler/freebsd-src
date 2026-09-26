@@ -66,4 +66,7 @@ copy_from_user(void *to, const void *from, unsigned long n)
 		goto err; \
 } while (0)
 
+#define	strncpy_from_user(to, from, n) \
+	linux_strncpy_from_user(to, from, n)
+
 #endif	/* _LINUXKPI_ASM_UACCESS_H_ */
