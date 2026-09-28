@@ -45,6 +45,7 @@
 #include <linux/build_bug.h>
 #include <linux/compiler.h>
 #include <linux/container_of.h>
+#include <linux/dynamic_debug.h>
 #include <linux/kstrtox.h>
 #include <linux/limits.h>
 #include <linux/math.h>
