@@ -29,9 +29,9 @@
 #ifndef	_LINUXKPI_LINUX_DMA_MAPPING_H_
 #define _LINUXKPI_LINUX_DMA_MAPPING_H_
 
-#include <linux/dma-direction.h>
 #include <linux/types.h>
 #include <linux/device.h>
+#include <linux/dma-direction.h>
 #include <linux/err.h>
 #include <linux/scatterlist.h>
 #include <linux/mm.h>
