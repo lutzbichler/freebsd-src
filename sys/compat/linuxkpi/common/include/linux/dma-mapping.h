@@ -31,6 +31,7 @@
 
 #include <linux/types.h>
 #include <linux/device.h>
+#include <linux/dma-direction.h>
 #include <linux/err.h>
 #include <linux/scatterlist.h>
 #include <linux/mm.h>
@@ -57,13 +58,6 @@
 #define	DMA_ATTR_ALLOC_SINGLE_PAGES	(1 << 7)
 #define	DMA_ATTR_NO_WARN		(1 << 8)
 #define	DMA_ATTR_PRIVILEGED		(1 << 9)
-
-enum dma_data_direction {
-	DMA_BIDIRECTIONAL = 0,
-	DMA_TO_DEVICE = 1,
-	DMA_FROM_DEVICE = 2,
-	DMA_NONE = 3,
-};
 
 struct dma_iova_state {
 };

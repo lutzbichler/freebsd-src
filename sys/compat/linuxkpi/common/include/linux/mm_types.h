@@ -27,6 +27,7 @@
 #ifndef _LINUXKPI_LINUX_MM_TYPES_H_
 #define	_LINUXKPI_LINUX_MM_TYPES_H_
 
+#include <linux/kref.h>
 #include <linux/types.h>
 #include <linux/page.h>
 #include <linux/rbtree.h>
