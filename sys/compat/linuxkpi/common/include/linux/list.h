@@ -36,6 +36,7 @@
  * definition prior to the undef.
  */
 #include <linux/container_of.h>
+#include <linux/poison.h>
 #include <linux/types.h>
 
 #include <sys/param.h>

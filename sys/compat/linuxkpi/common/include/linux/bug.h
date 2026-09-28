@@ -6,6 +6,6 @@
 #ifndef _LINUXKPI_LINUX_BUG_H
 #define _LINUXKPI_LINUX_BUG_H
 
-#include <linux/build_bug.h>
+#include <linux/kernel.h>
 
 #endif /* _LINUXKPI_LINUX_BUG_H */

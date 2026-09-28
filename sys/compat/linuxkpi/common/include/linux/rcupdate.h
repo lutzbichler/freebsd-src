@@ -36,6 +36,7 @@
 #include <linux/types.h>
 #include <linux/kernel.h>
 #include <linux/cleanup.h>
+#include <linux/seqlock.h>
 
 #include <machine/atomic.h>
 
