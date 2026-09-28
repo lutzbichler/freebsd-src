@@ -3,6 +3,8 @@
 #ifndef _LINUXKPI_LINUX_DYNAMIC_DEBUG_H
 #define _LINUXKPI_LINUX_DYNAMIC_DEBUG_H
 
+#include <linux/jump_label.h>
+
 #define DECLARE_DYNDBG_CLASSMAP(a, b, c, ...)
 
 #endif
