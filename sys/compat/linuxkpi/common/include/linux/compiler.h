@@ -107,4 +107,6 @@
 #define	GCC_VERSION		0
 #endif
 
+#define const_true(x)	__builtin_choose_expr(__is_constexpr(x), x, false)
+
 #endif	/* _LINUXKPI_LINUX_COMPILER_H_ */
