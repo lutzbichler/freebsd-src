@@ -47,7 +47,7 @@
 #define	MAX_ID_MASK	(MAX_ID_BIT - 1)
 #define	MAX_LEVEL	(MAX_ID_SHIFT + IDR_BITS - 1) / IDR_BITS
 
-#define MAX_IDR_SHIFT (sizeof(int)*8 - 1)
+#define MAX_IDR_SHIFT 32
 #define MAX_IDR_BIT (1U << MAX_IDR_SHIFT)
 #define MAX_IDR_MASK (MAX_IDR_BIT - 1)
 
@@ -78,23 +78,24 @@ struct idr {
 
 void	idr_preload(gfp_t gfp_mask);
 void	idr_preload_end(void);
-void	*idr_find(struct idr *idp, int id);
-void	*idr_get_next(struct idr *idp, int *nextid);
-bool	idr_is_empty(struct idr *idp);
-int	idr_pre_get(struct idr *idp, gfp_t gfp_mask);
-int	idr_get_new(struct idr *idp, void *ptr, int *id);
-int	idr_get_new_above(struct idr *idp, void *ptr, int starting_id, int *id);
-void	*idr_replace(struct idr *idp, void *ptr, int id);
-void	*idr_remove(struct idr *idp, int id);
-void	idr_remove_all(struct idr *idp);
-void	idr_destroy(struct idr *idp);
-void	idr_init(struct idr *idp);
-int	idr_alloc(struct idr *idp, void *ptr, int start, int end, gfp_t);
-int	idr_alloc_cyclic(struct idr *idp, void *ptr, int start, int end, gfp_t);
-int	idr_for_each(struct idr *idp, int (*fn)(int id, void *p, void *data), void *data);
+void	*idr_find(struct idr *idr, unsigned long id);
+void	*idr_get_next(struct idr *idr, int *nextid);
+bool	idr_is_empty(struct idr *idr);
+int	idr_pre_get(struct idr *idr, gfp_t gfp_mask);
+int	idr_get_new(struct idr *idr, void *ptr, int *id);
+int	idr_get_new_above(struct idr *idr, void *ptr, int starting_id, int *id);
+void	*idr_replace(struct idr *idr, void *ptr, unsigned long id);
+void	*idr_remove(struct idr *idr, unsigned long id);
+void	idr_remove_all(struct idr *idr);
+void	idr_destroy(struct idr *idr);
+void	idr_init(struct idr *idr);
+int	idr_alloc(struct idr *idr, void *ptr, int start, int end, gfp_t);
+int	idr_alloc_cyclic(struct idr *idr, void *ptr, int start, int end, gfp_t);
+int idr_alloc_u32(struct idr *idr, void *ptr, u32 *idp, unsigned long end, gfp_t);
+int	idr_for_each(struct idr *idr, int (*fn)(int id, void *p, void *data), void *data);
 
-#define	idr_for_each_entry(idp, entry, id)	\
-	for ((id) = 0; ((entry) = idr_get_next(idp, &(id))) != NULL; ++(id))
+#define	idr_for_each_entry(idr, entry, id)	\
+	for ((id) = 0; ((entry) = idr_get_next(idr, &(id))) != NULL; ++(id))
 
 #define	IDA_CHUNK_SIZE		128	/* 128 bytes per chunk */
 #define	IDA_BITMAP_LONGS	(IDA_CHUNK_SIZE / sizeof(long) - 1)
