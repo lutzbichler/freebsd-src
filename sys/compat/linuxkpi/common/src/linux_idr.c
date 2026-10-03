@@ -230,7 +230,7 @@ idr_remove_all(struct idr *idr)
 }
 
 static void *
-idr_remove_locked(struct idr *idr, int id)
+idr_remove_locked(struct idr *idr, unsigned long id)
 {
 	struct idr_layer *il;
 	void *res;
@@ -259,7 +259,7 @@ idr_remove_locked(struct idr *idr, int id)
 	 * and a warning so I don't think it's necessary.
 	 */
 	if (il == NULL || (il->bitmap & (1 << idx)) != 0)
-		panic("idr_remove: Item %d not allocated (%p, %p)\n",
+		panic("idr_remove: Item %lu not allocated (%p, %p)\n",
 		    id, idr, il);
 	res = il->ary[idx];
 	il->ary[idx] = NULL;
@@ -269,7 +269,7 @@ idr_remove_locked(struct idr *idr, int id)
 }
 
 void *
-idr_remove(struct idr *idr, int id)
+idr_remove(struct idr *idr, unsigned long id)
 {
 	void *res;
 
@@ -281,7 +281,7 @@ idr_remove(struct idr *idr, int id)
 }
 
 static inline struct idr_layer *
-idr_find_layer_locked(struct idr *idr, int id)
+idr_find_layer_locked(struct idr *idr, unsigned long id)
 {
 	struct idr_layer *il;
 	int layer;
@@ -299,7 +299,7 @@ idr_find_layer_locked(struct idr *idr, int id)
 }
 
 void *
-idr_replace(struct idr *idr, void *ptr, int id)
+idr_replace(struct idr *idr, void *ptr, unsigned long id)
 {
 	struct idr_layer *il;
 	void *res;
@@ -321,22 +321,21 @@ idr_replace(struct idr *idr, void *ptr, int id)
 }
 
 static inline void *
-idr_find_locked(struct idr *idr, int id)
+idr_find_locked(struct idr *idr, unsigned long id)
 {
 	struct idr_layer *il;
-	void *res;
+	unsigned int n;
 
-	IDR_LOCK_ASSERT(idr);
 	il = idr_find_layer_locked(idr, id);
-	if (il != NULL)
-		res = il->ary[id & IDR_MASK];
-	else
-		res = NULL;
-	return (res);
+	if (!il)
+		return (NULL);
+
+	n = id & IDR_MASK;
+	return (il->ary[n]);
 }
 
 void *
-idr_find(struct idr *idr, int id)
+idr_find(struct idr *idr, unsigned long id)
 {
 	void *res;
 
@@ -351,6 +350,9 @@ idr_get_next(struct idr *idr, int *nextidp)
 {
 	void *res = NULL;
 	int id = *nextidp;
+
+	if (id < 0)
+		return (NULL);
 
 	IDR_LOCK(idr);
 	for (; id <= idr_max(idr); id++) {
@@ -428,106 +430,15 @@ idr_get(struct idr *idp)
 	return (il);
 }
 
-/*
- * Could be implemented as get_new_above(idr, ptr, 0, idp) but written
- * first for simplicity sake.
- */
 static int
-idr_get_new_locked(struct idr *idr, void *ptr, int *idp)
+idr_get_new_above_u32_locked(struct idr *idr, void *ptr, u32 starting_id, u32 *idp)
 {
 	struct idr_layer *stack[MAX_LEVEL];
 	struct idr_layer *il;
 	int error;
 	int layer;
-	int idx;
-	int id;
-
-	IDR_LOCK_ASSERT(idr);
-
-	error = -EAGAIN;
-	/*
-	 * Expand the tree until there is free space.
-	 */
-	if (idr->top == NULL || idr->top->bitmap == 0) {
-		if (idr->layers == MAX_LEVEL + 1) {
-			error = -ENOSPC;
-			goto out;
-		}
-		il = idr_get(idr);
-		if (il == NULL)
-			goto out;
-		il->ary[0] = idr->top;
-		if (idr->top)
-			il->bitmap &= ~1;
-		idr->top = il;
-		idr->layers++;
-	}
-	il = idr->top;
-	id = 0;
-	/*
-	 * Walk the tree following free bitmaps, record our path.
-	 */
-	for (layer = idr->layers - 1;; layer--) {
-		stack[layer] = il;
-		idx = ffsl(il->bitmap);
-		if (idx == 0)
-			panic("idr_get_new: Invalid leaf state (%p, %p)\n",
-			    idr, il);
-		idx--;
-		id |= idx << (layer * IDR_BITS);
-		if (layer == 0)
-			break;
-		if (il->ary[idx] == NULL) {
-			il->ary[idx] = idr_get(idr);
-			if (il->ary[idx] == NULL)
-				goto out;
-		}
-		il = il->ary[idx];
-	}
-	/*
-	 * Allocate the leaf to the consumer.
-	 */
-	il->bitmap &= ~(1 << idx);
-	il->ary[idx] = ptr;
-	*idp = id;
-	/*
-	 * Clear bitmaps potentially up to the root.
-	 */
-	while (il->bitmap == 0 && ++layer < idr->layers) {
-		il = stack[layer];
-		il->bitmap &= ~(1 << idr_pos(id, layer));
-	}
-	error = 0;
-out:
-#ifdef INVARIANTS
-	if (error == 0 && idr_find_locked(idr, id) != ptr) {
-		panic("idr_get_new: Failed for idr %p, id %d, ptr %p\n",
-		    idr, id, ptr);
-	}
-#endif
-	return (error);
-}
-
-int
-idr_get_new(struct idr *idr, void *ptr, int *idp)
-{
-	int retval;
-
-	IDR_LOCK(idr);
-	retval = idr_get_new_locked(idr, ptr, idp);
-	IDR_UNLOCK(idr);
-	return (retval);
-}
-
-static int
-idr_get_new_above_locked(struct idr *idr, void *ptr, int starting_id, int *idp)
-{
-	struct idr_layer *stack[MAX_LEVEL];
-	struct idr_layer *il;
-	int error;
-	int layer;
-	int idx, sidx;
-	int id;
+	u32 idx, sidx;
+	u32 id;
 
 	IDR_LOCK_ASSERT(idr);
 
@@ -572,22 +483,22 @@ restart:
 	 */
 	for (layer = idr->layers - 1;; layer--) {
 		stack[layer] = il;
-		sidx = idr_pos(starting_id, layer);
+		sidx = (u32)idr_pos(starting_id, layer);
 		/* Returns index numbered from 0 or size if none exists. */
-		idx = find_next_bit(&il->bitmap, IDR_SIZE, sidx);
+		idx = (u32)find_next_bit(&il->bitmap, IDR_SIZE, sidx);
 		if (idx == IDR_SIZE && sidx == 0)
-			panic("idr_get_new: Invalid leaf state (%p, %p)\n",
+			panic("idr_get_new_above_u32_locked: Invalid leaf state (%p, %p)\n",
 			    idr, il);
 		/*
 		 * We may have walked a path where there was a free bit but
 		 * it was lower than what we wanted.  Restart the search with
-		 * a larger starting id.  id contains the progress we made so
-		 * far.  Search the leaf one above this level.  This may
+		 * a larger starting id.  id contains the progress we made
+		 * so far.  Search the leaf one above this level.  This may
 		 * restart as many as MAX_LEVEL times but that is expected
 		 * to be rare.
 		 */
 		if (idx == IDR_SIZE) {
-			starting_id = id + (1 << ((layer + 1) * IDR_BITS));
+			starting_id = id + (1u << ((layer + 1) * IDR_BITS));
 			goto restart;
 		}
 		if (idx > sidx)
@@ -619,81 +530,151 @@ restart:
 out:
 #ifdef INVARIANTS
 	if (error == 0 && idr_find_locked(idr, id) != ptr) {
-		panic("idr_get_new_above: Failed for idr %p, id %d, ptr %p\n",
+		panic("idr_get_new_above_u32_locked: Failed for idr %p, id %u, ptr %p\n",
 		    idr, id, ptr);
 	}
 #endif
 	return (error);
 }
 
+static inline int
+idr_get_new_locked(struct idr *idr, void *ptr, int *idp)
+{
+	u32 id;
+	int retval;
+
+	id = 0;
+	retval = idr_get_new_above_u32_locked(idr, ptr, id, &id);
+	if (!retval)
+		*idp = (int)id;
+
+	return (retval);
+}
+
 int
-idr_get_new_above(struct idr *idr, void *ptr, int starting_id, int *idp)
+idr_get_new(struct idr *idr, void *ptr, int *idp)
 {
 	int retval;
 
 	IDR_LOCK(idr);
-	retval = idr_get_new_above_locked(idr, ptr, starting_id, idp);
+	retval = idr_get_new_locked(idr, ptr, idp);
+	IDR_UNLOCK(idr);
+
+	return (retval);
+}
+
+/*
+ * Could be implemented as get_new_above(idr, ptr, 0, idp) but written
+ * first for simplicity sake.
+ */
+static int
+idr_get_new_above_locked(struct idr *idr, void *ptr, int start, int *idp)
+{
+	u32 id;
+	int retval;
+
+	if (start < 0)
+		return (-EINVAL);
+
+	id = (u32)start;
+	retval = idr_get_new_above_u32_locked(idr, ptr, id, &id);
+	if (!retval)
+		*idp = (int)id;
+
+	return (retval);
+}
+
+int
+idr_get_new_above(struct idr *idr, void *ptr, int start, int* idp)
+{
+	int retval;
+
+	IDR_LOCK(idr);
+	retval = idr_get_new_above_locked(idr, ptr, start, idp);
 	IDR_UNLOCK(idr);
 	return (retval);
 }
 
 int
-ida_get_new_above(struct ida *ida, int starting_id, int *p_id)
+ida_get_new_above(struct ida *ida, int start, int *p_id)
 {
-	return (idr_get_new_above(&ida->idr, NULL, starting_id, p_id));
+	return (idr_get_new_above(&ida->idr, NULL, start, p_id));
 }
 
 static int
-idr_alloc_locked(struct idr *idr, void *ptr, int start, int end)
+idr_alloc_u32_locked(struct idr *idr, void *ptr, u32 *idp, u32 end)
 {
-	int max = end > 0 ? end - 1 : INT_MAX;
-	int error;
-	int id;
+	u32 id;
+	int retval;
 
 	IDR_LOCK_ASSERT(idr);
 
-	if (unlikely(start < 0))
-		return (-EINVAL);
-	if (unlikely(max < start))
+	id = *idp;
+	if (id > end)
 		return (-ENOSPC);
 
-	if (start == 0)
-		error = idr_get_new_locked(idr, ptr, &id);
-	else
-		error = idr_get_new_above_locked(idr, ptr, start, &id);
+	retval = idr_get_new_above_u32_locked(idr, ptr, id, &id);
+	if (!retval)
+		*idp = id;
 
-	if (unlikely(error < 0))
-		return (error);
-	if (unlikely(id > max)) {
-		idr_remove_locked(idr, id);
-		return (-ENOSPC);
-	}
-	return (id);
+	return (retval);
+}
+
+int
+idr_alloc_u32(struct idr *idr, void *ptr, u32 *idp, unsigned long end, gfp_t gfp_mask)
+{
+	int retval;
+
+	IDR_LOCK(idr);
+	retval = idr_alloc_u32_locked(idr, ptr, idp, end);
+	IDR_UNLOCK(idr);
+
+	return (retval);
 }
 
 int
 idr_alloc(struct idr *idr, void *ptr, int start, int end, gfp_t gfp_mask)
 {
+	u32 id, max_id;
 	int retval;
 
-	IDR_LOCK(idr);
-	retval = idr_alloc_locked(idr, ptr, start, end);
-	IDR_UNLOCK(idr);
-	return (retval);
+	if (start < 0)
+		return (-EINVAL);
+
+	id = start;
+	max_id = (end > 0) ? (u32)end - 1 : (u32)INT_MAX;
+
+	retval = idr_alloc_u32(idr, ptr, &id, max_id, gfp_mask);
+	if (retval)
+		return (retval);
+
+	return ((int)id);
 }
 
 int
 idr_alloc_cyclic(struct idr *idr, void *ptr, int start, int end, gfp_t gfp_mask)
 {
+	u32 id, max_id;
 	int retval;
 
+	if (start < 0)
+		return (-EINVAL);
+
+	max_id = (end > 0) ? (u32)end - 1 : (u32)INT_MAX;
+
 	IDR_LOCK(idr);
-	retval = idr_alloc_locked(idr, ptr, max(start, idr->next_cyclic_id), end);
-	if (unlikely(retval == -ENOSPC))
-		retval = idr_alloc_locked(idr, ptr, start, end);
-	if (likely(retval >= 0))
+	id = (u32)max(start, idr->next_cyclic_id);
+	retval = idr_alloc_u32_locked(idr, ptr, &id, max_id);
+	if (unlikely(retval == -ENOSPC)) {
+		id = (u32)start;
+		retval = idr_alloc_u32_locked(idr, ptr, &id, max_id);
+	}
+	if (likely(retval == 0)) {
 		idr->next_cyclic_id = retval + 1;
+		retval = (int)id;
+	}
 	IDR_UNLOCK(idr);
+
 	return (retval);
 }
 
