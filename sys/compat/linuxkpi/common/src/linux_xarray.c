@@ -75,17 +75,26 @@ xa_erase(struct xarray *xa, uint32_t index)
  * This function returns the element pointer at the given index. A
  * value of NULL is returned if the element does not exist.
  */
+static inline void *
+__xa_load(struct xarray *xa, uint32_t index)
+{
+	void *retval;
+
+	retval = radix_tree_lookup(&xa->xa_head, index);
+	if (retval == NULL_VALUE)
+		retval = NULL;
+
+	return (retval);
+}
+
 void *
 xa_load(struct xarray *xa, uint32_t index)
 {
 	void *retval;
 
 	xa_lock(xa);
-	retval = radix_tree_lookup(&xa->xa_head, index);
+	retval = __xa_load(xa, index);
 	xa_unlock(xa);
-
-	if (retval == NULL_VALUE)
-		retval = NULL;
 
 	return (retval);
 }
@@ -495,4 +504,18 @@ xa_extract(struct xarray *xa, void **ptr, unsigned long start,
 	}
 
 	return (copied);
+}
+
+void *
+xa_cmpxchg(struct xarray *xa, unsigned long index, void *old, void *new,
+	gfp_t gfp_mask)
+{
+    void *cur;
+	xa_lock(xa);
+	cur = __xa_load(xa, index);
+	if (cur == old)
+		cur = __xa_store(xa, index, new, gfp_mask);
+	xa_unlock(xa);
+
+	return (cur);
 }
