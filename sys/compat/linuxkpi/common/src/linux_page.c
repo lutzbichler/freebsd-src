@@ -420,6 +420,35 @@ iounmap(void *addr)
 	kfree(vmmap);
 }
 
+static void
+lkpi_devm_memremap_unmap(struct device *dev, void *p)
+{
+	void **dr = p;
+
+	memunmap(*dr);
+}
+
+void *
+linuxkpi_devm_memremap(struct device *dev, resource_size_t offset, size_t size,
+    unsigned long flags)
+{
+	void **dr, *addr;
+
+	dr = devres_alloc(lkpi_devm_memremap_unmap, sizeof(*dr), GFP_KERNEL);
+	if (dr == NULL)
+		return (ERR_PTR(-ENOMEM));
+	addr = memremap(offset, size, flags);
+	if (addr != NULL) {
+		*dr = addr;
+		devres_add(dev, dr);
+	} else {
+		addr = ERR_PTR(-ENXIO);
+		devres_free(dr);
+	}
+
+	return (addr);
+}
+
 void *
 vmap(struct page **pages, unsigned int count, unsigned long flags, int prot)
 {
