@@ -89,6 +89,7 @@ void *xa_load(struct xarray *, uint32_t);
 int xa_alloc(struct xarray *, uint32_t *, void *, struct xa_limit, gfp_t);
 int xa_alloc_cyclic(struct xarray *, uint32_t *, void *, struct xa_limit, uint32_t *, gfp_t);
 int xa_alloc_cyclic_irq(struct xarray *, uint32_t *, void *, struct xa_limit, uint32_t *, gfp_t);
+void * xa_cmpxchg(struct xarray *, unsigned long, void *, void *, gfp_t);
 int xa_insert(struct xarray *, uint32_t, void *, gfp_t);
 void *xa_store(struct xarray *, uint32_t, void *, gfp_t);
 void xa_init_flags(struct xarray *, uint32_t);
@@ -173,4 +174,5 @@ xa_to_value(const void *e)
 
 	return (v >> 1);
 }
+
 #endif		/* _LINUXKPI_LINUX_XARRAY_H_ */
