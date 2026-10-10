@@ -7,6 +7,8 @@
 
 #include <sys/types.h>
 #include <machine/md_var.h>
+#include <machine/cpufunc.h>
+#include <machine/specialreg.h>
 
 #define	X86_FEATURE_CLFLUSH	1
 #define	X86_FEATURE_XMM4_1	2
@@ -31,6 +33,20 @@ static_cpu_has(uint16_t f)
 }
 
 #define	boot_cpu_has(x)	static_cpu_has(x)
+
+static inline unsigned long
+native_read_cr4(void)
+{
+	return ((unsigned long)rcr4());
+}
+
+#ifndef X86_CR4_LA57
+#ifdef CR4_LA57
+#define X86_CR4_LA57 CR4_LA57
+#else
+#define X86_CR4_LA57 (1UL << 12)
+#endif
+#endif
 
 #endif
 
