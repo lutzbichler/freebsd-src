@@ -738,6 +738,9 @@ linux_pci_attach_device(device_t dev, struct pci_driver *pdrv,
 		}
 	}
 	pcie_find_root_port(pbus);
+
+	device_printf(dev, "%s: pbus->root = 0x%p\n", __func__, pbus->root);
+
 	if (isdrm)
 		pdev->root = pbus->root;
 	ppbus = pci_upstream_bridge(pbus);
