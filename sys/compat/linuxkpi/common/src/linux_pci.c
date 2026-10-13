@@ -657,6 +657,24 @@ linux_pci_get_rle(struct pci_dev *pdev, int type, int rid, bool reserve_bar)
 	return (rle);
 }
 
+static void
+lkpi_print_device_path_to_nexus(device_t dev)
+{
+	device_t cur;
+
+	if (dev == NULL)
+		return;
+
+	device_printf(dev, "[Device Path] Retrieve hierachy for %s:\n", device_get_nameunit(dev));
+
+	cur = dev;
+	while (cur != NULL) {
+		const char *name = device_get_nameunit(cur);
+		device_printf(dev, "[Device Path] %s\n", name ? name : "<unknown>");
+		cur = device_get_parent(cur);
+	}
+}
+
 int
 linux_pci_attach_device(device_t dev, struct pci_driver *pdrv,
     const struct pci_device_id *id, struct pci_dev *pdev)
@@ -668,10 +686,13 @@ linux_pci_attach_device(device_t dev, struct pci_driver *pdrv,
 	int error;
 	bool isdrm;
 
+	lkpi_print_device_path_to_nexus(dev);
+
 	linux_set_current(curthread);
 
-	parent = device_get_parent(dev);
 	isdrm = pdrv != NULL && pdrv->isdrm;
+
+	parent = device_get_parent(dev);
 
 	if (isdrm) {
 		struct pci_devinfo *dinfo;
