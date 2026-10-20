@@ -44,6 +44,16 @@
 	.flags          = X86_CPU_ID_FLAG_ENTRY_VALID,			\
 }
 
+#define	X86_MATCH_VENDOR_FAM_MODEL(_vendor, _family, _model, _data) \
+	X86_MATCH_VENDORID_FAM_MODEL_STEPPINGS_FEATURE( \
+		X86_VENDOR_##_vendor, _family, _model, X86_STEPPING_ANY, \
+		X86_FEATURE_ANY)
+
+#define	X86_MATCH_VENDOR_FAM(_vendor, _family, _data) \
+	X86_MATCH_VENDORID_FAM_MODEL_STEPPINGS_FEATURE( \
+		X86_VENDOR_##_vendor, _family, X86_MODEL_ANY, X86_STEPPING_ANY, \
+		X86_FEATURE_ANY)
+
 #define	X86_MATCH_VFM(_vfm, _data)					\
     X86_MATCH_VENDORID_FAM_MODEL_STEPPINGS_FEATURE(			\
 	VFM_VENDOR(_vfm),						\
