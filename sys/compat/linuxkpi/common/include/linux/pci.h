@@ -753,6 +753,18 @@ pci_write_config_dword(const struct pci_dev *pdev, int where, u32 val)
 	return (0);
 }
 
+static inline void
+pci_clear_and_set_config_dword(const struct pci_dev *pdev, int where,
+	u32 cval, u32 sval)
+{
+	u32 val;
+
+	val = (u32)pci_read_config(pdev->dev.bsddev, where, 4);
+	val &= ~cval;
+	val |= sval;
+	pci_write_config(pdev->dev.bsddev, where, val, 4);
+}
+
 int	linux_pci_register_driver(struct pci_driver *pdrv);
 int	linux_pci_register_drm_driver(struct pci_driver *pdrv);
 void	linux_pci_unregister_driver(struct pci_driver *pdrv);
