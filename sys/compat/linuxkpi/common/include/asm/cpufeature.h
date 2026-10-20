@@ -31,6 +31,7 @@ static_cpu_has(uint16_t f)
 }
 
 #define	boot_cpu_has(x)	static_cpu_has(x)
+#define	cpu_feature_enabled(x)	static_cpu_has(x)
 
 #endif
 
