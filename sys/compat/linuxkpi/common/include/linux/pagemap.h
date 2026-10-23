@@ -80,4 +80,10 @@ mapping_gfp_mask(vm_object_t mapping)
 	return (0);
 }
 
+static inline pgoff_t
+linear_page_index(const struct vm_area_struct *vma,	const unsigned long addr)
+{
+	return (((addr - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff);
+}
+
 #endif
