@@ -470,6 +470,12 @@ void lkpi_unmap_mapping_range(void *obj, loff_t const holebegin __unused,
 
 void vma_set_file(struct vm_area_struct *vma, struct linux_file *file);
 
+static inline pgoff_t
+vma_end_pgoff(const struct vm_area_struct *vma)
+{
+	return (vma->vm_pgoff + ((vma->vm_end - vma->vm_start) >> PAGE_SHIFT));
+}
+
 static inline void
 might_alloc(gfp_t gfp_mask __unused)
 {
