@@ -476,6 +476,12 @@ vma_end_pgoff(const struct vm_area_struct *vma)
 	return (vma->vm_pgoff + ((vma->vm_end - vma->vm_start) >> PAGE_SHIFT));
 }
 
+static inline pgprot_t
+vma_get_page_prot(const struct vm_area_struct *vma)
+{
+	return (vm_get_page_prot(vma->vm_flags));
+}
+
 static inline void
 might_alloc(gfp_t gfp_mask __unused)
 {
