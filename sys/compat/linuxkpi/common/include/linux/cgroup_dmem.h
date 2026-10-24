@@ -55,4 +55,26 @@ dmem_cgroup_pool_state_put(struct dmem_cgroup_pool_state *pool)
 {
 }
 
+static inline bool
+dmem_cgroup_below_min(struct dmem_cgroup_pool_state *pool,
+	struct dmem_cgroup_pool_state *test_pool)
+{
+	return (false);
+}
+
+static inline bool
+dmem_cgroup_below_low(struct dmem_cgroup_pool_state *pool,
+	struct dmem_cgroup_pool_state *test_pool)
+{
+	return (false);
+}
+
+static inline struct dmem_cgroup_pool_state *
+dmem_cgroup_get_common_ancestor(struct dmem_cgroup_pool_state *lhs,
+	struct dmem_cgroup_pool_state *rhs)
+{
+    return (NULL);
+}
+
+
 #endif /* _LINUXKPI_LINUX_CGROUP_DMEM_H_ */
