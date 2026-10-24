@@ -45,6 +45,7 @@
 #define	I2C_M_RD	0x0001
 #define	I2C_M_NOSTART	0x0002
 #define	I2C_M_STOP	0x0004
+#define	I2C_M_TEN	0x0010
 
 /* No need for us */
 #define	I2C_FUNC_I2C			0
@@ -71,6 +72,13 @@ struct i2c_adapter {
 
 	int retries;
 	void *data;
+};
+
+struct i2c_client {
+	uint16_t addr;
+	uint16_t flags;
+	struct device dev;
+	struct i2c_adapter *adapter;
 };
 
 struct i2c_msg {
@@ -164,6 +172,38 @@ i2c_transfer(struct i2c_adapter *adapter, struct i2c_msg *msgs, int nmsgs)
 		adapter->lock_ops->unlock_bus(adapter, 0);
 
 	return (ret);
+}
+
+static inline int
+i2c_master_send(struct i2c_client *client, const char* buf, int count)
+{
+	int ret;
+	struct i2c_msg msg = {
+		.addr = client->addr,
+		.flags = (client->flags & I2C_M_TEN),
+		.len = count,
+		.buf = buf,
+	};
+
+	ret = i2c_transfer(client->adapter, &msg, 1);
+
+	return (ret == 1 ? count : ret);
+}
+
+static inline int
+i2c_master_recv(struct i2c_client *client, char* buf, int count)
+{
+	int ret;
+	struct i2c_msg msg = {
+		.addr = client->addr,
+		.flags = I2C_M_RD | (client->flags & I2C_M_TEN),
+		.len = count,
+		.buf = buf,
+	};
+
+	ret = i2c_transfer(client->adapter, &msg, 1);
+
+	return (ret == 1 ? count : ret);
 }
 
 /* Unlocked version of i2c_transfer */
