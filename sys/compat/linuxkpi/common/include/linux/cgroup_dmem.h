@@ -10,14 +10,24 @@
 #include <linux/types.h>
 #include <linux/llist.h>
 
+struct dmem_cgroup_init;
 struct dmem_cgroup_pool_state;
 struct dmem_cgroup_region;
 
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION < 73000
 static inline __printf(2,3) struct dmem_cgroup_region *
 dmem_cgroup_register_region(uint64_t size, const char *name_fmt, ...)
 {
 	return (NULL);
 }
+#else
+static inline __printf(2,3) struct dmem_cgroup_region *
+dmem_cgroup_register_region(const struct dmem_cgroup_init *init,
+	const char *name_fmt, ...)
+{
+	return (NULL);
+}
+#endif
 
 static inline void
 dmem_cgroup_unregister_region(struct dmem_cgroup_region *region)
