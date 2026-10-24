@@ -488,6 +488,7 @@ might_alloc(gfp_t gfp_mask __unused)
 }
 
 #define	is_cow_mapping(flags)	(false)
+#define	vma_is_cow_mapping(vma)	(false)
 
 static inline bool
 want_init_on_free(void)
