@@ -36,6 +36,8 @@
 
 #include <sys/systm.h>
 
+#define	MAX_UDELAY_MS	5
+
 static inline void
 linux_msleep(unsigned int ms)
 {
