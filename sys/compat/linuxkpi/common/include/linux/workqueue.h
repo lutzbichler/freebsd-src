@@ -243,6 +243,9 @@ do {									\
 #define	current_work() \
 	linux_current_work()
 
+#define	from_work(_var, _callback, _field) \
+    container_of(_callback, typeof(*(_var)), _field)
+
 /* prototypes */
 
 extern struct workqueue_struct *system_wq;
