@@ -14,6 +14,11 @@
 #include <linux/device.h>
 #include <linux/pm.h>
 
+#define SET_RUNTIME_PM_OPS(RUNTIME_SUSPEND, RUNTIME_RESUME, RUNTIME_IDLE) \
+	.runtime_suspend = RUNTIME_SUSPEND, \
+	.runtime_resume = RUNTIME_RESUME, \
+	.runtime_idle = RUNTIME_IDLE,
+
 /*
  * Return values, where needed, are based on the !CONFIG_PM/!CONFIG_PM_SLEEP
  * assumption given we currently do not support anything in here.
