@@ -166,7 +166,7 @@ unsigned long linux_timer_hz_mask;
 wait_queue_head_t linux_bit_waitq;
 wait_queue_head_t linux_var_waitq;
 
-const guid_t guid_null;
+const linux_guid_t linux_guid_null = {0};
 
 enum system_states system_state = SYSTEM_RUNNING;
 

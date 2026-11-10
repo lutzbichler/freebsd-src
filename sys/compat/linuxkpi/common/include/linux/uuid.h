@@ -31,13 +31,15 @@
 #ifndef	_LINUXKPI_LINUX_UUID_H
 #define	_LINUXKPI_LINUX_UUID_H
 
+#include <sys/ctype.h>
+
 #include <linux/random.h>
 
 #define	UUID_SIZE	16
 #define	UUID_STRING_LEN	36
 
 #define	GUID_INIT(x0_3, x4_5, x6_7, x8, x9, x10, x11, x12, x13, x14, x15) \
-	((guid_t) { .x = { 						\
+	((linux_guid_t) { .b = { 					\
 		[0]  =  (x0_3)        & 0xff,				\
 		[1]  = ((x0_3) >> 8)  & 0xff,				\
 		[2]  = ((x0_3) >> 16) & 0xff,				\
@@ -57,8 +59,9 @@
 }})
 
 typedef struct {
-	char	x[16];
-} guid_t;
+	char	b[UUID_SIZE];
+} linux_guid_t;
+#define	guid_t	linux_guid_t
 
 /* Renamed to stay clear of the other uuid_t types in the tree. */
 typedef struct {
@@ -66,45 +69,44 @@ typedef struct {
 } linux_uuid_t;
 #define	uuid_t	linux_uuid_t
 
-extern const guid_t guid_null;
+extern const linux_guid_t linux_guid_null;
 
 static inline void
-guid_gen(guid_t *g)
+guid_gen(linux_guid_t *g)
 {
-
 	get_random_bytes(g, 16);
-	g->x[7] = (g->x[7] & 0x0f) | 0x40;
-	g->x[8] = (g->x[8] & 0x3f) | 0x80;
+	g->b[7] = (g->b[7] & 0x0f) | 0x40;
+	g->b[8] = (g->b[8] & 0x3f) | 0x80;
 }
 
 static inline bool
-guid_equal(const guid_t *u1, const guid_t *u2)
+guid_equal(const linux_guid_t *u1, const linux_guid_t *u2)
 {
-	return (memcmp(u1, u2, sizeof(guid_t)) == 0);
+	return (memcmp(u1, u2, sizeof(linux_guid_t)) == 0);
 }
 
 static inline void
-guid_copy(guid_t *dst, const guid_t *src)
+guid_copy(linux_guid_t *dst, const linux_guid_t *src)
 {
-	memcpy(dst, src, sizeof(*dst));
+	memcpy(dst, src, sizeof(linux_guid_t));
 }
 
 static inline void
-import_guid(guid_t *dst, const uint8_t *src)
+import_guid(linux_guid_t *dst, const uint8_t *src)
 {
-	memcpy(dst, src, sizeof(guid_t));
+	memcpy(dst, src, sizeof(linux_guid_t));
 }
 
 static inline void
-export_guid(uint8_t *dst, const guid_t *src)
+export_guid(uint8_t *dst, const linux_guid_t *src)
 {
-	memcpy(dst, src, sizeof(guid_t));
+	memcpy(dst, src, sizeof(linux_guid_t));
 }
 
 static inline bool
-guid_is_null(const guid_t *guid)
+guid_is_null(const linux_guid_t *guid)
 {
-	return (guid_equal(guid, &guid_null));
+	return (guid_equal(guid, &linux_guid_null));
 }
 
 static inline bool
@@ -129,6 +131,27 @@ static inline void
 export_uuid(uint8_t *dst, const linux_uuid_t *src)
 {
 	memcpy(dst, src, sizeof(linux_uuid_t));
+}
+
+static inline bool
+uuid_is_valid(const char *uuid)
+{
+	int i;
+
+	/*
+	 * String format of an uuid is "FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"
+	 * Thus, the character at the indices 8, 13, 18 and 21 must by a hyphen.
+	 * All other characters need to represent a hex value.
+	 */
+	for (i = 0; i < UUID_STRING_LEN; i++) {
+		if (i == 8 || i == 13 || i == 18 || i == 23) {
+			if (uuid[i] != '-')
+				return false;
+		} else if (!isxdigit(uuid[i]))
+			return false;
+	}
+
+	return true;
 }
 
 #endif	/* _LINUXKPI_LINUX_UUID_H */
