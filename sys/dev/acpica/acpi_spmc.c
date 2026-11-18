@@ -691,7 +691,8 @@ acpi_spmc_parse_constraints_intel(struct acpi_spmc_softc *sc, ACPI_OBJECT *objec
 			    "constraint %zu's constraint package.\n", i);
 			goto skip;
 		}
-		if (constraint_package->Package.Count != 3) {
+		if (constraint_package->Package.Count < 2 ||
+		    constraint_package->Package.Count > 3) {
 			device_printf(sc->dev, "Intel: Wrong package length "
 			    "for constraint %zu's constraint package.\n", i);
 			goto skip;
@@ -703,9 +704,12 @@ acpi_spmc_parse_constraints_intel(struct acpi_spmc_softc *sc, ACPI_OBJECT *objec
 		    constraint_package->Package.Elements[0].Integer.Value;
 		constraint->min_d_state =
 		    constraint_package->Package.Elements[1].Integer.Value;
-		constraint->min_dev_specific_state =
-		    constraint_package->Package.Elements[2].Integer.Value;
 
+		if (constraint_package->Package.Count == 3)
+			constraint->min_dev_specific_state =
+			    constraint_package->Package.Elements[2].Integer.Value;
+		else
+			constraint->min_dev_specific_state = 0;
 		j++;
 		continue;
 skip:
