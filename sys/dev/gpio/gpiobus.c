@@ -954,7 +954,7 @@ gpiobus_alloc_resource(device_t bus, device_t child, int type, int rid,
 static int
 gpiobus_release_resource(device_t dev, device_t child, struct resource *r)
 {
-	struct rman *rm;
+	struct rman *rm __diagused;
 	int err;
 	u_int flags;
 #ifdef INTRNG
