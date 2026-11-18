@@ -614,26 +614,36 @@ acpi_set_prepare_sleep(
 }
 
 /*
- * ACPI cousin interrupts.
+ * ACPI cousin interrupts.  Registration and removal require bus_topo_lock.
+ * The consumer must be ready to receive an interrupt before requesting a
+ * source: activation can make the handler runnable before setup_cb runs.
+ * An activation failure must unwind partial setup; successful deactivation
+ * must stop and drain the handler before returning.  A source and request
+ * each have at most one peer.  Requests survive source removal until canceled.
+ * Callbacks must not re-enter the registration, removal or query routines.
  */
 #ifdef __x86_64__
 typedef void (*acpi_cousin_intr_setup_cb_t)(device_t dev);
 typedef void (*acpi_cousin_intr_detach_cb_t)(device_t dev);
 typedef void (*acpi_cousin_intr_intr_cb_t)(device_t dev);
+struct acpi_cousin_intr_request;
+struct acpi_cousin_intr_source;
+typedef int (*acpi_cousin_intr_activate_cb_t)(void *arg,
+    struct acpi_cousin_intr_source *source);
+typedef int (*acpi_cousin_intr_deactivate_cb_t)(void *arg);
 
-device_t	acpi_cousin_intr_req(device_t consumer,
+struct acpi_cousin_intr_request *acpi_cousin_intr_req(device_t consumer,
 		    acpi_cousin_intr_setup_cb_t setup_cb,
 		    acpi_cousin_intr_detach_cb_t detach_cb,
 		    acpi_cousin_intr_intr_cb_t intr_cb);
-struct acpi_cousin_intr_consumers	*acpi_cousin_intr_provide(
-		    struct acpi_cousin_intr_consumers *cons_list,
-		    ACPI_HANDLE cons_handle);
-void		acpi_cousin_intr_detach(
-		    struct acpi_cousin_intr_consumers *cons_list);
-void		acpi_cousin_intr_trigger(
-		    struct acpi_cousin_intr_consumers *cons_list);
-void		acpi_cousin_intr_free_cons(
-		    struct acpi_cousin_intr_consumers *cons_list);
+bool		acpi_cousin_intr_connected(struct acpi_cousin_intr_request *req);
+int		acpi_cousin_intr_cancel(struct acpi_cousin_intr_request *req);
+struct acpi_cousin_intr_source *acpi_cousin_intr_provide(device_t provider,
+		    ACPI_HANDLE consumer, void *arg,
+		    acpi_cousin_intr_activate_cb_t activate,
+		    acpi_cousin_intr_deactivate_cb_t deactivate);
+int		acpi_cousin_intr_unprovide(struct acpi_cousin_intr_source *source);
+void		acpi_cousin_intr_trigger(struct acpi_cousin_intr_source *source);
 #endif
 
 #ifdef __aarch64__

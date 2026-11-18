@@ -176,6 +176,10 @@ struct iichid_softc {
 	int			irq_rid;
 	struct resource		*irq_res;
 	void			*irq_cookie;
+#ifdef __x86_64__
+	struct acpi_cousin_intr_request *cousin_req;
+	bool			cousin_active;		/* iicbus lock */
+#endif
 
 #ifdef IICHID_SAMPLING
 	int			sampling_rate_slow;	/* iicbus lock */
@@ -542,7 +546,7 @@ iichid_sampling_task(void *context, int pending)
 		goto rearm;
 	bus_requested = true;
 
-	if (!sc->power_on)
+	if (!sc->power_on || sc->intr_handler == NULL)
 		goto out;
 
 	error = iichid_cmd_read(sc, sc->intr_buf, sc->intr_bufsize, &actual);
@@ -625,7 +629,7 @@ iichid_intr(void *context)
 	error = iichid_cmd_read(sc, sc->intr_buf, sc->intr_bufsize, &actual);
 	THREAD_NO_SLEEPING();
 	if (error == 0) {
-		if (sc->power_on && sc->open) {
+		if (sc->power_on && sc->open && sc->intr_handler != NULL) {
 			if (actual != 0)
 				sc->intr_handler(sc->intr_ctx, sc->intr_buf + 2,
 				    actual - 2);
@@ -711,6 +715,8 @@ iichid_setup_interrupt(struct iichid_softc *sc)
 {
 	int error;
 
+	if (sc->irq_res == NULL || sc->irq_dev == NULL)
+		return (ENXIO);
 	sc->irq_cookie = 0;
 
 	error = BUS_SETUP_INTR(sc->irq_dev, sc->dev, sc->irq_res,
@@ -795,14 +801,21 @@ iichid_sysctl_sampling_rate_handler(SYSCTL_HANDLER_ARGS)
 	    value == sc->sampling_rate_slow)
 		return (error);
 
-	/* Can't switch to interrupt mode if it is not supported. */
-	if (sc->irq_res == NULL && value < 0)
-		return (EINVAL);
-
 	parent = device_get_parent(sc->dev);
 	error = iicbus_request_bus(parent, sc->dev, IIC_WAIT);
 	if (error != 0)
 		return (iic2errno(error));
+
+	/* Cousin IRQs stay connected until the provider is detached. */
+#ifdef __x86_64__
+	if ((sc->irq_res == NULL && !sc->cousin_active && value < 0) ||
+	    (sc->cousin_active && value >= 0)) {
+#else
+	if (sc->irq_res == NULL && value < 0) {
+#endif
+		iicbus_release_bus(parent, sc->dev);
+		return (EINVAL);
+	}
 
 	oldval = sc->sampling_rate_slow;
 	sc->sampling_rate_slow = value;
@@ -814,7 +827,8 @@ iichid_sysctl_sampling_rate_handler(SYSCTL_HANDLER_ARGS)
 	} else if (oldval >= 0 && value < 0) {
 		if (sc->power_on)
 			iichid_teardown_callout(sc);
-		iichid_setup_interrupt(sc);
+		if (sc->irq_res != NULL)
+			iichid_setup_interrupt(sc);
 	}
 
 	if (sc->power_on && value > 0)
@@ -871,10 +885,17 @@ iichid_intr_setup(device_t dev, device_t child __unused, hid_intr_t intr,
 static void
 iichid_intr_unsetup(device_t dev, device_t child __unused)
 {
-#ifdef IICHID_SAMPLING
 	struct iichid_softc *sc;
+	device_t parent;
 
 	sc = device_get_softc(dev);
+	parent = device_get_parent(dev);
+	if (iicbus_request_bus(parent, dev, IIC_WAIT) == 0) {
+		sc->intr_handler = NULL;
+		sc->intr_ctx = NULL;
+		iicbus_release_bus(parent, dev);
+	}
+#ifdef IICHID_SAMPLING
 	taskqueue_drain_all(sc->taskqueue);
 #endif
 }
@@ -1140,15 +1161,28 @@ done:
 	return (sc->probe_result);
 }
 
+#ifdef __x86_64__
 static void
 iichid_setup_cousin_intr(device_t dev)
 {
 	struct iichid_softc *sc = device_get_softc(dev);
+	device_t parent = device_get_parent(dev);
+	int error;
 
+	error = iicbus_request_bus(parent, dev, IIC_WAIT);
+	if (error != 0) {
+		device_printf(dev, "cannot switch to cousin interrupt (%d)\n",
+		    error);
+		return;
+	}
+	sc->cousin_active = true;
 	device_printf(dev, "Using cousin interrupt source\n");
 #ifdef IICHID_SAMPLING
+	if (sc->sampling_rate_slow >= 0 && sc->callout_setup)
+		iichid_teardown_callout(sc);
 	sc->sampling_rate_slow = -1;
 #endif
+	iicbus_release_bus(parent, dev);
 }
 
 static void
@@ -1161,26 +1195,28 @@ static void
 iichid_detach_cousin_intr(device_t dev)
 {
 	struct iichid_softc *sc = device_get_softc(dev);
-	device_t intr_src;
+	device_t parent = device_get_parent(dev);
+	int error;
 
-	device_printf(dev, "Sibling interrupt source detached; making "
-	    "new request\n");
-	intr_src = acpi_cousin_intr_req(dev, iichid_setup_cousin_intr,
-	    iichid_detach_cousin_intr, iichid_cousin_intr);
-
-	// TODO We should make sure we still use sampling if the user explcitly sets the sampling rate sysctls.
-
-	if (intr_src != NULL)
-		panic("acpi_cousin_intr_req() should always return "
-		    "NULL at the moment");
+	error = iicbus_request_bus(parent, dev, IIC_WAIT);
+	if (error != 0) {
+		device_printf(dev, "cannot switch from cousin interrupt (%d)\n",
+		    error);
+		return;
+	}
+	sc->cousin_active = false;
+	device_printf(dev, "Cousin interrupt source detached\n");
 #ifdef IICHID_SAMPLING
-	else {
-		device_printf(sc->dev,
-		    "Using sampling mode\n");
-		sc->sampling_rate_slow = IICHID_SAMPLING_RATE_SLOW;
+	device_printf(dev, "Using sampling mode\n");
+	sc->sampling_rate_slow = IICHID_SAMPLING_RATE_SLOW;
+	if (sc->power_on && sc->intr_handler != NULL) {
+		iichid_setup_callout(sc);
+		iichid_reset_callout(sc);
 	}
 #endif
+	iicbus_release_bus(parent, dev);
 }
+#endif /* __x86_64__ */
 
 static int
 iichid_attach(device_t dev)
@@ -1225,20 +1261,26 @@ iichid_attach(device_t dev)
 
 	if (sc->irq_res == NULL || error != 0) {
 		device_printf(sc->dev, "Interrupt setup failed\n");
-		if (sc->irq_res != NULL)
+		if (sc->irq_res != NULL) {
 			bus_release_resource(dev, SYS_RES_IRQ, sc->irq_rid,
 			    sc->irq_res);
-		device_t intr_src = acpi_cousin_intr_req(dev,
+			sc->irq_res = NULL;
+		}
+#ifdef IICHID_SAMPLING
+		sc->sampling_rate_slow = IICHID_SAMPLING_RATE_SLOW;
+#endif
+#ifdef __x86_64__
+		sc->cousin_req = acpi_cousin_intr_req(dev,
 		    iichid_setup_cousin_intr, iichid_detach_cousin_intr,
 		    iichid_cousin_intr);
-		if (intr_src != NULL)
-			panic("acpi_cousin_intr_req() should always return "
-			    "NULL at the moment");
-		else {
+#endif
+#ifdef __x86_64__
+		if (!acpi_cousin_intr_connected(sc->cousin_req)) {
+#else
+		{
+#endif
 #ifdef IICHID_SAMPLING
-			device_printf(sc->dev,
-			    "Using sampling mode\n");
-			sc->sampling_rate_slow = IICHID_SAMPLING_RATE_SLOW;
+			device_printf(sc->dev, "Using sampling mode\n");
 #else
 			iichid_detach(dev);
 			error = ENXIO;
@@ -1330,6 +1372,12 @@ iichid_detach(device_t dev)
 	error = bus_generic_detach(dev);
 	if (error)
 		return (error);
+#ifdef __x86_64__
+	error = acpi_cousin_intr_cancel(sc->cousin_req);
+	if (error != 0)
+		return (error);
+	sc->cousin_req = NULL;
+#endif
 	iichid_teardown_interrupt(sc);
 	if (sc->irq_res != NULL)
 		bus_release_resource(sc->irq_dev, SYS_RES_IRQ, sc->irq_rid,

@@ -11,6 +11,7 @@ include 	"conf/files.x86"
 # dependency lines other than the first are silently ignored.
 #
 #
+dev/acpica/acpi_cousin_intr.c	optional	acpi
 elf-vdso.so.o			standard				\
 	dependency	"$S/amd64/amd64/sigtramp.S assym.inc $S/conf/vdso_amd64.ldscript $S/tools/amd64_vdso.sh" \
 	compile-with	"env AWK='${AWK}' NM='${NM}' LD='${LD}' CC='${CC}' OBJCOPY='${OBJCOPY}' ELFDUMP='${ELFDUMP}' S='${S}' sh $S/tools/amd64_vdso.sh" \
