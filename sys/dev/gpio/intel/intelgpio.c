@@ -734,6 +734,8 @@ intelgpio_detach(device_t dev)
 	}
 
 	INTELGPIO_LOCK_DESTROY(sc);
+	if (sc->sc_plat != NULL && sc->sc_plat->cleanup != NULL)
+		sc->sc_plat->cleanup(sc->sc_plat);
 	return (0);
 }
 

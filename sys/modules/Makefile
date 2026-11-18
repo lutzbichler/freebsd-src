@@ -230,6 +230,7 @@ SUBDIR=	\
 	linuxkpi_video \
 	linuxkpi_wlan \
 	${_lio} \
+	${_lnlgpio} \
 	lpt \
 	${_mac_biba} \
 	${_mac_bsdextended} \
@@ -845,6 +846,7 @@ _ipwfw=		ipwfw
 _iwifw=		iwifw
 _iwnfw=		iwnfw
 .endif
+_lnlgpio=	lnlgpio
 _nfe=		nfe
 _nvram=		nvram
 .if ${MK_CRYPT} != "no" || defined(ALL_MODULES)

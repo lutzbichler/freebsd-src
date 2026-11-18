@@ -74,6 +74,9 @@ struct intelgpio_platform {
 	int ncommunities;
 	char **hids;
 	const char *desc;
+
+	/* set if dynamically allocated data needs to be freed on detach */
+	void (*cleanup)(const struct intelgpio_platform *);
 };
 
 struct intelgpio_softc {
