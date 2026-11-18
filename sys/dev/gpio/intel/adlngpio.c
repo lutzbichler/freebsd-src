@@ -88,7 +88,6 @@ DEFINE_CLASS_1(gpio, adln_driver, adln_methods,
     sizeof(struct intelgpio_softc), intelgpio_driver);
 
 DRIVER_MODULE(adlngpio, acpi, adln_driver, NULL, NULL);
-MODULE_DEPEND(adlngpio, acpi, 1, 1, 1);
-MODULE_DEPEND(adlngpio, gpiobus, 1, 1, 1);
+MODULE_DEPEND(adlngpio, intelgpio, 1, 1, 1);
 MODULE_VERSION(adlngpio, 1);
 ACPI_PNP_INFO(adln_hids);

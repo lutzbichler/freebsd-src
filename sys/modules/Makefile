@@ -180,6 +180,7 @@ SUBDIR=	\
 	imgact_binmisc \
 	${_imx} \
 	${_intel_pmc} \
+	${_intelgpio} \
 	${_intelspi} \
 	${_io} \
 	${_ioat} \
@@ -846,6 +847,7 @@ _ipwfw=		ipwfw
 _iwifw=		iwifw
 _iwnfw=		iwnfw
 .endif
+_intelgpio=	intelgpio
 _lnlgpio=	lnlgpio
 _nfe=		nfe
 _nvram=		nvram

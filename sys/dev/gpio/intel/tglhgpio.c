@@ -100,7 +100,6 @@ DEFINE_CLASS_1(gpio, tglh_driver, tglh_methods,
     sizeof(struct intelgpio_softc), intelgpio_driver);
 
 DRIVER_MODULE(tglhgpio, acpi, tglh_driver, NULL, NULL);
-MODULE_DEPEND(tglhgpio, acpi, 1, 1, 1);
-MODULE_DEPEND(tglhgpio, gpiobus, 1, 1, 1);
+MODULE_DEPEND(tglhgpio, intelgpio, 1, 1, 1);
 MODULE_VERSION(tglhgpio, 1);
 ACPI_PNP_INFO(tglh_hids);

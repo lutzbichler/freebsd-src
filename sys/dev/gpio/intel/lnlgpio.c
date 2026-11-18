@@ -393,7 +393,6 @@ DEFINE_CLASS_1(gpio, lnl_driver, lnl_methods,
     sizeof(struct intelgpio_softc), intelgpio_driver);
 
 DRIVER_MODULE(lnlgpio, acpi, lnl_driver, NULL, NULL);
-MODULE_DEPEND(lnlgpio, acpi, 1, 1, 1);
-MODULE_DEPEND(lnlgpio, gpiobus, 1, 1, 1);
+MODULE_DEPEND(lnlgpio, intelgpio, 1, 1, 1);
 MODULE_VERSION(lnlgpio, 1);
 ACPI_PNP_INFO(lnl_hids);

@@ -858,3 +858,7 @@ static device_method_t intelgpio_methods[] = {
 
 DEFINE_CLASS_0(intelgpio, intelgpio_driver, intelgpio_methods,
     sizeof(struct intelgpio_softc));
+
+MODULE_DEPEND(intelgpio, acpi, 1, 1, 1);
+MODULE_DEPEND(intelgpio, gpiobus, 1, 1, 1);
+MODULE_VERSION(intelgpio, 1);
