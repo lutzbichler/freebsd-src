@@ -1489,6 +1489,7 @@ static void
 gpiobus_pic_resume(struct gpiopic *gpiopic)
 {
 	struct gpiopic_intsrc *gisrc;
+	bool was_enabled;
 	int i;
 
 	if (gpiopic == NULL)
@@ -1500,11 +1501,11 @@ gpiobus_pic_resume(struct gpiopic *gpiopic)
 		if (gisrc->is_event == NULL)
 			continue;
 
-		/* Just in case. */
-		gpiopic_disable_intr(gisrc);
-
-		if (!gisrc->is_enabled)
+		was_enabled = gisrc->is_enabled;
+		if (!was_enabled)
 			continue;
+		/* Reconfigure the source before enabling it again. */
+		gpiopic_disable_intr(gisrc);
 
 		if (gisrc->is_mode != GPIO_INTR_CONFORM)
 			gpiopic_config_intr(gisrc, gisrc->is_mode);
